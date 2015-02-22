@@ -1,0 +1,29 @@
+%MAIN SCRIPT - This script retrieves all the parameters and run the
+%simulation
+%
+% All the parameters are configured in config.m
+
+% Author: Ruben Di Battista
+% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+% email: ruben.dibattista@skywarder.eu
+% Website: http://www.skywarder.eu
+% April 2014; Last revision: 25.IV.2014
+
+tic
+%Retrieving Parameters
+config
+
+%Checking if stochastic or standard simulation needed
+if settings.stoch.N > 1
+    fprintf('Stochastic Simulation Fired...\n\n');
+    if settings.stoch.parallel == 1
+        [LP,Z]=stoch_run_p(settings);
+    else
+        [LP,Z]=stoch_run(settings);
+    end
+else
+    fprintf('Standard Simulation Fired...\n\n');
+    [T,Y]=std_run(settings);
+end
+
+toc

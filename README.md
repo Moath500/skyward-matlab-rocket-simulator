@@ -4,7 +4,10 @@ This is a script developed in MATLAB for the simulation of rocket 6 d.o.f. dynam
 ## How to use it
 
 Just clone the repository. You're going to find two folders, all the *core files* are inside the `sources` folder. 
-In the `resources` you're going to find a `config.m` sample file and some aerodynamics dataset of the Skyward Experimental Rocketry's first sounding rocket <a href="http://www.skywarder.eu/blog/rocksanne-i-x/">Rocksanne I-X</a> in the early stages of design (so they can be wrong). 
+In the `resources` you're going to find a `config.m` sample file and some aerodynamics dataset of the Skyward Experimental Rocketry's first sounding rocket <a href="http://www.skywarder.eu/blog/rocksanne-i-x/">Rocksanne I-X</a> in the early stages of design (so they can be wrong).
+
+- Fill a `config.m` file and put it inside the `sources` folder.
+- From the command window run `MAIN`
 
 ## `config.m` file
 The config file is where you set up all the relevant data about the rocket. So just copy and paste the one inside the `resources`folder and replace the data you need to. The file is fully commented so the variables should be very straightforward.

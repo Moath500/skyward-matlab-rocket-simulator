@@ -7,6 +7,7 @@ Just clone the repository. You're going to find two folders, all the *core files
 In the `resources` you're going to find a `config.m` sample file and some aerodynamics dataset of the Skyward Experimental Rocketry's first sounding rocket <a href="http://www.skywarder.eu/blog/rocksanne-i-x/">Rocksanne I-X</a> in the early stages of design (so they can be wrong).
 
 - Fill a `config.m` file and put it inside the `sources` folder.
+- Provide the correctly formatted aerodynamics dataset files (see `resources/for006*` files for reference)
 - From the command window run `MAIN`
 
 ## `config.m` file
@@ -24,3 +25,6 @@ The wind model is provided by the `windgen.m` function. The function just (buggy
 
 If the variable `settings.stoch.N` is set to a number greater than one, a *stochastic simulation* is fired, that means running the simulation several times calling the `windgen.m` function each time, so providing different wind magnitudes and orientations. 
 The `settings.stoch.parallel` variable implement the `parfor` instead of the classical `for` for the *stochastic simulation* leading to a sensible drop of computation time due to multitasking.
+
+#License
+see `sources/LICENSE/LICENSE` file.

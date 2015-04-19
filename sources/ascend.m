@@ -238,7 +238,7 @@ end
 %Body Frame
 
 qdynS=0.5*rho*V_norm^2*S;
-qdynL_V = 0.5*rho*V_norm*C;
+qdynL_V = 0.5*rho*V_norm*S*C;
 
 X=qdynS*CA;
 Y=qdynS*CYB*beta;

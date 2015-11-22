@@ -7,7 +7,7 @@ Just clone the repository. You're going to find two folders, all the *core files
 In the `resources` you're going to find a `config.m` sample file and some aerodynamics dataset of the Skyward Experimental Rocketry's first sounding rocket <a href="http://www.skywarder.eu/blog/rocksanne-i-x/">Rocksanne I-X</a> in the early stages of design (so they can be wrong).
 
 - Fill a `config.m` file and put it inside the `sources` folder.
-- Provide the correctly formatted aerodynamics dataset files (see `resources/for006*` files for reference)
+- Provide the correctly formatted aerodynamics dataset files (see `resources/for006*` files for reference). We used Missile DATCOM '97 software to estimate all the aerodynamics coefficients and <a href="https://github.com/skyward-er/skyward-datcom-parser"> a parsers </a> to convert the output text file into MATLAB dataset.
 - From the command window run `MAIN`
 
 ## `config.m` file

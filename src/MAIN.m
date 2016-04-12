@@ -1,4 +1,4 @@
-function [T,Y] = MAIN()
+function [T,Y, Ta,Ya] = MAIN(settings)
     %MAIN SCRIPT - This function retrieves all the parameters and run the
     %simulation
     %
@@ -16,7 +16,7 @@ function [T,Y] = MAIN()
     tic
     
     %Retrieving Parameters
-    run('config.m');
+%     run('config.m');
     
 
     %Checking if stochastic or standard simulation needed
@@ -29,7 +29,7 @@ function [T,Y] = MAIN()
         end
     else
         fprintf('Standard Simulation Fired...\n\n');
-        [T,Y]=std_run(settings);
+        [T,Y, Ta,Ya]=std_run(settings);
     end
 
     toc

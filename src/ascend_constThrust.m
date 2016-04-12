@@ -40,6 +40,14 @@ Ixx = Y(15);
 Iyy = Y(16);
 Izz = Y(17);
 
+global bool
+% if bool = 0 the trends during the integration are NOT requested
+% if bool = 1 the trends during the integration are saved and plotted
+global t_plot contatore
+if bool == 1
+    t_plot(contatore) = t;
+end
+
 
 Q = [ q0 q1 q2 q3];
 Q_conj= [ q0 -q1 -q2 -q3];
@@ -52,15 +60,44 @@ if abs(normQ-1)>0.1
 end
 
 
-%Adding Wind (supposed to be added in NED axes);
+% Adding Wind (supposed to be added in NED axes);
+
+% constant wind
+wind = quatrotate(Q, [uw vw ww]);
+
+% % Wind model
+% h = 0;
+% if -z > 0
+%     h = -z+settings.z0;
+% end
+% % global alt
+% % if bool == 1
+% %     alt = [alt; h];
+% % end
+% 
+% % wind in NED axis
+% [uw,vw] = atmoshwm07(settings.wind.Lat, settings.wind.Long, h, ...
+%     'day',settings.wind.Day,'model','quiet');
+% 
+% % global WIND
+% % if bool == 1
+% %     WIND = [WIND; uw, vw, ww];
+% % end
+% 
+% % wind in body frame
+% wind = quatrotate(Q, [uw, vw, ww]);
 
 
-%Real velocities (plus wind);
-ur = u - uw;
-vr = v - vw;
-wr = w - ww;
+% % Wind Model
+% [uw,vw,ww] = wind_generator(settings,z,t,Q);
+% wind = [ uw,vw,ww ];
 
-%Body to Inertial velocities
+% Relative velocities (plus wind);
+ur = u - wind(1);
+vr = v - wind(2);
+wr = w - wind(3);
+
+% Body to Inertial velocities
 Vels = quatrotate(Q_conj,[u v w]);
 
 V_norm = norm([ur vr wr]);
@@ -75,7 +112,7 @@ CoeffsF = settings.CoeffsF; % Full Rocket Coefficients
 
 g = 9.81;
 %Time-Dependant Properties
-m0 = settings.m0;
+m0 = settings.m0; %kg mass
 mfr = settings.mfr;
 tb = settings.tb;
 
@@ -104,6 +141,10 @@ else
     T=0;
 end
 
+global T_plot
+if bool == 1
+    T_plot(contatore) = T; % thrust
+end
 
 %Atmosphere
 if -z<0
@@ -112,8 +153,10 @@ end
 [~, a, ~, rho] = atmoscoesa(-z+settings.z0);
 M = V_norm/a;
 
-
-
+global M_plot
+if bool == 1
+    M_plot(contatore) = M; % mach
+end
 
 %Aero Angles
 if not(u<1e-1 || V_norm<1e-3);
@@ -124,8 +167,15 @@ else
     beta = 0;
 end
 
+global alpha_plot beta_plot
+if bool == 1
+    alpha_plot(contatore) = alpha;
+    beta_plot(contatore) = beta;
+end
 
-%beta = 0;
+% beta = 0; % prova simulazione con beta imposto uguale a 0
+
+
 
 % Coeffs. Interpolation
 givA = settings.Alphas*pi/180;
@@ -177,7 +227,8 @@ else if -z < givH(1)
     end
 end
 
-% 
+% interpolation with the value in the nearest condition: interp_easy
+% full
 CAf=interp4_easy(givA,givM,givB,givH,CoeffsF.CA,alpha,M,beta,-z);%,'nearest');
 CYBf=interp4_easy(givA,givM,givB,givH,CoeffsF.CYB,alpha,M,beta,-z);%,'nearest');
 CNAf=interp4_easy(givA,givM,givB,givH,CoeffsF.CNA,alpha,M,beta,-z);%,'nearest');
@@ -189,7 +240,12 @@ Cmqf=interp4_easy(givA,givM,givB,givH,CoeffsF.CMQ,alpha,M,beta,-z);%,'nearest');
 Cnbf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLNB,alpha,M,beta,-z);%,'nearest');
 Cnrf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLNR,alpha,M,beta,-z);%,'nearest');
 Cnpf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLNP,alpha,M,beta,-z);%,'nearest');
+%
+Clrf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLLR,alpha,M,beta,-z);%,'nearest');
+Clbf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLLB,alpha,M,beta,-z);%,'nearest');
+CDf =interp4_easy(givA,givM,givB,givH,CoeffsF.CD,alpha,M,beta,-z);
 
+% empty
 CAe=interp4_easy(givA,givM,givB,givH,CoeffsE.CA,alpha,M,beta,-z);%,'nearest');
 CYBe=interp4_easy(givA,givM,givB,givH,CoeffsE.CYB,alpha,M,beta,-z);%,'nearest');
 CNAe=interp4_easy(givA,givM,givB,givH,CoeffsE.CNA,alpha,M,beta,-z);%,'nearest');
@@ -201,35 +257,87 @@ Cmqe=interp4_easy(givA,givM,givB,givH,CoeffsE.CMQ,alpha,M,beta,-z);%,'nearest');
 Cnbe=interp4_easy(givA,givM,givB,givH,CoeffsE.CLNB,alpha,M,beta,-z);%,'nearest');
 Cnre=interp4_easy(givA,givM,givB,givH,CoeffsE.CLNR,alpha,M,beta,-z);%,'nearest');
 Cnpe=interp4_easy(givA,givM,givB,givH,CoeffsE.CLNP,alpha,M,beta,-z);%,'nearest');
+%
+Clre=interp4_easy(givA,givM,givB,givH,CoeffsE.CLLR,alpha,M,beta,-z);%,'nearest');
+Clbe=interp4_easy(givA,givM,givB,givH,CoeffsE.CLLB,alpha,M,beta,-z);%,'nearest');
+CDe =interp4_easy(givA,givM,givB,givH,CoeffsE.CD,alpha,M,beta,-z);
+
+% % linear interpolation of the coeff
+% %full
+% CAf = interpn(givA,givM,givB,givH,CoeffsF.CA,alpha,M,beta,-z);
+% CYBf = interpn(givA,givM,givB,givH,CoeffsF.CYB,alpha,M,beta,-z);
+% CNAf = interpn(givA,givM,givB,givH,CoeffsF.CNA,alpha,M,beta,-z);
+% Clf = interpn(givA,givM,givB,givH,CoeffsF.CLL,alpha,M,beta,-z);
+% Clpf = interpn(givA,givM,givB,givH,CoeffsF.CLLP,alpha,M,beta,-z);
+% Cmaf = interpn(givA,givM,givB,givH,CoeffsF.CMA,alpha,M,beta,-z);
+% Cmadf = interpn(givA,givM,givB,givH,CoeffsF.CMAD,alpha,M,beta,-z);
+% Cmqf = interpn(givA,givM,givB,givH,CoeffsF.CMQ,alpha,M,beta,-z);
+% Cnbf = interpn(givA,givM,givB,givH,CoeffsF.CLNB,alpha,M,beta,-z);
+% Cnrf = interpn(givA,givM,givB,givH,CoeffsF.CLNR,alpha,M,beta,-z);
+% Cnpf = interpn(givA,givM,givB,givH,CoeffsF.CLNP,alpha,M,beta,-z);
+% %
+% Clrf = interpn(givA,givM,givB,givH,CoeffsF.CLLR,alpha,M,beta,-z);
+% Clbf = interpn(givA,givM,givB,givH,CoeffsF.CLLB,alpha,M,beta,-z);
+% CDf = interpn(givA,givM,givB,givH,CoeffsF.CD,alpha,M,beta,-z);
+% 
+% % empty
+% CAe = interpn(givA,givM,givB,givH,CoeffsE.CA,alpha,M,beta,-z);
+% CYBe = interpn(givA,givM,givB,givH,CoeffsE.CYB,alpha,M,beta,-z);
+% CNAe = interpn(givA,givM,givB,givH,CoeffsE.CNA,alpha,M,beta,-z);
+% Cle = interpn(givA,givM,givB,givH,CoeffsE.CLL,alpha,M,beta,-z);
+% Clpe = interpn(givA,givM,givB,givH,CoeffsE.CLLP,alpha,M,beta,-z);
+% Cmae = interpn(givA,givM,givB,givH,CoeffsE.CMA,alpha,M,beta,-z);
+% Cmade = interpn(givA,givM,givB,givH,CoeffsE.CMAD,alpha,M,beta,-z);
+% Cmqe = interpn(givA,givM,givB,givH,CoeffsE.CMQ,alpha,M,beta,-z);
+% Cnbe = interpn(givA,givM,givB,givH,CoeffsE.CLNB,alpha,M,beta,-z);
+% Cnre = interpn(givA,givM,givB,givH,CoeffsE.CLNR,alpha,M,beta,-z);
+% Cnpe = interpn(givA,givM,givB,givH,CoeffsE.CLNP,alpha,M,beta,-z);
+% %
+% Clre = interpn(givA,givM,givB,givH,CoeffsE.CLLR,alpha,M,beta,-z);
+% Clbe = interpn(givA,givM,givB,givH,CoeffsE.CLLB,alpha,M,beta,-z);
+% CDe =interpn(givA,givM,givB,givH,CoeffsE.CD,alpha,M,beta,-z);
 
 %Linear interpolation from empty and full configuration coefficients
 if t<tb
     CA = t/tb*(CAe-CAf)+CAf;
-    CYB=t/tb*(CYBe-CYBf)+CYBf;
-    CNA=t/tb*(CNAe-CNAf)+CNAf;
-    Cl=t/tb*(Cle-Clf)+Clf;
-    Clp=t/tb*(Clpe-Clpf)+Clpf;
-    Cma=t/tb*(Cmae-Cmaf)+Cmaf;
+    CYB= t/tb*(CYBe-CYBf)+CYBf;
+    CNA= t/tb*(CNAe-CNAf)+CNAf;
+    Cl = t/tb*(Cle-Clf)+Clf;
+    Clp= t/tb*(Clpe-Clpf)+Clpf;
+    Cma= t/tb*(Cmae-Cmaf)+Cmaf;
     Cmad=t/tb*(Cmade-Cmadf)+Cmadf;
-    Cmq=t/tb*(Cmqe-Cmqf)+Cmqf;
-    Cnb=t/tb*(Cnbe-Cnbf)+Cnbf;
-    Cnr=t/tb*(Cnre-Cnrf)+Cnrf;
-    Cnp=t/tb*(Cnpe-Cnpf)+Cnpf;
-
-
+    Cmq= t/tb*(Cmqe-Cmqf)+Cmqf;
+    Cnb= t/tb*(Cnbe-Cnbf)+Cnbf;
+    Cnr= t/tb*(Cnre-Cnrf)+Cnrf;
+    Cnp= t/tb*(Cnpe-Cnpf)+Cnpf;
+    %
+    Clr= t/tb*(Clre-Clrf)+Clrf;
+    Clb= t/tb*(Clbe-Clbf)+Clbf;
+    CD= t/tb*(CDe-CDf)+CDf;
 else
     CA = CAe;
-    CYB=CYBe;
-    CNA=CNAe;
-    Cl=Cle;
-    Clp=Clpe;
-    Cma=Cmae;
+    CYB= CYBe;
+    CNA= CNAe;
+    Cl = Cle;
+    Clp= Clpe;
+    Cma= Cmae;
     Cmad=Cmade;
-    Cmq=Cmqe;
-    Cnb=Cnbe;
-    Cnr=Cnre;
-    Cnp=Cnpe;
+    Cmq= Cmqe;
+    Cnb= Cnbe;
+    Cnr= Cnre;
+    Cnp= Cnpe;
+    %
+    Clr= Clre;
+    Clb= Clbe;
+    CD = CDe;
 end
+
+
+global CA_plot % coefficiente aerodinamico
+if bool == 1
+    CA_plot(contatore) = CD; % Axial force coeff
+end
+
 
 %Center of Mass
 
@@ -244,27 +352,46 @@ X=qdynS*CA;
 Y=qdynS*CYB*beta;
 Z=qdynS*CNA*alpha;
 
+global Drag_plot
+if bool == 1
+    Drag_plot(contatore) = qdynS*CD;
+end
+
+
 %Forces
 F = quatrotate(Q,[0 0 m*g])';
 
-F = F +[-X+T,-Y,-Z]';
+F = F +[-X+T,+Y,-Z]';
+
+% global Forces_plot
+% if bool == 1
+%     Forces_plot(contatore) = F(1);
+% end
 
 
-
-du=F(1)/m -q*w + r*v;
-dv=F(2)/m -r*u + p*w;
-dw=F(3)/m -p*v + q*u;
+du=F(1)/m -q*w + r*v;% - mdot/m*u;
+dv=F(2)/m -r*u + p*w;% - mdot/m*v;
+dw=F(3)/m -p*v + q*u;% - mdot/m*w;
 
 
 
 
 % Rotation
-
 dp=(Iyy-Izz)/Ixx*q*r + qdynL_V/Ixx*(V_norm*Cl+Clp*p*C/2)-Ixxdot*p/Ixx;
 dq=(Izz-Ixx)/Iyy*p*r + qdynL_V/Iyy*(V_norm*Cma*alpha + (Cmad+Cmq)*q*C/2)...
     -Iyydot*q/Iyy;
-dr=(Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r +Cnp*p)*C/2)...
+dr=(Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r+Cnp*p)*C/2)...
     -Izzdot*r/Izz;
+
+
+% dp=(Iyy-Izz)/Ixx*q*r + qdynL_V/Ixx*(V_norm*(Cl+Clb*beta)+(Clp*p+Clr*r)*C/2)...
+%     -Ixxdot*p/Ixx;
+% dq=(Izz-Ixx)/Iyy*p*r + qdynL_V/Iyy*(V_norm*Cma*alpha + (Cmad+Cmq)*q*C/2)...
+%     -Iyydot*q/Iyy;
+% dr=(Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r+Cnp*p)*C/2)...
+%     -Izzdot*r/Izz;
+
+
 
 % Launch Pad-relative coordinates
 Xb = quatrotate(Q,[x y z]);
@@ -314,4 +441,9 @@ dY(15) = Ixxdot;
 dY(16) = Iyydot;
 dY(17) = Izzdot;
 dY=dY';
+
+if bool == 1
+    contatore = contatore + 1;
+end
+
 end

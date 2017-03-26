@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 % TARGET ??
 % usare il simulatore a 6dof per simulare diverse configuarzioni del
 % missile e vedere la quota massima raggiunta per poter fare un confronto e

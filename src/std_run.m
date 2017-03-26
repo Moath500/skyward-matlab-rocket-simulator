@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 function [ Tf,Yf, Ta,Ya ] = std_run( settings )
 %STD RUN - This function runs a standard (non-stochastic) simulation
 % OUTPUTS

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 %CONFIG SCRIPT - This script sets up all the parameters for the simulation (H1 line)
 % All the parameters are stored in the "settings" structure.
 %

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 % Author: Francesco Colombi
 % Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
 % email: francesco.colombi@skywarder.eu

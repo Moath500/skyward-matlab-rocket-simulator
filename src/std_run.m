@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 function [ Tf,Yf, Ta,Ya ] = std_run( settings )
 %STD RUN - This function runs a standard (non-stochastic) simulation
 % OUTPUTS
@@ -35,7 +36,7 @@ X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 [Ta,Ya] = ode45(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
     settings,uw,vw,ww);
 
-%% DROGUE 1 %% 
+%% DROGUE 1 %%
 para = 1; %Flag for Drogue 1
 
 %Initial Condition are the last from ascend (need to rotate because
@@ -44,7 +45,7 @@ X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
 [Td1,Yd1] = ode45(@descent_parachute,settings.ode.timedrg1,X0d1,...
     settings.ode.optionsdrg1,settings,uw,vw,ww,para);
 
-%% DROGUE 2 %% 
+%% DROGUE 2 %%
 para = 2; %Flag for Drogue 2
 
 %Initial Condition are the last from drogue 1 descent
@@ -67,11 +68,12 @@ X0m = Yd2(end,:);
 %Total State
 Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1; Yd2;Yrog];
 
-global Par1 Par2 Par3 Asc
-Asc = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6))]; 
-Par1 = Yd1;
-Par2 = Yd2;
-Par3 = Yrog;
+%global Par1 Par2 Par3 Asc
+%Asc = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6))];
+%Par1 = Yd1;
+%Par2 = Yd2;
+%Par3 = Yrog;
+
 %Total Time
 Tf = [Ta; Ta(end)+Td1; Ta(end)+Td1(end)+Td2;Ta(end)+Td1(end)+Td2(end)+Trog];
 
@@ -83,7 +85,7 @@ Tp = [Ta(end)+Td1;Ta(end)+Td1(end)+Td2;Ta(end)+Td1(end)+Td2(end)+Trog];
 %% PLOTTING THINGS %%
 
 if settings.plot == 1
-    
+
     set(0,'DefaultAxesFontSize',settings.DefaultFontSize,...
     'DefaultLineLineWidth',settings.DefaultLineWidth);
 
@@ -102,17 +104,17 @@ if settings.plot == 1
     legend([h1 h2 h3],'Apogee/1st Drogue Deployment',...
         '2nd Drogue Deployment', 'Main Parachute Deployment')
     grid on
-    
+
     %Interpolation for less points --> visualization
     Tinterp = linspace(Tf(1),Tf(end),settings.tSteps);
     [Tunique,ia,~]= unique(Tf);
     u = interp1(Tunique,Yf(ia,4),Tinterp);
     v = interp1(Tunique,Yf(ia,5),Tinterp);
     w = interp1(Tunique,Yf(ia,6),Tinterp);
-   
+
     % VELOCITIES %
     Va=quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6)); %apogee
-    
+
     figure;
     suptitle('Velocities Profiles on Time')
     subplot(3,1,1);
@@ -130,7 +132,7 @@ if settings.plot == 1
         '2nd Drogue Deployment','Main Parachute Deployment',...
         'Location','southeast');
     grid on
-    
+
     subplot(3,1,2)
     plot(Tinterp,v,'k-')
     hold on
@@ -146,8 +148,8 @@ if settings.plot == 1
         '2nd Drogue Deployment','Main Parachute Deployment',...
         'Location','southeast');
     grid on
-    
-        
+
+
     subplot(3,1,3)
     plot(Tinterp,w,'k-')
     hold on
@@ -163,8 +165,8 @@ if settings.plot == 1
         '2nd Drogue Deployment','Main Parachute Deployment',...
         'Location','southeast');
     grid on
-    
-    %COMPLETE TRAJECTORY% 
+
+    %COMPLETE TRAJECTORY%
     figure;
     h0=plot3(Yf(1,2),Yf(1,1),-Yf(1,3)+settings.z0,'k+','MarkerSize',10);
     hold on
@@ -182,7 +184,7 @@ if settings.plot == 1
     legend([h0,h1,h2,h3],'Launch Pad','Apogee/1st Drogue Deployment',...
         '2nd Drogue Deployment','Main Parachute Deployment');
     grid on
-    
+
     % PLANAR DISPLACEMENT %
 
     figure
@@ -201,7 +203,7 @@ if settings.plot == 1
         '2nd Drogue Deployment','Main Parachute Deployment',...
         'Location','southeast');
     grid on
-    
+
     % PARACHUTES %
     figure
     plot(Tp,-Yp(:,3)+settings.z0,'k-','LineWidth',2)
@@ -219,17 +221,17 @@ if settings.plot == 1
         '2nd Drogue Deployment','Main Parachute Deployment',...
         'Location','southeast');
     grid on
-    
-    
-     
+
+
+
    %Interpolation for less points --> visualization
     Tinterp = linspace(Ta(1),Ta(end),settings.tSteps);
     p = interp1(Ta,Ya(:,7),Tinterp);
     q = interp1(Ta,Ya(:,8),Tinterp);
     r = interp1(Ta,Ya(:,9),Tinterp);
-   
+
     % ANGULAR RATES %
-    
+
     figure;
     suptitle('Angular rates on Time')
     subplot(3,1,1);
@@ -241,7 +243,7 @@ if settings.plot == 1
         'MarkerFaceColor','k');
     legend(h1,'Apogee/1st Drogue Deployment','Location','southeast');
     grid on
-    
+
     subplot(3,1,2)
     plot(Tinterp,q,'k-')
     hold on
@@ -251,8 +253,8 @@ if settings.plot == 1
         'MarkerFaceColor','k');
     legend(h1,'Apogee/1st Drogue Deployment','Location','northeast');
     grid on
-    
-        
+
+
     subplot(3,1,3)
     plot(Tinterp,r,'k-')
     hold on
@@ -262,7 +264,7 @@ if settings.plot == 1
         'MarkerFaceColor','k');
     legend(h1,'Apogee/1st Drogue Deployment','Location','southeast');
     grid on
-    
+
 end
 
 %Resizing
@@ -272,7 +274,4 @@ for i=1:length(h)
   set(h(i),'OuterPosition',[0 0 scrsz(4) scrsz(4)])
   %saveas(h(i), ['figure' num2str(i)], 'fig');
 end
-
-
-
 end

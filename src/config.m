@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 %CONFIG SCRIPT - This script sets up all the parameters for the simulation (H1 line)
 % All the parameters are stored in the "settings" structure.
 %
@@ -18,6 +19,9 @@
 % clear all
 % close all
 % clc
+
+% ROCKET NAME
+settings.rocket_name = 'R2A';
 
 % LAUNCHPAD %
 settings.z0 = 100;       %Launchpad Altitude
@@ -50,7 +54,7 @@ switch engine
 
         settings.m0 = 67.761;                    %kg    Overall Mass (Burnout + Propellant)
         settings.ms = 43.961;                    %kg    Structural Mass (Burnout - Nosecone)
-        settings.mp = 18.6;                      %kg    Propellant Mass        
+        settings.mp = 18.6;                      %kg    Propellant Mass
         settings.tb = 5.12;                      %sec   Burning Time
         settings.mfr = settings.mp/settings.tb;  %kg/s  Mass Flow Rate
     case 2
@@ -73,10 +77,10 @@ switch engine
             4     5   6   6.8  7.05 7.3 7.6 7.8]; %s
         settings.motor.exp_thrust = [0 800 4000 5500 5160 5130 5400 5300 5450 5347 ...
             5160 4950 4700 4400 4400 3800 300 0]; %N
-   
+
         settings.m0 = 67.111;                    %kg   Overall Mass (Burnout + Propellant)
         settings.ms = 44.211;                    %kg   Structural Mass (Burnout - Nosecone)
-        settings.mp = 17.7;                      %kg   Propellant Mass                                               
+        settings.mp = 17.7;                      %kg   Propellant Mass
         settings.tb = 7.60;                      %sec  Burning Time
         settings.mfr = settings.mp/settings.tb;  %kg/s Mass Flow Rate
     otherwise
@@ -117,21 +121,37 @@ settings.Izze = 30.16930792; %kg*m2 Inertia to z-axis (Empty)
 % AERODYNAMICS DETAILS %
 % This coefficients are intended to be obtained through MISSILE DATCOM
 % (than parsed with the tool datcom_parser.py)
-CoeffsF = load('for006_full.mat','Coeffs');
+% The files are stored in the ../data folder with a naming convention of
+% rocket_name_full.mat | rocket_name_empty.mat
+% e.g. R1X_full.mat etc..
+
+%Relative Path of the data files (default: ../data/). Remember the trailing
+% slash!!
+
+DATA_PATH = '../data/';
+filename = strcat(DATA_PATH, settings.rocket_name);
+
+%Coefficients in full configuration (with all the propellant embarqued)
+filename_full = strcat(filename,'_full.mat');
+CoeffsF = load(filename_full,'Coeffs');
 settings.CoeffsF = CoeffsF.Coeffs;
 clear('CoeffsF');
-CoeffsE = load('for006_empty.mat','Coeffs');
+
+%Coefficients in empty configuration (all the propellant consumed)
+filename_empty = strcat(filename,'_empty.mat');
+CoeffsE = load(filename_empty,'Coeffs');
 settings.CoeffsE = CoeffsE.Coeffs;
 clear('CoeffsE');
 
-% Note: All the parameters (AoA,Betas,Altitudes,Machs) must be the same for
-% empty and full configuration
-s = load('for006_full.mat','State');
+%Note: All the parameters (AoA,Betas,Altitudes,Machs) must be the same for
+%empty and full configuration
+s = load(filename_full,'State');
 settings.Alphas = s.State.Alphas';
 settings.Betas = s.State.Betas';
 settings.Altitudes = s.State.Altitudes';
 settings.Machs = s.State.Machs';
 clear('s');
+
 
 %PARACHUTES DETAILS %
 %%% DROGUE 1 %%%
@@ -161,7 +181,7 @@ settings.para3.CD = 0.4;            %Parachute Drag Coeff
 settings.para3.CL = 0.9;            %Parachute Lift Coefficient
 
 % INTEGRATION OPTIONS %
-settings.ode.timeasc = 0:0.01:2000;  %sec   %Time span for ascend 
+settings.ode.timeasc = 0:0.01:2000;  %sec   %Time span for ascend
 settings.ode.timedrg1 = 0:0.01:2000; %sec   %Time span for drogue 1
 settings.ode.timedrg2 = 0:0.01:2000; %sec   %Time span for drogue 2
 settings.ode.timemain = 0:0.01:2000; %sec   %Time span for main (rogallo)
@@ -201,12 +221,12 @@ settings.wind.AzMax = (180 + (135))*pi/180;  %Maximum Azimuth
 % 180-(..) heading sud-est
 
 % Settings for the Wind Model
-settings.wind.Lat = 52.85;       %Latitude of launching site 
+settings.wind.Lat = 52.85;       %Latitude of launching site
 settings.wind.Long = 16.033333;  %Longitude of launching site
-settings.wind.Day = 180;         %Day of the launch 
-settings.wind.Seconds = 36000;   %Second of the day 
+settings.wind.Day = 180;         %Day of the launch
+settings.wind.Seconds = 36000;   %Second of the day
 
-% settings.wind.ww = vert_windgen(settings.wind.MagMin,settings.wind.MagMax); 
+% settings.wind.ww = vert_windgen(settings.wind.MagMin,settings.wind.MagMax);
 %Vertical wind speed
 settings.wind.ww = 0; % no vertical wind
 

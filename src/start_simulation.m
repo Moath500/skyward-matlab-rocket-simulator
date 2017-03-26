@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 % Author: Francesco Colombi
 % Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
 % email: francesco.colombi@skywarder.eu
@@ -44,23 +45,23 @@ if (bool == 1)
     figure();
     plot(t_plot, beta_plot*180/pi), title('beta vs time'), grid on;
     ylabel('beta [deg]')
-    
+
     figure();
     plot(t_plot, M_plot), title('mach vs time'), grid on;
     ylabel('Mach M [-]')
-    
+
     figure();
     plot(t_plot, CA_plot), title('Aerodyn Coeff vs time'), grid on;
     ylabel('Drag Coeff CD [-]')
-    
+
     figure();
     plot(t_plot, Drag_plot), title('Drag vs time'), grid on;
     ylabel('Drag D [N]')
-    
+
     figure();
     plot(t_plot, Forces_plot), title('Axial Force vs time'), grid on;
     ylabel('Axial force [N]')
-    
+
 %     figure()
 %     title('Wind'), grid on, hold on;
 %     plot(WIND(:, 1), alt)
@@ -68,7 +69,7 @@ if (bool == 1)
 %     plot(WIND(:, 3), alt)
 %     xlabel('Wind magnitude [m/s]')
 %     ylabel('Altitude [m]')
-%     legend('North','Eas','Down')
+%     legend('North','East','Down')
 end
 
 
@@ -80,7 +81,7 @@ y = Y(:,2);
 z = -Y(:,3);
 X = [x, y, z];
 
-%% velocità
+%% velocitï¿½
 N = length(x);
 %     % derivata centrale
 %     vx = (x(3:N)-x(1:N-2))./(T(3:N)-T(1:N-2));
@@ -260,7 +261,7 @@ if plots
             z_flight(ii) = 0;
         end
     end
-        
+
     figure();
     subplot(1,3,1);
     plot(y_flight/1000, x_flight/1000), axis equal, hold on, grid on;
@@ -275,7 +276,7 @@ if plots
     %setting limit if is parallel to east
     if sum(x_flight) == 0
         xlim([-1 1]);
-    end    
+    end
     subplot(1,3,3);
     plot(y_flight/1000, z_flight/1000), hold on, grid on;
     plot(Ya(end,2)/1000, -Ya(end,3)/1000, '*');
@@ -284,7 +285,7 @@ if plots
     %setting limit if is parallel to north
     if sum(y_flight) == 0
         xlim([-1 1]);
-    end    
+    end
 
     % angular rates
     figure();
@@ -333,7 +334,7 @@ if plots
     hold on, grid on;
     plot(T, Ttot-273.15)
     title('Temperature profile')
-    xlabel('time [sec]'), ylabel('Temperature [°C]');
+    xlabel('time [sec]'), ylabel('Temperature [ï¿½C]');
     legend('Surrounding', 'Total', 'location', 'best')
-    
+
 end

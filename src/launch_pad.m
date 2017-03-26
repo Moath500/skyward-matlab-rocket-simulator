@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 % Author: Francesco Colombi
 % Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
 % email: francesco.colombi@skywarder.eu
@@ -15,7 +16,7 @@ R = [ cos(theta), 0, sin(theta); ...
                0, 1,          0; ...
      -sin(theta), 0, cos(theta)];
 
-% velocità di uscita dalla rampa
+% velocitï¿½ di uscita dalla rampa
 Lrampa = 4.5; % m
 acc = 5*9.80665; % m/s2
 texit = sqrt(Lrampa/(.5*acc)); % sec
@@ -53,20 +54,20 @@ Mpitch = zeros(length(dev), 1);
 for n = 1:length(dev)
     ww = -W*[cos(dev(n)), sin(dev(n)), 0]'; % assi horizon
     ww = R*ww; % assi corpo
-    
+
     % vel relativa al vento
     vvr = vv - ww; % assi corpo
     norm_vr(n) = norm(vvr);
     M(n) = norm_vr(n)/a;
-    
+
     ur = vvr(1);
     vr = vvr(2);
     wr = vvr(3);
-    
+
     % alpha
     alpha(n) = atan(-wr/ur) *180/pi; % deg
     beta(n) = asin(vr/norm(vvr)) *180/pi; % deg
-    
+
     XCP(n) = interpn(givA,givM,givB,givH,Coeffs.X_C_P,alpha(n),M(n),beta(n),0);
     CM(n) = interpn(givA,givM,givB,givH,Coeffs.CM,alpha(n),M(n),beta(n),0);
     Mpitch(n) = 0.5*rho*norm_vr(n)^2*S*C*CM(n);

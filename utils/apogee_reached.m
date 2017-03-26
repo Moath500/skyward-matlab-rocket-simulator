@@ -1,7 +1,8 @@
+<<<<<<< HEAD
 % TARGET ??
 % usare il simulatore a 6dof per simulare diverse configuarzioni del
 % missile e vedere la quota massima raggiunta per poter fare un confronto e
-% decidere la soluzione più perormante
+% decidere la soluzione piï¿½ perormante
 
 %% COSA MI SERVE ??
 % 1) i vari file di DATCOM per le diverse configurazioni (geometrie e CG)
@@ -19,7 +20,7 @@
 % (q0 q1 q2 q3): attitude unit quaternion
 
 % % [T,Y]=MAIN();
-% % 
+% %
 % % apogeo = max(-Y(:,3));
 % % fprintf('Apogee: %g [m] \n', apogeo);
 
@@ -72,28 +73,28 @@ max_a = zeros(n_casi, 1);
 for n = 1:n_casi
     % carica i dati dai file di DATCOM per ogni caso e salvali nel file
     % .mat per il run del simulatore
-    
+
 %     % se invece per ogni caso cambia anche la geometria
 %     file_name = ['for006_empty(',num2str(n),').mat'];
 %     load(file_name);
 %     save('for006_empty.mat', 'Coeffs', 'State');
-%     
+%
 %     file_name = ['for006_full(',num2str(n),').mat'];
 %     save('for006_full.mat', 'Coeffs', 'State');
-%     
+%
 %     run('config.m');
-    
+
     % setto la massa e le inerzie del caso n-th
     settings.ms = m_empty(n);
     settings.m0 = m_full(n);
-    
+
     settings.Ixxf = Ixx_full(n); %Inertia to x-axis (Full)
     settings.Ixxe = Ixx_empty(n); %Inertia to x-axis (Empty)
     settings.Iyyf = Iyy_full(n); %Inertia to y-axis (Full)
     settings.Iyye = Iyy_empty(n); %Inertia to y-axis (Empty)
     settings.Izzf = Izz_full(n); %Inertia to z-axis (Full)
     settings.Izze = Izz_empty(n); %Inertia to z-axis (Empty)
-    
+
 %     % prova senza inerzie
 %     settings.Ixxf=2.1; %Inertia to x-axis (Full)
 %     settings.Ixxe=1.4; %Inertia to x-axis (Empty)
@@ -101,24 +102,24 @@ for n = 1:n_casi
 %     settings.Iyye=15; %Inertia to y-axis (Empty)
 %     settings.Izzf=20; %Inertia to z-axis (Full)
 %     settings.Izze=15; %Inertia to z-axis (Empty)
-    
+
 %     save('settings.mat', 'settings')
-    
+
     % faccio girare il simulatore
     [T,Y, Ta,Ya] = MAIN(settings);
-    
+
     [apogeo(n), iapogeo] = max(-Y(:,3));
     fprintf('apogee is equal to %g m \n', apogeo(n));
     fprintf('apogeo raggiunto in %g sec \n\n', Ta(end))
-    
+
 %     % plot vari
 %     % posizione
 %     x = Y(:,1);
 %     y = Y(:,2);
 %     z = -Y(:,3);
 %     X = [x, y, z];
-%     
-%     % velocità
+%
+%     % velocitï¿½
 %     N = length(x);
 % %     % derivata centrale
 % %     vx = (x(3:N)-x(1:N-2))./(T(3:N)-T(1:N-2));
@@ -132,7 +133,7 @@ for n = 1:n_casi
 %     vy = Y(:,5);
 %     vz = -Y(:,6);
 %     V = [vx, vy, vz];
-%     
+%
 %     % accelerazione
 %     % derivata centrale
 %     ax = (vx(3:N)-vx(1:N-2))./(T(3:N)-T(1:N-2));
@@ -143,11 +144,11 @@ for n = 1:n_casi
 %     ay = [vy(2)/T(2); ay; (vy(end)-vy(end-1))/(T(end)-T(end-1))];
 %     az = [vz(2)/T(2); az; (vz(end)-vz(end-1))/(T(end)-T(end-1))];
 %     A = [ax, ay, az];
-%     
+%
 %     mod_X = zeros(length(X), 1);
 %     mod_V = mod_X;
 %     mod_A = mod_X;
-%     
+%
 %     for k = 1:length(X)
 %         mod_X(k) = norm(X(k,:));
 %         mod_V(k) = norm(V(k,:));
@@ -155,7 +156,7 @@ for n = 1:n_casi
 %     end
 %     [max_dist, imax_dist] = max(mod_X);
 %     [max_v, imax_v] = max(mod_V);
-%     
+%
 %     % plot
 %     figure(), hold on, grid on;
 %     plot(T, z);

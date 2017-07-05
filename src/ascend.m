@@ -231,7 +231,7 @@ else if -z < givH(1)
         z = -givH(1);
     end
 end
-
+global XCP
 % interpolation with the value in the nearest condition: interp_easy
 % full
 CAf=interp4_easy(givA,givM,givB,givH,CoeffsF.CA,alpha,M,beta,-z);%,'nearest');
@@ -249,7 +249,7 @@ Cnpf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLNP,alpha,M,beta,-z);%,'nearest')
 Clrf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLLR,alpha,M,beta,-z);%,'nearest');
 Clbf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLLB,alpha,M,beta,-z);%,'nearest');
 CDf =interp4_easy(givA,givM,givB,givH,CoeffsF.CD,alpha,M,beta,-z);
-
+XCPf =interp4_easy(givA,givM,givB,givH,CoeffsF.X_C_P,alpha,M,beta,-z);
 % empty
 CAe=interp4_easy(givA,givM,givB,givH,CoeffsE.CA,alpha,M,beta,-z);%,'nearest');
 CYBe=interp4_easy(givA,givM,givB,givH,CoeffsE.CYB,alpha,M,beta,-z);%,'nearest');
@@ -266,7 +266,7 @@ Cnpe=interp4_easy(givA,givM,givB,givH,CoeffsE.CLNP,alpha,M,beta,-z);%,'nearest')
 Clre=interp4_easy(givA,givM,givB,givH,CoeffsE.CLLR,alpha,M,beta,-z);%,'nearest');
 Clbe=interp4_easy(givA,givM,givB,givH,CoeffsE.CLLB,alpha,M,beta,-z);%,'nearest');
 CDe =interp4_easy(givA,givM,givB,givH,CoeffsE.CD,alpha,M,beta,-z);
-
+XCPe =interp4_easy(givA,givM,givB,givH,CoeffsE.X_C_P,alpha,M,beta,-z);
 % % linear interpolation of the coeff
 % %full
 % CAf = interpn(givA,givM,givB,givH,CoeffsF.CA,alpha,M,beta,-z);
@@ -319,6 +319,7 @@ if t<tb
     Clr= t/tb*(Clre-Clrf)+Clrf;
     Clb= t/tb*(Clbe-Clbf)+Clbf;
     CD= t/tb*(CDe-CDf)+CDf;
+    XCP(contatore)= t/tb*(XCPe-XCPf)+XCPf;
 else
     CA = CAe;
     CYB= CYBe;
@@ -335,6 +336,7 @@ else
     Clr= Clre;
     Clb= Clbe;
     CD = CDe;
+    XCP(contatore) = XCPe;
 end
 
 

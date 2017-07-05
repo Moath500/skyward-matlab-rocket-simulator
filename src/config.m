@@ -22,9 +22,9 @@
 % ROCKET NAME
 settings.rocket_name = 'R2A';
 
-% LAUNCHPAD %
+% LAUNCHPAD 6
 settings.z0 = 100;       %Launchpad Altitude
-settings.lrampa = 4.443; %LaunchPad route (launchpad lenght-distance from ground of the first hook)
+settings.lrampa = 6.5; %LaunchPad route (launchpad lenght-distance from ground of the first hook)
 
 
 %STARTING ATTITUDE SETUP %
@@ -64,9 +64,9 @@ switch engine
         settings.motor.exp_thrust = [0 3400 3100 3000 3300 3400 3500 3700 3700 ...
             3800 4000 4081.6 3900 3800 3700 3500 3350 3200 3000 2000 750 0]; %N
 
-        settings.m0 = 66.052;                   %kg    Overall Mass (Burnout + Propellant)
-        settings.ms = 43.695;                   %kg    Structural Mass (Burnout - Nosecone)
-        settings.mp = 17.157;                   %kg    Propellant Mass
+        settings.m0 = 64.9;                     %kg    Overall Mass 
+        settings.ms = 46.8;                     %kg    Structural Mass (Burnout)
+        settings.mp = settings.m0-settings.ms;  %kg    Propellant Mass
         settings.tb = 8.19;                     %sec   Burning Time
         settings.mfr = settings.mp/settings.tb; %kg/s  Mass Flow Rate
     case 3
@@ -77,9 +77,9 @@ switch engine
         settings.motor.exp_thrust = [0 800 4000 5500 5160 5130 5400 5300 5450 5347 ...
             5160 4950 4700 4400 4400 3800 300 0]; %N
 
-        settings.m0 = 67.111;                    %kg   Overall Mass (Burnout + Propellant)
-        settings.ms = 44.211;                    %kg   Structural Mass (Burnout - Nosecone)
-        settings.mp = 17.7;                      %kg   Propellant Mass
+        settings.m0 = 66.2;                      %kg   Overall Mass 
+        settings.ms = 47.3;                      %kg   Structural Mass (Burnout)
+        settings.mp = settings.m0-settings.ms;   %kg   Propellant Mass
         settings.tb = 7.60;                      %sec  Burning Time
         settings.mfr = settings.mp/settings.tb;  %kg/s Mass Flow Rate
     otherwise
@@ -110,12 +110,12 @@ L = 4.4;              %m        Rocket length
 
 
 % inertias first approximation
-settings.Ixxf = 0.14412762;  %kg*m2 Inertia to x-axis (Full)
-settings.Ixxe = 0.14412762;  %kg*m2 Inertia to x-axis (Empty)
-settings.Iyyf = 30.16891336; %kg*m2 Inertia to y-axis (Full)
-settings.Iyye = 30.16891335; %kg*m2 Inertia to y-axis (Empty)
-settings.Izzf = 30.16930792; %kg*m2 Inertia to z-axis (Full)
-settings.Izze = 30.16930792; %kg*m2 Inertia to z-axis (Empty)
+settings.Ixxf = 0.27;  %kg*m2 Inertia to x-axis (Full)
+settings.Ixxe = 0.21;  %kg*m2 Inertia to x-axis (Empty)
+settings.Iyyf = 86.02; %kg*m2 Inertia to y-axis (Full)
+settings.Iyye = 66.84; %kg*m2 Inertia to y-axis (Empty)
+settings.Izzf = 86.02; %kg*m2 Inertia to z-axis (Full)
+settings.Izze = 66.84; %kg*m2 Inertia to z-axis (Empty)
 
 % AERODYNAMICS DETAILS %
 % This coefficients are intended to be obtained through MISSILE DATCOM
@@ -160,7 +160,7 @@ settings.para1.CD = 0.8;            %Parachute Drag Coefficient
 settings.para1.CL = 0;              %Parachute Lift Coefficient
 
 %Altitude of Drogue 2 Opening
-settings.zdrg2 = 2000;
+settings.zdrg2 = 5000;
 
 %%% DROGUE 2 %%%
 settings.para2.S = 17.5;            %m2   Surface
@@ -169,7 +169,7 @@ settings.para2.CD = 0.59;           %Parachute Drag Coefficient
 settings.para2.CL = 0;              %Parachute Lift Coefficient
 
 %Altitude of Main Parachute Opening
-settings.zmain = 1000;
+settings.zmain = 2000;
 
 %%% MAIN - ROGALLO %%%
 %The drogue parachute effects are neglected
@@ -177,7 +177,7 @@ settings.zmain = 1000;
 settings.para3.S = 15;              %m2   Surface
 settings.para3.mass = 1.466;        %kg   Parachute Mass
 settings.para3.CD = 0.4;            %Parachute Drag Coeff
-settings.para3.CL = 0.9;            %Parachute Lift Coefficient
+settings.para3.CL = 0.8;            %Parachute Lift Coefficient
 
 % INTEGRATION OPTIONS %
 settings.ode.timeasc = 0:0.01:2000;  %sec   %Time span for ascend
@@ -230,7 +230,7 @@ settings.wind.Seconds = 36000;   %Second of the day
 settings.wind.ww = 0; % no vertical wind
 
 % BALLISTIC SIMULATION
-settings.ballistic = false;     % Set to True to run a standard ballistic simulation
+settings.ballistic = true;     % Set to True to run a standard ballistic simulation
 
 % STOCHASTIC DETAILS %
 %If N>1 the stochastic routine is fired (different standard plots)

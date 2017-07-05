@@ -75,12 +75,12 @@ switch para
         S = settings.para2.S;
         CD = settings.para2.CD;
         CL = settings.para2.CL;
-        pmass = settings.para1.mass;
+        pmass = settings.para1.mass + 6.13; %parachute + nosecone
     case 3
         S = settings.para3.S;
         CD = settings.para3.CD;
         CL = settings.para3.CL;
-        pmass = settings.para1.mass + settings.para2.mass;
+        pmass = settings.para1.mass + settings.para2.mass + 6.13;
     otherwise
 end
 

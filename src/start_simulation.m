@@ -12,11 +12,12 @@ run('config.m');
 global bool contatore;
 global t_plot T_plot alpha_plot beta_plot M_plot CA_plot Drag_plot Forces_plot;
 % global WIND alt;
+global XCP;
 
 
 % if bool = 0 the trends during the integration are NOT requested
 % if bool = 1 the trends during the integration are saved and plotted
-bool = 0;
+bool = 1;
 if bool == 1
     contatore = 1;
     t_plot = 0;
@@ -29,6 +30,7 @@ if bool == 1
     Forces_plot = 0;
 %     WIND = [];
 %     alt = [];
+    XCP = 0;
 end
 
 %% lancio simulatore
@@ -69,6 +71,11 @@ if (bool == 1)
 %     xlabel('Wind magnitude [m/s]')
 %     ylabel('Altitude [m]')
 %     legend('North','East','Down')
+
+    figure();
+    plot(t_plot, XCP,'.'), title('Stability margin vs time'), grid on;
+    ylabel('s.m.')
+
 end
 
 

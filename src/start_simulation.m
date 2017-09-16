@@ -257,13 +257,13 @@ if plots
     y_flight=y;
     z_flight=z;
     for ii = 1 : length(x)
-        if norm(x_flight(ii))<1
+        if norm(x_flight(ii))<3
             x_flight(ii) = 0;
         end
-        if norm(y_flight(ii))<1
+        if norm(y_flight(ii))<3
             y_flight(ii) = 0;
         end
-        if norm(z_flight(ii))<1
+        if norm(z_flight(ii))<3
             z_flight(ii) = 0;
         end
     end

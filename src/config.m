@@ -28,7 +28,7 @@ settings.lrampa = 6.5; %LaunchPad route (launchpad lenght-distance from ground o
 
 
 %STARTING ATTITUDE SETUP %
-settings.OMEGA = 85*pi/180;     %Elevation Angle
+settings.OMEGA = 90*pi/180;     %Elevation Angle
 settings.PHI = 270*pi/180;      %Azimuth Angle from North Direction
 
 % ENGINE DETAILS %
@@ -211,13 +211,14 @@ settings.wind.MagMin = 6;                    %Minimum Magnitude
 settings.wind.MagMax = 6;                    %Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              %Minimum Elevation
 settings.wind.ElMax = 0*pi/180;              %Maximum Elevation (Max == 90 Deg)
-settings.wind.AzMin = (180 + (135))*pi/180;  %Minimum Azimuth
-settings.wind.AzMax = (180 + (135))*pi/180;  %Maximum Azimuth
+settings.wind.AzMin = (0.01)*pi/180;  %Minimum Azimuth
+settings.wind.AzMax = (0.01)*pi/180;  %Maximum Azimuth
 
-% NOTE: wind aziumt angle = 180 + ...
-% means that I'm upwind with an angle of ...
-% 180+(..) heading sud-ovest
-% 180-(..) heading sud-est
+% NOTE: wind aziumt angle indications (wind directed towards):
+% 0 deg (use 0.01 to overcome a bug) -> North
+% 90 deg -> East
+% 180 deg -> South
+% 270 deg -> West
 
 % Settings for the Wind Model
 settings.wind.Lat = 52.85;       %Latitude of launching site
@@ -230,7 +231,7 @@ settings.wind.Seconds = 36000;   %Second of the day
 settings.wind.ww = 0; % no vertical wind
 
 % BALLISTIC SIMULATION
-settings.ballistic = true;     % Set to True to run a standard ballistic simulation
+settings.ballistic = false;     % Set to True to run a standard ballistic simulation
 
 % STOCHASTIC DETAILS %
 %If N>1 the stochastic routine is fired (different standard plots)

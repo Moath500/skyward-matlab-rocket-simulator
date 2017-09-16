@@ -28,7 +28,7 @@ settings.lrampa = 6.5; %LaunchPad route (launchpad lenght-distance from ground o
 
 
 %STARTING ATTITUDE SETUP %
-settings.OMEGA = 90*pi/180;     %Elevation Angle
+settings.OMEGA = 80*pi/180;     %Elevation Angle
 settings.PHI = 270*pi/180;      %Azimuth Angle from North Direction
 
 % ENGINE DETAILS %
@@ -207,15 +207,15 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 % Wind is randomly generated. Setting the same values for min and max will
 % fix the parameters of the wind.
 
-settings.wind.MagMin = 6;                    %Minimum Magnitude
-settings.wind.MagMax = 6;                    %Maximum Magnitude
+settings.wind.MagMin = 10;                    %Minimum Magnitude
+settings.wind.MagMax = 10;                    %Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              %Minimum Elevation
 settings.wind.ElMax = 0*pi/180;              %Maximum Elevation (Max == 90 Deg)
-settings.wind.AzMin = (0.01)*pi/180;  %Minimum Azimuth
-settings.wind.AzMax = (0.01)*pi/180;  %Maximum Azimuth
+settings.wind.AzMin = (360)*pi/180;  %Minimum Azimuth
+settings.wind.AzMax = (360)*pi/180;  %Maximum Azimuth
 
 % NOTE: wind aziumt angle indications (wind directed towards):
-% 0 deg (use 0.01 to overcome a bug) -> North
+% 0 deg (use 360 instead of 0)  -> North
 % 90 deg -> East
 % 180 deg -> South
 % 270 deg -> West

@@ -207,8 +207,8 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 % Wind is randomly generated. Setting the same values for min and max will
 % fix the parameters of the wind.
 
-settings.wind.MagMin = 0;                    %Minimum Magnitude
-settings.wind.MagMax = 0;                    %Maximum Magnitude
+settings.wind.MagMin = 6;                    %Minimum Magnitude
+settings.wind.MagMax = 6;                    %Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              %Minimum Elevation
 settings.wind.ElMax = 0*pi/180;              %Maximum Elevation (Max == 90 Deg)
 settings.wind.AzMin = (360)*pi/180;  %Minimum Azimuth

@@ -207,8 +207,8 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 % Wind is randomly generated. Setting the same values for min and max will
 % fix the parameters of the wind.
 
-settings.wind.MagMin = 10;                    %Minimum Magnitude
-settings.wind.MagMax = 10;                    %Maximum Magnitude
+settings.wind.MagMin = 0;                    %Minimum Magnitude
+settings.wind.MagMax = 0;                    %Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              %Minimum Elevation
 settings.wind.ElMax = 0*pi/180;              %Maximum Elevation (Max == 90 Deg)
 settings.wind.AzMin = (360)*pi/180;  %Minimum Azimuth
@@ -232,6 +232,11 @@ settings.wind.ww = 0; % no vertical wind
 
 % BALLISTIC SIMULATION
 settings.ballistic = false;     % Set to True to run a standard ballistic simulation
+
+% LAST DROGUE FAILURE SIMULATION
+% simulation in which rogallo wing does not open, therefore landing is
+% achieved thanks to the 2nd parachute
+settings.ldf = true;
 
 % STOCHASTIC DETAILS %
 %If N>1 the stochastic routine is fired (different standard plots)

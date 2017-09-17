@@ -36,6 +36,9 @@ function [T,Y, Ta,Ya] = MAIN(settings)
             else
                 [LP,Z]=stoch_run(settings);
             end
+        elseif settings.ldf
+            fprintf('Last Drogue Failure Simulation Fired...\n\n');
+            [T,Y, Ta,Ya]=ldf_run(settings);
         else
             fprintf('Standard Simulation Fired...\n\n');
             [T,Y, Ta,Ya]=std_run(settings);

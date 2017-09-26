@@ -207,11 +207,11 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 % Wind is randomly generated. Setting the same values for min and max will
 % fix the parameters of the wind.
 
-settings.wind.MagMin = 0;            %Minimum Magnitude
-settings.wind.MagMax = 6;            %Maximum Magnitude
-settings.wind.ElMin = 0*pi/180;      %Minimum Elevation
-settings.wind.ElMax = 0*pi/180;      %Maximum Elevation (Max == 90 Deg)
-settings.wind.AzMin = (0)*pi/180;  %Minimum Azimuth
+settings.wind.MagMin = 6;                    %Minimum Magnitude
+settings.wind.MagMax = 6;                    %Maximum Magnitude
+settings.wind.ElMin = 0*pi/180;              %Minimum Elevation
+settings.wind.ElMax = 0*pi/180;              %Maximum Elevation (Max == 90 Deg)
+settings.wind.AzMin = (360)*pi/180;  %Minimum Azimuth
 settings.wind.AzMax = (360)*pi/180;  %Maximum Azimuth
 
 % NOTE: wind aziumt angle indications (wind directed towards):
@@ -236,15 +236,15 @@ settings.ballistic = false;     % Set to True to run a standard ballistic simula
 % LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open, therefore landing is
 % achieved thanks to the 2nd parachute
-settings.ldf = false;
+settings.ldf = true;
 
 % STOCHASTIC DETAILS %
 %If N>1 the stochastic routine is fired (different standard plots)
-settings.stoch.N = 100;            % Number of iterations
-settings.stoch.parallel = true; % Using parallel or not parallel
+settings.stoch.N = 1;            % Number of iterations
+settings.stoch.parallel = false; % Using parallel or not parallel
 
 % PLOT DETAILS %
-settings.plot = true;         % Set to True to Plot with default plots
+settings.plot = false;         % Set to True to Plot with default plots
 settings.tSteps = 250;         % Set the number of time steps to visualize
 settings.DefaultFontSize = 10; % Default font size for plot
 settings.DefaultLineWidth = 1; % Default Line Width for plot

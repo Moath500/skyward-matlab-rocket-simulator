@@ -1,4 +1,4 @@
-    function [ Tf,Yf, Ta,Ya ] = std_run_ballistic( settings )
+function [ Tf,Yf, Ta,Ya ] = std_run_ballistic( settings )
 %STD RUN - This function runs a standard (non-stochastic) simulation
 % OUTPUTS
 % Tf: Time steps

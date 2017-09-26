@@ -1,4 +1,4 @@
-function [ value,isterminal,direction ] = drg2_opening( t,Y,settings,varargin)
+function [ value,isterminal,direction ] = drg2_opening( t,Y,settings,varargin )
 %Event that sets the main parachute opening altitude
 
 % Author: Francesco Colombi

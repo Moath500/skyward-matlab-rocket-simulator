@@ -18,7 +18,7 @@ global XCP;
 % if bool = 0 the trends during the integration are NOT requested
 % if bool = 1 the trends during the integration are saved and plotted
 bool = 1;
-if bool == 1
+if bool == 0
     contatore = 1;
     t_plot = 0;
     T_plot = 0;

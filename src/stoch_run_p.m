@@ -25,9 +25,11 @@ X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 LP = zeros(settings.stoch.N,3);
 Z = zeros(settings.stoch.N,1);
 ApoTime = zeros(settings.stoch.N,1);
-
+    settings.ode.optionsdrg2 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+    'Events',@crash);
 parfor_progress(settings.stoch.N);
 parpool;
+
 parfor i=1:settings.stoch.N
     %% Wind Generation
     [uw,vw,ww] = windgen(settings.wind.AzMin,settings.wind.AzMax,...
@@ -52,22 +54,23 @@ parfor i=1:settings.stoch.N
     para = 2; %Flag for Drogue 2
 
     %Initial Condition are the last from drogue 1 descent
+
     X0d2 = Yd1(end,:);
     [Td2,Yd2] = ode45(@descent_parachute,settings.ode.timedrg2,X0d2,...
         settings.ode.optionsdrg2,settings,uw,vw,ww,para);
 
-    %% MAIN %%
-    para = 3; %Flag for Main (Rogall)
-
-    %Initial Condition are the last from drogue 2 descent
-    X0m = Yd2(end,:);
-    [Tm,Ym] = ode45(@descent_parachute,settings.ode.timemain,X0m,...
-        settings.ode.optionsmain,settings,uw,vw,ww,para);
+%     %% MAIN %%
+%     para = 3; %Flag for Main (Rogall)
+% 
+%     %Initial Condition are the last from drogue 2 descent
+%     X0m = Yd2(end,:);
+%     [Tm,Ym] = ode45(@descent_parachute,settings.ode.timemain,X0m,...
+%         settings.ode.optionsmain,settings,uw,vw,ww,para);
 
     %% FINAL STATE ASSEMBLING %%
 
     %Total State
-    Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1; Yd2;Ym];
+    Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1; Yd2];%Ym];
     %Total Time
     %Tf = [Ta; Ta(end)+Td;Ta(end)+Td(end)+Tm];
 

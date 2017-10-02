@@ -122,20 +122,21 @@ if settings.plot == 1
     %% PLOTTING THINGS
     
     
-    plot(xm,ym,'ks','MarkerSize',20);
+    plot(xm,ym,'bs','MarkerSize',20,'MarkerFacecolor','b');
     hold on
     
     %Point of launch
-    plot(0,0,'ro','MarkerSize',20);
+    plot(0,0,'ro','MarkerSize',20,'MarkerFacecolor','r');
    
     %All the landing points
     plot(LP(:,1),LP(:,2),'k+');
      
     title('Landing Points');
-    xlabel('X [m]');
-    ylabel('Y [m]');
+    xlabel('North [m]');
+    ylabel('East [m]');
     legend('Mean Landing Point','Launch Site','Landing Points');
-    
+    view(90,270)
+    axis equal
     
     %Histogram
     [f,x] = hist(Z,10);

@@ -207,7 +207,7 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 % Wind is randomly generated. Setting the same values for min and max will
 % fix the parameters of the wind.
 
-settings.wind.MagMin = 6;                    %Minimum Magnitude
+settings.wind.MagMin = 0;                    %Minimum Magnitude
 settings.wind.MagMax = 6;                    %Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              %Minimum Elevation
 settings.wind.ElMax = 0*pi/180;              %Maximum Elevation (Max == 90 Deg)
@@ -245,11 +245,11 @@ settings.ao = false;
 
 % STOCHASTIC DETAILS %
 %If N>1 the stochastic routine is fired (different standard plots)
-settings.stoch.N = 1;            % Number of iterations
+settings.stoch.N = 10;            % Number of iterations
 settings.stoch.parallel = false; % Using parallel or not parallel
 
 % PLOT DETAILS %
-settings.plot = false;         % Set to True to Plot with default plots
+settings.plot = true;         % Set to True to Plot with default plots
 settings.tSteps = 250;         % Set the number of time steps to visualize
 settings.DefaultFontSize = 10; % Default font size for plot
 settings.DefaultLineWidth = 1; % Default Line Width for plot

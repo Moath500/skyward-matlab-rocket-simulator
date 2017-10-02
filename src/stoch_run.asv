@@ -1,5 +1,5 @@
-function [ LP ,Z ] = stoch_run_p( settings )
-%STD RUN - This function runs a stochastic simulation (parallel)
+function [ LP ,Z ] = stoch_run( settings )
+%STD RUN - This function runs a stochastic simulation
 % OUTPUTS
 % LP: Landing Points
 % Z: Apogee Altitudes
@@ -26,9 +26,9 @@ LP = zeros(settings.stoch.N,3);
 Z = zeros(settings.stoch.N,1);
 ApoTime = zeros(settings.stoch.N,1);
 
+
 parfor_progress(settings.stoch.N);
-parpool;
-parfor i=1:settings.stoch.N
+for i=1:settings.stoch.N
     %% Wind Generation
     [uw,vw,ww] = windgen(settings.wind.AzMin,settings.wind.AzMax,...
         settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
@@ -109,6 +109,9 @@ Zm = mean(Z);
 %Std. Deviation Altitude
 Zstd = std(Z);
 
+%Best Fit Ellipse
+plot(LP(:,1),LP(:,2),'k*');
+
 % Printing to screen
 text =['Mean Landing Point:X:%3.3f m, Y:%3.3f m\n',...
     'Mean Altitude: %3.3f m || STD: %3.3f m\n',...
@@ -133,8 +136,7 @@ if settings.plot == 1
     ylabel('East [m]');
     legend('Mean Landing Point','Launch Site','Landing Points');
     view(90,270)
-    axis equal
-    
+    ax
     %Histogram
     [f,x] = hist(Z,10);
     figure;
@@ -148,8 +150,6 @@ if settings.plot == 1
 
 end
 
-delete(gcp);
-
 %Resizing
 h = get(0,'children');
 scrsz = get(0,'ScreenSize');
@@ -157,6 +157,7 @@ for i=1:length(h)
   set(h(i),'OuterPosition',[0 0 scrsz(4) scrsz(4)])
   %saveas(h(i), ['figure' num2str(i)], 'fig');
 end
+
 
 
 

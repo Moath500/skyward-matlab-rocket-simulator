@@ -29,7 +29,7 @@ settings.lrampa = 6.5; %LaunchPad route (launchpad lenght-distance from ground o
 
 %STARTING ATTITUDE SETUP %
 settings.OMEGA = 80*pi/180;     %Elevation Angle
-settings.PHI = 270*pi/180;      %Azimuth Angle from North Direction
+settings.PHI = 90*pi/180;      %Azimuth Angle from North Direction
 
 % ENGINE DETAILS %
 
@@ -211,8 +211,8 @@ settings.wind.MagMin = 6;                    %Minimum Magnitude
 settings.wind.MagMax = 6;                    %Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              %Minimum Elevation
 settings.wind.ElMax = 0*pi/180;              %Maximum Elevation (Max == 90 Deg)
-settings.wind.AzMin = (360)*pi/180;  %Minimum Azimuth
-settings.wind.AzMax = (360)*pi/180;  %Maximum Azimuth
+settings.wind.AzMin = (90)*pi/180;  %Minimum Azimuth
+settings.wind.AzMax = (90)*pi/180;  %Maximum Azimuth
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -236,7 +236,12 @@ settings.ballistic = false;     % Set to True to run a standard ballistic simula
 % LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open, therefore landing is
 % achieved thanks to the 2nd parachute
-settings.ldf = true;
+settings.ldf = false;
+
+% APOGEE ONLY
+% simulation stopped when reaching the apogee, therefore there is no
+% descend phase. Only available for stochastic runs
+settings.ao = false;
 
 % STOCHASTIC DETAILS %
 %If N>1 the stochastic routine is fired (different standard plots)

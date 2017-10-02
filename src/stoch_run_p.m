@@ -57,7 +57,9 @@ parfor i=1:settings.stoch.N
         settings.ode.optionsdrg2,settings,uw,vw,ww,para);
 
     %% MAIN %%
+    if not(settings.ldf)
     para = 3; %Flag for Main (Rogall)
+    end
 
     %Initial Condition are the last from drogue 2 descent
     X0m = Yd2(end,:);
@@ -67,7 +69,11 @@ parfor i=1:settings.stoch.N
     %% FINAL STATE ASSEMBLING %%
 
     %Total State
+    if settings.ao
+    Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6))];
+    else
     Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1; Yd2;Ym];
+    end
     %Total Time
     %Tf = [Ta; Ta(end)+Td;Ta(end)+Td(end)+Tm];
 

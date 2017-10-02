@@ -45,6 +45,7 @@ X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
     settings.ode.optionsdrg1,settings,uw,vw,ww,para);
 
 %% DROGUE 2 %%
+
 para = 2; %Flag for Drogue 2
 
 %Initial Condition are the last from drogue 1 descent
@@ -53,8 +54,9 @@ X0d2 = Yd1(end,:);
     settings.ode.optionsdrg2,settings,uw,vw,ww,para);
 
 %% MAIN %%
+if not(settings.ldf)
 para = 3; %Flag for Main (Rogall)
-
+end
 %Initial Condition are the last from drogue 2 descent
 X0m = Yd2(end,:);
 [Trog,Yrog] = ode45(@descent_parachute,settings.ode.timemain,X0m,...

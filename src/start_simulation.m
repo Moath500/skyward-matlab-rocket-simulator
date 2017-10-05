@@ -7,7 +7,7 @@ close all
 clear, clc
 
 %% caricamento dati
-run('config.m');
+run('config.m');    
 
 global bool contatore;
 global t_plot T_plot alpha_plot beta_plot M_plot CA_plot Drag_plot Forces_plot;

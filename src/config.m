@@ -23,7 +23,7 @@
 settings.rocket_name = 'R2A';
 
 % LAUNCHPAD 6
-settings.z0 = 100;       %Launchpad Altitude
+settings.z0 = 5;       %Launchpad Altitude
 settings.lrampa = 6.5; %LaunchPad route (launchpad lenght-distance from ground of the first hook)
 
 
@@ -154,7 +154,7 @@ clear('s');
 
 %PARACHUTES DETAILS %
 %%% DROGUE 1 %%%
-settings.para1.S = 5;               %m2   Surface
+settings.para1.S = 1.55;            %m2   Surface
 settings.para1.mass = 0.577;        %kg   Parachute Mass
 settings.para1.CD = 0.8;            %Parachute Drag Coefficient
 settings.para1.CL = 0;              %Parachute Lift Coefficient
@@ -208,11 +208,11 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 % fix the parameters of the wind.
 
 settings.wind.MagMin = 0;                    %Minimum Magnitude
-settings.wind.MagMax = 6;                    %Maximum Magnitude
+settings.wind.MagMax = 7;                    %Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              %Minimum Elevation
 settings.wind.ElMax = 0*pi/180;              %Maximum Elevation (Max == 90 Deg)
-settings.wind.AzMin = (90)*pi/180;  %Minimum Azimuth
-settings.wind.AzMax = (90)*pi/180;  %Maximum Azimuth
+settings.wind.AzMin = (1)*pi/180;  %Minimum Azimuth
+settings.wind.AzMax = (360)*pi/180;  %Maximum Azimuth
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -241,11 +241,11 @@ settings.ldf = false;
 % APOGEE ONLY
 % simulation stopped when reaching the apogee, therefore there is no
 % descend phase. Only available for stochastic runs
-settings.ao = false;
+settings.ao = true;
 
 % STOCHASTIC DETAILS %
 %If N>1 the stochastic routine is fired (different standard plots)
-settings.stoch.N = 10;            % Number of iterations
+settings.stoch.N = 2;            % Number of iterations
 settings.stoch.parallel = false; % Using parallel or not parallel
 
 % PLOT DETAILS %

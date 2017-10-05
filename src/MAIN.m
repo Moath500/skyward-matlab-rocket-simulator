@@ -26,8 +26,17 @@ function [T,Y, Ta,Ya] = MAIN(settings)
 
     %Checking if stochastic or standard simulation needed
     if settings.ballistic    
-        fprintf('Standard Ballistic Simulation Fired...\n\n');
-            [T,Y, Ta,Ya]=std_run_ballistic(settings);
+        if settings.stoch.N>1
+            fprintf('Stochastic Ballistic Simulation Fired...\n\n');
+            if settings.stoch.parallel
+             [LP,Z]=stoch_run_bal_p(settings);
+            else
+             [LP,Z]=stoch_run_bal(settings);
+            end
+        else
+             fprintf('Standard Ballistic Simulation Fired...\n\n');
+             [T,Y, Ta,Ya]=std_run_ballistic(settings);
+        end
     else
         if settings.stoch.N > 1
             fprintf('Stochastic Simulation Fired...\n\n');
@@ -41,6 +50,5 @@ function [T,Y, Ta,Ya] = MAIN(settings)
             [T,Y, Ta,Ya]=std_run(settings);
         end
     end
-
     toc
 end

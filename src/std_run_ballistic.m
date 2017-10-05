@@ -90,7 +90,7 @@ if settings.plot == 1
     Va=quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6)); %apogee
     
     figure;
-    suptitle('Velocities Profiles on Time')
+    subtitle('Velocities Profiles on Time')
     subplot(3,1,1);
     plot(Tinterp,u,'k-')
     hold on

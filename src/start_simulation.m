@@ -243,14 +243,19 @@ if plots
     figure();
     plot(y, x), axis equal, hold on, grid on;
     % visualizzazione circonferenze distanze
-    theta_plot = linspace(0,2*pi);
-    R_plot = [1, 2, 3, 4, 5]*1000;
-    for j = 1:length(R_plot)
-        x_plot = R_plot(j)*cos(theta_plot');
-        y_plot = R_plot(j)*sin(theta_plot');
-        plot(y_plot, x_plot, '--r')
-    end
+%     theta_plot = linspace(0,2*pi);
+%     R_plot = [1, 2, 3, 4, 5]*1000;
+%     for j = 1:length(R_plot)
+%         x_plot = R_plot(j)*cos(theta_plot');
+%         y_plot = R_plot(j)*sin(theta_plot');
+%         plot(y_plot, x_plot, '--r')
+%     end
+    p1 = plot(0,0,'r.','MarkerSize',21);
+    p2 = plot(y(end),x(end),'rx','MarkerSize',14);
+    title('Trajectory Top view')
     xlabel('y, East [m]'), ylabel('x, North [m]');
+    legend([p1,p2],{'Launch Point','Landing Point'})
+    clear p1 p2
 
     % lengths to 0 if they are less than 1 meter
     x_flight=x;
@@ -271,13 +276,16 @@ if plots
     figure();
     subplot(1,3,1);
     plot(y_flight/1000, x_flight/1000), axis equal, hold on, grid on;
-    plot(Ya(end,2)/1000, Ya(end,1)/1000, '*');
-    plot(0, 0, 'or')
+    p11 = plot(Ya(end,2)/1000, Ya(end,1)/1000, 'r*','markersize',7);
+    p12 = plot(0, 0, 'r.','markersize',14);
+    p13 = plot(Y(end,2)/1000, Y(end,1)/1000, 'rx','markersize',7);
     xlabel('y, East [Km]'), ylabel('x, North [Km]');
+    
     subplot(1,3,2);
     plot(x_flight/1000, z_flight/1000), hold on, grid on;
-    plot(Ya(end,1)/1000, -Ya(end,3)/1000, '*');
-    plot(0, 0, 'or')
+    plot(Ya(end,1)/1000, -Ya(end,3)/1000, 'r*','markersize',7);
+    plot(Y(end,1)/1000, -Y(end,3)/1000, 'rx','markersize',7);
+    plot(0, 0, 'r.','markersize',14);
     xlabel('x, North [Km]'), ylabel('z, Altitude [Km]');
     %setting limit if is parallel to east
     if sum(x_flight) == 0
@@ -285,14 +293,16 @@ if plots
     end
     subplot(1,3,3);
     plot(y_flight/1000, z_flight/1000), hold on, grid on;
-    plot(Ya(end,2)/1000, -Ya(end,3)/1000, '*');
-    plot(0, 0, 'or')
+    plot(Ya(end,2)/1000, -Ya(end,3)/1000, 'r*','markersize',7);
+    plot(Y(end,2)/1000, -Y(end,3)/1000, 'rx','markersize',7);
+    plot(0, 0, 'r.','markersize',14);
     xlabel('y, East [Km]'), ylabel('z, Altitude [Km]');
     %setting limit if is parallel to north
     if sum(y_flight) == 0
         xlim([-1 1]);
     end
-
+    legend([p11, p12, p13],{'Apogee','Launch Point','Landing Point'})
+    
     % angular rates
     figure();
     plot(Ta, Ya(:, 7)*180/pi)

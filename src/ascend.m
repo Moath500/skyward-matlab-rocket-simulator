@@ -67,8 +67,14 @@ end
 
 % Adding Wind (supposed to be added in NED axes);
 
+if settings.wind.model
+% Wind Model
+[uw,vw,ww] = wind_generator(settings,z,t,Q);
+wind = [ uw,vw,ww ];
+else
 % constant wind
 wind = quatrotate(Q, [uw vw ww]);
+end
 
 % % Wind model
 % h = 0;
@@ -91,11 +97,6 @@ wind = quatrotate(Q, [uw vw ww]);
 %
 % % wind in body frame
 % wind = quatrotate(Q, [uw, vw, ww]);
-
-
-% % Wind Model
-% [uw,vw,ww] = wind_generator(settings,z,t,Q);
-% wind = [ uw,vw,ww ];
 
 % Relative velocities (plus wind);
 ur = u - wind(1);

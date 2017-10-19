@@ -26,10 +26,15 @@ W0 = [0 0 0]';
 X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 
 %% Wind Generation
-[uw,vw,ww] = windgen(settings.wind.AzMin,settings.wind.AzMax,...
+if settings.wind.model
+    uw = 0;
+    vw = 0;
+    ww = 0;
+else 
+    [uw,vw,ww] = windgen(settings.wind.AzMin,settings.wind.AzMax,...
     settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
     settings.wind.MagMax);
-
+end
 %% ASCEND %%
 
 [Ta,Ya] = ode45(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...

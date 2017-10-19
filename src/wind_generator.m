@@ -15,12 +15,15 @@ function [ uw,vw,ww ] = wind_generator( settings,z,t,Q )
 
 
 h=-z+settings.z0;
+if h < 0
+    h = 0;
+end
 %global vento
 
 %% Horizontal Wind Components
-[uw,vw]=atmoshwm07(settings.wind.Lat,settings.wind.Long,h,'day',settings.wind.Day,...
-    'seconds',settings.wind.Seconds+t,'model','quiet'); %NED reference
-
+[uw,vw]=atmoshwm(settings.wind.Lat,settings.wind.Long,h,'day',settings.wind.Day,...
+    'seconds',settings.wind.Seconds+t,'model','quiet','version','14'); %NED reference
+ww = settings.wind.ww;
 %vento=[vento;uw,vw,ww,h];
 
 %% Wind Components
@@ -31,7 +34,6 @@ if nargin==4
     uw=wind(1);
     vw=wind(2);
     ww=wind(3);
-
 end
 
 end

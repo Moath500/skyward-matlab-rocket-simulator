@@ -28,9 +28,14 @@ w = Y(6);
 
 
 % Adding Wind (supposed to be added in NED axes);
-
+if settings.wind.model
+% Wind Model
+[uw,vw,ww] = wind_generator(settings,z,t);
+wind = [ uw,vw,ww ];
+else
 % constant wind
 wind = [uw vw ww];
+end
 
 % % Wind model
 % h = 0;
@@ -52,10 +57,6 @@ wind = [uw vw ww];
 % % if bool == 1
 % %     WIND = [WIND; uw, vw, ww];
 % % end
-
-% % Wind Model
-% [uw,vw,ww] = wind_generator(settings,z,t,Q);
-% wind = [ uw,vw,ww ];
 
 % Adding wind;
 ur = u - wind(1);

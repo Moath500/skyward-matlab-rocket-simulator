@@ -99,7 +99,7 @@ if -z<0
     z = 0;
 end
 
-[~, ~, ~, rho] = atmoscoesa(-z);
+[~, ~, ~, rho] = atmosisa(-z+settings.z0);
 
 %Center of Mass
 

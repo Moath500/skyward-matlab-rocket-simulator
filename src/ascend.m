@@ -156,7 +156,7 @@ end
 if -z<0
     z = 0;
 end
-[~, a, ~, rho] = atmoscoesa(-z+settings.z0);
+[~, a, ~, rho] = atmosisa(-z+settings.z0);
 M = V_norm/a;
 
 global M_plot

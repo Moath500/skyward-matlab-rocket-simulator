@@ -1,5 +1,5 @@
 function percent = parfor_progress(N)
-%   PARFOR_PROGRESS Progress monitor (progress bar) that works with parfor.
+%PARFOR_PROGRESS Progress monitor (progress bar) that works with parfor.
 %   PARFOR_PROGRESS works by creating a file called parfor_progress.txt in
 %   your working directory, and then keeping track of the parfor loop's
 %   progress within that file. This workaround is necessary because parfor

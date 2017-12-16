@@ -1,4 +1,4 @@
-function [ dY ] = ascend( t,Y,settings,uw,vw,ww )
+function [dY] = ascend(t,Y,settings,uw,vw,ww)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 )
 %
@@ -45,58 +45,28 @@ Ixx = Y(15);
 Iyy = Y(16);
 Izz = Y(17);
 
-global bool
-% if bool = 0 the trends during the integration are NOT requested
-% if bool = 1 the trends during the integration are saved and plotted
-global t_plot contatore
-if bool == 1
-    t_plot(contatore) = t;
-end
 
 
-Q = [ q0 q1 q2 q3];
-Q_conj= [ q0 -q1 -q2 -q3];
-normQ=norm(Q);
+Q = [q0 q1 q2 q3];
+Q_conj = [q0 -q1 -q2 -q3];
+normQ = norm(Q);
 
-if abs(normQ-1)>0.1
+if abs(normQ-1) > 0.1
     Q = Q/normQ;
-    %frprintf('Norm of the quaternion is (too much!) less than one (%3.2f)\n', ...
-        %normQ);
 end
 
 
-% Adding Wind (supposed to be added in NED axes);
+%% ADDING WIND (supposed to be added in NED axes);
 
 if settings.wind.model
-% Wind Model
-[uw,vw,ww] = wind_generator(settings,z,t,Q);
-wind = [ uw,vw,ww ];
-else
-% constant wind
-wind = quatrotate(Q, [uw vw ww]);
-end
+    [uw,vw,ww] = wind_matlab_generator(settings,z,t,Q); 
+    wind = [uw,vw,ww];
 
-% % Wind model
-% h = 0;
-% if -z > 0
-%     h = -z+settings.z0;
-% end
-% % global alt
-% % if bool == 1
-% %     alt = [alt; h];
-% % end
-%
-% % wind in NED axis
-% [uw,vw] = atmoshwm07(settings.wind.Lat, settings.wind.Long, h, ...
-%     'day',settings.wind.Day,'model','quiet');
-%
-% % global WIND
-% % if bool == 1
-% %     WIND = [WIND; uw, vw, ww];
-% % end
-%
-% % wind in body frame
-% wind = quatrotate(Q, [uw, vw, ww]);
+else
+
+wind = quatrotate(Q, [uw vw ww]); % constant wind
+
+end
 
 % Relative velocities (plus wind);
 ur = u - wind(1);
@@ -105,29 +75,31 @@ wr = w - wind(3);
 
 % Body to Inertial velocities
 Vels = quatrotate(Q_conj,[u v w]);
-
 V_norm = norm([ur vr wr]);
 
 
 
-% Constants
-S = settings.S;
-C = settings.C;
-CoeffsE = settings.CoeffsE; %Empty Rocket Coefficients
-CoeffsF = settings.CoeffsF; % Full Rocket Coefficients
+%% CONSTANTS
 
-g = 9.81;
-%Time-Dependant Properties
-m0 = settings.m0; %kg mass
-mfr = settings.mfr;
-tb = settings.tb;
+S = settings.S;              % [m^2] cross surface
+C = settings.C;              % [m]   caliber
+CoeffsE = settings.CoeffsE;  % Empty Rocket Coefficients
+CoeffsF = settings.CoeffsF;  % Full Rocket Coefficients
+g = 9.80655;                 % [N/kg] module of gravitational field at zero
+tb = settings.tb;            % [s]     Burning Time
+mfr = settings.mfr;          % [kg/s]  Mass Flow Rate
 
-Ixxf= settings.Ixxf;
-Ixxe= settings.Ixxe;
-Iyyf= settings.Iyyf;
-Iyye= settings.Iyye;
-Izzf= settings.Izzf;
-Izze= settings.Izze;
+% inertias for full configuration (with all the propellant embarqued) obtained with CAD's
+Ixxf = settings.Ixxf;        % [kg*m^2] Inertia to x-axis
+Iyyf = settings.Iyyf;        % [kg*m^2] Inertia to y-axis
+Izzf = settings.Izzf;        % [kg*m^2] Inertia to z-axis
+
+% inertias for empty configuration (all the propellant consumed) obtained with CAD's
+Ixxe = settings.Ixxe;        % [kg*m^2] Inertia to x-axis
+Iyye = settings.Iyye;        % [kg*m^2] Inertia to y-axis
+Izze = settings.Izze;        % [kg*m^2] Inertia to z-axis
+
+%% TIME-DEPENDENTS VARIABLES
 
 dI = 1/tb*([Ixxf Iyyf Izzf]'-[Ixxe Iyye Izze]');
 
@@ -136,10 +108,9 @@ if t<tb
     Ixxdot = -dI(1);
     Iyydot = -dI(2);
     Izzdot = -dI(3);
-%     T = settings.T_coeffs*[t^0 t^1 t^2 t^3 t^4]';
     T = interp1(settings.motor.exp_time, settings.motor.exp_thrust, t);
 
-else
+else             % for t >= tb the fligth condition is the empty one(no interpolation needed)
     mdot = 0;
     Ixxdot = 0;
     Iyydot = 0;
@@ -147,294 +118,203 @@ else
     T=0;
 end
 
-global T_plot
-if bool == 1
-    T_plot(contatore) = T; % thrust
-end
+T_value = T;
 
-%Atmosphere
-if -z<0
+%% ATMOSPHERE DATA
+
+if -z < 0     % z is directed as the gravity vector
     z = 0;
 end
-[~, a, ~, rho] = atmoscoesa(-z+settings.z0);
+[~, a, ~, rho] = atmosisa(-z+settings.z0);
 M = V_norm/a;
+M_value = M;
 
-global M_plot
-if bool == 1
-    M_plot(contatore) = M; % mach
-end
 
-%Aero Angles
-if not(u<1e-1 || V_norm<1e-3);
+
+%% AERODYNAMICS ANGLES
+
+if not(u < 1e-1 || V_norm < 1e-3)
     alpha = atan(wr/ur);
     beta = asin(vr/V_norm);
 else
-    alpha =0;
+    alpha = 0;
     beta = 0;
 end
 
-global alpha_plot beta_plot
-if bool == 1
-    alpha_plot(contatore) = alpha;
-    beta_plot(contatore) = beta;
-end
-
-% beta = 0; % prova simulazione con beta imposto uguale a 0
+alpha_value = alpha;
+beta_value = beta;
 
 
 
-% Coeffs. Interpolation
+%% DATCOM COEFFICIENTS
+
 givA = settings.Alphas*pi/180;
 givB = settings.Betas*pi/180;
 givH = settings.Altitudes;
 givM = settings.Machs;
 
-% Interpolation error check
+%% INTERPOLATION AT THE BOUNDARIES
 
 if M > givM(end)
-    %frprintf('Mach No. is more than the max provided (M = %3.2f @ t=%2.2f)\n\n', ...
-        %M,t);
+   
     M = givM(end);
 
 end
 
-if M<givM(1)
-    %frprintf('Mach No. is less than the min provided (M = %3.2f @ t=%2.2f)\n\n', ...
-       % M,t);
+if M < givM(1)
+   
     M = givM(1);
 
 end
 
 if alpha > givA(end)
-    %frprintf('AoA is more than the max provided (alpha = %3.2f @ t=%2.2f)\n\n', ...
-            %alpha*180/pi,t)
-    alpha= givA(end);
+    
+    alpha = givA(end);
 
-else if alpha < givA(1)
-        %frprintf('AoA is less than the min provided (alpha = %3.2f @ t=%2.2f)\n\n',...
-            %alpha*180/pi,t);
+elseif alpha < givA(1)
+       
         alpha = givA(1);
 
-
-    end
 end
 
 if beta > givB(end)
-    beta= givB(end);
-else if beta < givB(1)
+    
+    beta = givB(end);
+    
+elseif beta < givB(1)
+    
         beta = givB(1);
-    end
 end
 
-if -z >givH(end)
+if -z > givH(end)
+    
     z = -givH(end);
-else if -z < givH(1)
+    
+elseif -z < givH(1)
+    
         z = -givH(1);
-    end
+        
 end
-global XCP
-% interpolation with the value in the nearest condition: interp_easy
-% full
-CAf=interp4_easy(givA,givM,givB,givH,CoeffsF.CA,alpha,M,beta,-z);%,'nearest');
-CYBf=interp4_easy(givA,givM,givB,givH,CoeffsF.CYB,alpha,M,beta,-z);%,'nearest');
-CNAf=interp4_easy(givA,givM,givB,givH,CoeffsF.CNA,alpha,M,beta,-z);%,'nearest');
-Clf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLL,alpha,M,beta,-z);%,'nearest');
-Clpf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLLP,alpha,M,beta,-z);%,'nearest');
-Cmaf=interp4_easy(givA,givM,givB,givH,CoeffsF.CMA,alpha,M,beta,-z);%,'nearest');
-Cmadf=interp4_easy(givA,givM,givB,givH,CoeffsF.CMAD,alpha,M,beta,-z);%,'nearest');
-Cmqf=interp4_easy(givA,givM,givB,givH,CoeffsF.CMQ,alpha,M,beta,-z);%,'nearest');
-Cnbf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLNB,alpha,M,beta,-z);%,'nearest');
-Cnrf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLNR,alpha,M,beta,-z);%,'nearest');
-Cnpf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLNP,alpha,M,beta,-z);%,'nearest');
-%
-Clrf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLLR,alpha,M,beta,-z);%,'nearest');
-Clbf=interp4_easy(givA,givM,givB,givH,CoeffsF.CLLB,alpha,M,beta,-z);%,'nearest');
-CDf =interp4_easy(givA,givM,givB,givH,CoeffsF.CD,alpha,M,beta,-z);
-XCPf =interp4_easy(givA,givM,givB,givH,CoeffsF.X_C_P,alpha,M,beta,-z);
-% empty
-CAe=interp4_easy(givA,givM,givB,givH,CoeffsE.CA,alpha,M,beta,-z);%,'nearest');
-CYBe=interp4_easy(givA,givM,givB,givH,CoeffsE.CYB,alpha,M,beta,-z);%,'nearest');
-CNAe=interp4_easy(givA,givM,givB,givH,CoeffsE.CNA,alpha,M,beta,-z);%,'nearest');
-Cle=interp4_easy(givA,givM,givB,givH,CoeffsE.CLL,alpha,M,beta,-z);%,'nearest');
-Clpe=interp4_easy(givA,givM,givB,givH,CoeffsE.CLLP,alpha,M,beta,-z);%,'nearest');
-Cmae=interp4_easy(givA,givM,givB,givH,CoeffsE.CMA,alpha,M,beta,-z);%,'nearest');
-Cmade=interp4_easy(givA,givM,givB,givH,CoeffsE.CMAD,alpha,M,beta,-z);%,'nearest');
-Cmqe=interp4_easy(givA,givM,givB,givH,CoeffsE.CMQ,alpha,M,beta,-z);%,'nearest');
-Cnbe=interp4_easy(givA,givM,givB,givH,CoeffsE.CLNB,alpha,M,beta,-z);%,'nearest');
-Cnre=interp4_easy(givA,givM,givB,givH,CoeffsE.CLNR,alpha,M,beta,-z);%,'nearest');
-Cnpe=interp4_easy(givA,givM,givB,givH,CoeffsE.CLNP,alpha,M,beta,-z);%,'nearest');
-%
-Clre=interp4_easy(givA,givM,givB,givH,CoeffsE.CLLR,alpha,M,beta,-z);%,'nearest');
-Clbe=interp4_easy(givA,givM,givB,givH,CoeffsE.CLLB,alpha,M,beta,-z);%,'nearest');
-CDe =interp4_easy(givA,givM,givB,givH,CoeffsE.CD,alpha,M,beta,-z);
-XCPe =interp4_easy(givA,givM,givB,givH,CoeffsE.X_C_P,alpha,M,beta,-z);
-% % linear interpolation of the coeff
-% %full
-% CAf = interpn(givA,givM,givB,givH,CoeffsF.CA,alpha,M,beta,-z);
-% CYBf = interpn(givA,givM,givB,givH,CoeffsF.CYB,alpha,M,beta,-z);
-% CNAf = interpn(givA,givM,givB,givH,CoeffsF.CNA,alpha,M,beta,-z);
-% Clf = interpn(givA,givM,givB,givH,CoeffsF.CLL,alpha,M,beta,-z);
-% Clpf = interpn(givA,givM,givB,givH,CoeffsF.CLLP,alpha,M,beta,-z);
-% Cmaf = interpn(givA,givM,givB,givH,CoeffsF.CMA,alpha,M,beta,-z);
-% Cmadf = interpn(givA,givM,givB,givH,CoeffsF.CMAD,alpha,M,beta,-z);
-% Cmqf = interpn(givA,givM,givB,givH,CoeffsF.CMQ,alpha,M,beta,-z);
-% Cnbf = interpn(givA,givM,givB,givH,CoeffsF.CLNB,alpha,M,beta,-z);
-% Cnrf = interpn(givA,givM,givB,givH,CoeffsF.CLNR,alpha,M,beta,-z);
-% Cnpf = interpn(givA,givM,givB,givH,CoeffsF.CLNP,alpha,M,beta,-z);
-% %
-% Clrf = interpn(givA,givM,givB,givH,CoeffsF.CLLR,alpha,M,beta,-z);
-% Clbf = interpn(givA,givM,givB,givH,CoeffsF.CLLB,alpha,M,beta,-z);
-% CDf = interpn(givA,givM,givB,givH,CoeffsF.CD,alpha,M,beta,-z);
-%
-% % empty
-% CAe = interpn(givA,givM,givB,givH,CoeffsE.CA,alpha,M,beta,-z);
-% CYBe = interpn(givA,givM,givB,givH,CoeffsE.CYB,alpha,M,beta,-z);
-% CNAe = interpn(givA,givM,givB,givH,CoeffsE.CNA,alpha,M,beta,-z);
-% Cle = interpn(givA,givM,givB,givH,CoeffsE.CLL,alpha,M,beta,-z);
-% Clpe = interpn(givA,givM,givB,givH,CoeffsE.CLLP,alpha,M,beta,-z);
-% Cmae = interpn(givA,givM,givB,givH,CoeffsE.CMA,alpha,M,beta,-z);
-% Cmade = interpn(givA,givM,givB,givH,CoeffsE.CMAD,alpha,M,beta,-z);
-% Cmqe = interpn(givA,givM,givB,givH,CoeffsE.CMQ,alpha,M,beta,-z);
-% Cnbe = interpn(givA,givM,givB,givH,CoeffsE.CLNB,alpha,M,beta,-z);
-% Cnre = interpn(givA,givM,givB,givH,CoeffsE.CLNR,alpha,M,beta,-z);
-% Cnpe = interpn(givA,givM,givB,givH,CoeffsE.CLNP,alpha,M,beta,-z);
-% %
-% Clre = interpn(givA,givM,givB,givH,CoeffsE.CLLR,alpha,M,beta,-z);
-% Clbe = interpn(givA,givM,givB,givH,CoeffsE.CLLB,alpha,M,beta,-z);
-% CDe =interpn(givA,givM,givB,givH,CoeffsE.CD,alpha,M,beta,-z);
 
-%Linear interpolation from empty and full configuration coefficients
-if t<tb
+%% CHOSING THE FULL CONDITION VALUE
+% interpolation of the coefficients with the value in the nearest condition of the Coeffs matrix    
+
+CAf = interp4_easy(givA,givM,givB,givH,CoeffsF.CA,alpha,M,beta,-z);
+CYBf = interp4_easy(givA,givM,givB,givH,CoeffsF.CYB,alpha,M,beta,-z);
+CNAf = interp4_easy(givA,givM,givB,givH,CoeffsF.CNA,alpha,M,beta,-z);
+Clf = interp4_easy(givA,givM,givB,givH,CoeffsF.CLL,alpha,M,beta,-z);
+Clpf = interp4_easy(givA,givM,givB,givH,CoeffsF.CLLP,alpha,M,beta,-z);
+Cmaf = interp4_easy(givA,givM,givB,givH,CoeffsF.CMA,alpha,M,beta,-z);
+Cmadf = interp4_easy(givA,givM,givB,givH,CoeffsF.CMAD,alpha,M,beta,-z);
+Cmqf = interp4_easy(givA,givM,givB,givH,CoeffsF.CMQ,alpha,M,beta,-z);
+Cnbf = interp4_easy(givA,givM,givB,givH,CoeffsF.CLNB,alpha,M,beta,-z);
+Cnrf = interp4_easy(givA,givM,givB,givH,CoeffsF.CLNR,alpha,M,beta,-z);
+Cnpf = interp4_easy(givA,givM,givB,givH,CoeffsF.CLNP,alpha,M,beta,-z);
+CDf = interp4_easy(givA,givM,givB,givH,CoeffsF.CD,alpha,M,beta,-z);
+XCPf = interp4_easy(givA,givM,givB,givH,CoeffsF.X_C_P,alpha,M,beta,-z);
+
+%% CHOSING THE EMPTY CONDITION VALUE
+% interpolation of the coefficients with the value in the nearest condition of the Coeffs matrix
+
+CAe = interp4_easy(givA,givM,givB,givH,CoeffsE.CA,alpha,M,beta,-z);
+CYBe = interp4_easy(givA,givM,givB,givH,CoeffsE.CYB,alpha,M,beta,-z);
+CNAe = interp4_easy(givA,givM,givB,givH,CoeffsE.CNA,alpha,M,beta,-z);
+Cle = interp4_easy(givA,givM,givB,givH,CoeffsE.CLL,alpha,M,beta,-z);
+Clpe = interp4_easy(givA,givM,givB,givH,CoeffsE.CLLP,alpha,M,beta,-z);
+Cmae = interp4_easy(givA,givM,givB,givH,CoeffsE.CMA,alpha,M,beta,-z);
+Cmade = interp4_easy(givA,givM,givB,givH,CoeffsE.CMAD,alpha,M,beta,-z);
+Cmqe = interp4_easy(givA,givM,givB,givH,CoeffsE.CMQ,alpha,M,beta,-z);
+Cnbe = interp4_easy(givA,givM,givB,givH,CoeffsE.CLNB,alpha,M,beta,-z);
+Cnre = interp4_easy(givA,givM,givB,givH,CoeffsE.CLNR,alpha,M,beta,-z);
+Cnpe = interp4_easy(givA,givM,givB,givH,CoeffsE.CLNP,alpha,M,beta,-z);
+CDe = interp4_easy(givA,givM,givB,givH,CoeffsE.CD,alpha,M,beta,-z);
+XCPe = interp4_easy(givA,givM,givB,givH,CoeffsE.X_C_P,alpha,M,beta,-z);
+
+%% LINEAR INTERPOLATION BETWEEN THE TWO CONDITIONS
+% Computing the value of the aerodynamics coefficients at a certain time              
+% Needed only for t<tb because for t>=tb the condition is the empty one
+
+if t < tb
     CA = t/tb*(CAe-CAf)+CAf;
-    CYB= t/tb*(CYBe-CYBf)+CYBf;
-    CNA= t/tb*(CNAe-CNAf)+CNAf;
+    CYB = t/tb*(CYBe-CYBf)+CYBf;
+    CNA = t/tb*(CNAe-CNAf)+CNAf;
     Cl = t/tb*(Cle-Clf)+Clf;
-    Clp= t/tb*(Clpe-Clpf)+Clpf;
-    Cma= t/tb*(Cmae-Cmaf)+Cmaf;
-    Cmad=t/tb*(Cmade-Cmadf)+Cmadf;
-    Cmq= t/tb*(Cmqe-Cmqf)+Cmqf;
-    Cnb= t/tb*(Cnbe-Cnbf)+Cnbf;
-    Cnr= t/tb*(Cnre-Cnrf)+Cnrf;
-    Cnp= t/tb*(Cnpe-Cnpf)+Cnpf;
-    %
-    Clr= t/tb*(Clre-Clrf)+Clrf;
-    Clb= t/tb*(Clbe-Clbf)+Clbf;
-    CD= t/tb*(CDe-CDf)+CDf;
-    XCP(contatore)= t/tb*(XCPe-XCPf)+XCPf;
+    Clp = t/tb*(Clpe-Clpf)+Clpf;
+    Cma = t/tb*(Cmae-Cmaf)+Cmaf;
+    Cmad = t/tb*(Cmade-Cmadf)+Cmadf;
+    Cmq = t/tb*(Cmqe-Cmqf)+Cmqf;
+    Cnb = t/tb*(Cnbe-Cnbf)+Cnbf;
+    Cnr = t/tb*(Cnre-Cnrf)+Cnrf;
+    Cnp = t/tb*(Cnpe-Cnpf)+Cnpf;
+CD = t/tb*(CDe-CDf)+CDf;
+XCP_value = t/tb*(XCPe-XCPf)+XCPf;
 else
     CA = CAe;
-    CYB= CYBe;
-    CNA= CNAe;
+    CYB = CYBe;
+    CNA = CNAe;
     Cl = Cle;
-    Clp= Clpe;
-    Cma= Cmae;
-    Cmad=Cmade;
-    Cmq= Cmqe;
-    Cnb= Cnbe;
-    Cnr= Cnre;
-    Cnp= Cnpe;
-    %
-    Clr= Clre;
-    Clb= Clbe;
-    CD = CDe;
-    XCP(contatore) = XCPe;
+    Clp = Clpe;
+    Cma = Cmae;
+    Cmad =Cmade;
+    Cmq = Cmqe;
+    Cnb = Cnbe;
+    Cnr = Cnre;
+    Cnp = Cnpe;
+CD = CDe;
+XCP_value = XCPe;
 end
 
 
-global CA_plot % coefficiente aerodinamico
-if bool == 1
-    CA_plot(contatore) = CD; % Axial force coeff
-end
+%% FORCES
+% first computed in the body-frame reference system
 
+qdyn = 0.5*rho*V_norm^2;        %[Pa] dynamics pressure
+qdynL_V = 0.5*rho*V_norm*S*C;   % 
 
-%Center of Mass
+X = qdyn*S*CA;                  %[N] x-body component of the aerodynamics force
+Y = qdyn*S*CYB*beta;            %[N] y-body component of the aerodynamics force
+Z = qdyn*S*CNA*alpha;           %[N] z-body component of the aerodynamics force
+Fg = quatrotate(Q,[0 0 m*g])';  %[N] force due to the gravity
 
+F = Fg +[-X+T,+Y,-Z]';          %[N] total forces vector
 
+%% STATE DERIVATIVES
 
-%Body Frame
-
-qdynS=0.5*rho*V_norm^2*S;
-qdynL_V = 0.5*rho*V_norm*S*C;
-
-X=qdynS*CA;
-Y=qdynS*CYB*beta;
-Z=qdynS*CNA*alpha;
-
-global Drag_plot
-if bool == 1
-    Drag_plot(contatore) = qdynS*CD;
-end
-
-
-%Forces
-F = quatrotate(Q,[0 0 m*g])';
-
-F = F +[-X+T,+Y,-Z]';
-
-global Forces_plot
-if bool == 1
-    Forces_plot(contatore) = F(1);
-end
-
-
-du=F(1)/m -q*w + r*v;% - mdot/m*u;
-dv=F(2)/m -r*u + p*w;% - mdot/m*v;
-dw=F(3)/m -p*v + q*u;% - mdot/m*w;
-
-
-
+% velocity
+du = F(1)/m-q*w+r*v;
+dv = F(2)/m-r*u+p*w;
+dw = F(3)/m-p*v+q*u;
 
 % Rotation
-dp=(Iyy-Izz)/Ixx*q*r + qdynL_V/Ixx*(V_norm*Cl+Clp*p*C/2)-Ixxdot*p/Ixx;
-dq=(Izz-Ixx)/Iyy*p*r + qdynL_V/Iyy*(V_norm*Cma*alpha + (Cmad+Cmq)*q*C/2)...
+dp = (Iyy-Izz)/Ixx*q*r + qdynL_V/Ixx*(V_norm*Cl+Clp*p*C/2)-Ixxdot*p/Ixx;
+dq = (Izz-Ixx)/Iyy*p*r + qdynL_V/Iyy*(V_norm*Cma*alpha + (Cmad+Cmq)*q*C/2)...
     -Iyydot*q/Iyy;
-dr=(Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r+Cnp*p)*C/2)...
+dr = (Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r+Cnp*p)*C/2)...
     -Izzdot*r/Izz;
+Xb = quatrotate(Q,[x y z]);     % Launch Pad-relative coordinates
 
-
-% dp=(Iyy-Izz)/Ixx*q*r + qdynL_V/Ixx*(V_norm*(Cl+Clb*beta)+(Clp*p+Clr*r)*C/2)...
-%     -Ixxdot*p/Ixx;
-% dq=(Izz-Ixx)/Iyy*p*r + qdynL_V/Iyy*(V_norm*Cma*alpha + (Cmad+Cmq)*q*C/2)...
-%     -Iyydot*q/Iyy;
-% dr=(Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r+Cnp*p)*C/2)...
-%     -Izzdot*r/Izz;
-
-
-
-% Launch Pad-relative coordinates
-Xb = quatrotate(Q,[x y z]);
-
-%
-
-%On Launch Pad No Torque
- if Xb(1) < settings.lrampa
+if Xb(1) < settings.lrampa      % No torque on the Launch
     dp = 0;
     dq = 0;
     dr = 0;
-
-    %Ground Reaction.
-    if T < m*g
-        du = 0;
-        dv = 0;
-        dw = 0;
-
-    end
+    
+    if T < m*g                 % No velocity untill T = Fg
+    du = 0;
+    dv = 0;
+    dw = 0;
+    
+   end
 end
 
+% Quaternion
+OM = 1/2* [ 0 -p -q -r  ;
+            p  0  r -q  ;
+            q -r  0  p  ;
+            r  q -p  0 ];
 
+dQQ = OM*Q'; 
 
-
-
-
-
-OM = 1/2*[
-   0 -p -q -r
-   p 0 r -q
-   q -r 0 p
-   r q -p 0];
-
-
-dQQ = OM*Q';
+%% FINAL DERIVATIVE STATE ASSEMBLING
 
 dY(1:3) = Vels;
 dY(4) = du;
@@ -448,10 +328,56 @@ dY(14) = mdot;
 dY(15) = Ixxdot;
 dY(16) = Iyydot;
 dY(17) = Izzdot;
-dY=dY';
+dY = dY';
 
-if bool == 1
+
+%% PERSISTENT VARIABLES
+
+persistent XCP contatore t_plot ...
+    T_plot M_plot CA_plot alpha_plot beta_plot Drag_plot Forces_plot
+
+
+%% SAVING THE QUANTITIES FOR THE PLOTS
+
+if settings.ascend_plot
+    
+    if isempty (contatore)
+        contatore = 1;
+        t_plot(contatore) = 0;
+        T_plot(contatore) = 0;
+        CA_plot(contatore) = 0;
+        Drag_plot(contatore) = 0;
+        Forces_plot(contatore) = 0;
+        M_plot(contatore) = 0;
+        XCP(contatore) = 0;
+        alpha_plot(contatore) = 0;
+        beta_plot(contatore) = 0;
+    end
+    t_plot(contatore) = t;
+    beta_plot(contatore) = beta_value;
+    alpha_plot(contatore) = alpha_value;
+    XCP(contatore) = XCP_value;
+    M_plot(contatore) = M_value;
+    T_plot(contatore) = T_value;
+    CA_plot(contatore) = CD;
+    Drag_plot(contatore) = qdyn*S*CD;
+    Forces_plot(contatore) = F(1);
     contatore = contatore + 1;
-end
 
+    if Vels(3) <= 0 && t > tb
+        
+        ascend.XCP = XCP;
+        ascend.t = t_plot;
+        ascend.T = T_plot;
+        ascend.M = M_plot;
+        ascend.CA = CA_plot;
+        ascend.alpha = alpha_plot;
+        ascend.beta = beta_plot;
+        ascend.Drag = Drag_plot;
+        ascend.Forces = Forces_plot;
+        
+        
+        
+        save ('ascend_plot.mat', 'ascend')
+    end
 end

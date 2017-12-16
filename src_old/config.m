@@ -1,0 +1,262 @@
+%CONFIG SCRIPT - This script sets up all the parameters for the simulation (H1 line)
+% All the parameters are stored in the "settings" structure.
+%
+
+% TODO: GUI to fill automatically this configuration script
+
+% Author: Ruben Di Battista
+% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+% email: ruben.dibattista@skywarder.eu
+% Website: http://www.skywarder.eu
+% License: 2-clause BSD
+
+% Author: Francesco Colombi
+% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+% email: francesco.colombi@skywarder.eu
+% Release date: 16/04/2016
+
+% clear all
+% close all
+% clc
+
+%% LAUNCH SETUP
+
+% rocket name
+settings.rocket_name = 'R2A';
+
+% launchpad 6
+settings.z0 = 5;       %[m] Launchpad Altitude
+settings.lrampa = 6.5; %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+
+
+% starting altitude 
+settings.OMEGA = 80*pi/180;    %[rad] Elevation Angle, user input in degrees (ex. 80)
+settings.PHI = 90*pi/180;      %[rad] Azimuth Angle from North Direction, user input in degrees (ex. 90)
+
+%% ENGINE DETAILS 
+
+% % Thrust on time profile (IV Order Interpolation)
+% settings.T_coeffs = [8034.5, 0, 0, 0, 0]; % constant thrust
+% data from the motor details sheet (experimental plot of the Thrust)
+
+% SYNTAX:
+% engine = 1 -> Cesaroni PRO 150 White Thunder
+% engine = 2 -> Cesaroni PRO 150 SkidMark
+% engine = 3 -> Cesaroni PRO 150 BlueStreak
+engine = 3;
+switch engine
+    case 1
+        % Cesaroni PRO 150 White Thunder
+        % Sampling for thrust interpolation
+        settings.motor.exp_time = [0 0.05 0.15 0.5 0.6 0.74 0.85 1.15 1.7 2.4 3 ...
+            4 4.5 4.8 4.9 5 5.05 5.1 5.15 5.2]; %s
+        settings.motor.exp_thrust = [8605.1 8900 7900 8400 8400 8250 8200 8300 ...
+            8400 8400 8200 7800 7600 7450 7350 7300 4500 500 100 0]; %N
+
+        settings.m0 = 67.761;                    %kg    Overall Mass (Burnout + Propellant)
+        settings.ms = 43.961;                    %kg    Structural Mass (Burnout - Nosecone)
+        settings.mp = 18.6;                      %kg    Propellant Mass
+        settings.tb = 5.12;                      %sec   Burning Time
+        settings.mfr = settings.mp/settings.tb;  %kg/s  Mass Flow Rate
+    case 2
+        % Cesaroni PRO 150 SkidMark
+        % Sampling for thrust interpolation
+        settings.motor.exp_time = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.8 1.2 1.8 3.2 ...
+            3.6 4.8 6 7 7.2 7.6 7.8 7.9 8 8.1 8.19]; %s
+        settings.motor.exp_thrust = [0 3400 3100 3000 3300 3400 3500 3700 3700 ...
+            3800 4000 4081.6 3900 3800 3700 3500 3350 3200 3000 2000 750 0]; %N
+
+        settings.m0 = 64.9;                     %kg    Overall Mass 
+        settings.ms = 46.8;                     %kg    Structural Mass (Burnout)
+        settings.mp = settings.m0-settings.ms;  %kg    Propellant Mass
+        settings.tb = 8.19;                     %sec   Burning Time
+        settings.mfr = settings.mp/settings.tb; %kg/s  Mass Flow Rate
+    case 3
+        % Cesaroni PRO 150 BlueStreak
+        % Sampling for thrust interpolation
+        settings.motor.exp_time =   [0 0.06 0.1 0.15 0.25 0.45 0.8  1     2    3 ...
+            4     5   6   6.8  7.05 7.3 7.6 7.8]; %s
+        settings.motor.exp_thrust = [0 800 4000 5500 5160 5130 5400 5300 5450 5347 ...
+            5160 4950 4700 4400 4400 3800 300 0]; %N
+
+        settings.m0 = 66.2;                      %kg   Overall Mass 
+        settings.ms = 47.3;                      %kg   Structural Mass (Burnout)
+        settings.mp = settings.m0-settings.ms;   %kg   Propellant Mass
+        settings.tb = 7.60;                      %sec  Burning Time
+        settings.mfr = settings.mp/settings.tb;  %kg/s Mass Flow Rate
+    otherwise
+end
+
+
+% GEOMETRY DETAILS %
+% This parameters should be the same parameters set up in MISSILE DATCOM
+% simulation.
+
+settings.C = 0.174;     %m      Caliber (Fuselage Diameter)
+settings.S = 0.02378;   %m2     Cross-sectional Surface
+L = 4.4;              %m        Rocket length
+
+% MASS GEOMERTY DETAILS %
+% x-axis: along the fuselage
+% y-axis: right wing
+% z-axis: downward
+
+% % Note: inerzias are used in "apogee_reached.m"
+% % HP: rocket inertias = full finite cilinder inertias
+% settings.Ixxf=settings.m0*(settings.C/2)^2/2; %Inertia to x-axis (Full)
+% settings.Ixxe=settings.ms*(settings.C/2)^2/2; %Inertia to x-axis (Empty)
+% settings.Iyyf=settings.m0.*((settings.C/2)^2/4 + L^2/3); %Inertia to y-axis (Full)
+% settings.Iyye=settings.ms.*((settings.C/2)^2/4 + L^2/3); %Inertia to y-axis (Empty)
+% settings.Izzf=settings.Iyyf; %Inertia to z-axis (Full)
+% settings.Izze=settings.Iyye; %Inertia to z-axis (Empty)
+
+
+% inertias first approximation
+settings.Ixxf = 0.27;  %kg*m2 Inertia to x-axis (Full)
+settings.Ixxe = 0.21;  %kg*m2 Inertia to x-axis (Empty)
+settings.Iyyf = 86.02; %kg*m2 Inertia to y-axis (Full)
+settings.Iyye = 66.84; %kg*m2 Inertia to y-axis (Empty)
+settings.Izzf = 86.02; %kg*m2 Inertia to z-axis (Full)
+settings.Izze = 66.84; %kg*m2 Inertia to z-axis (Empty)
+
+% AERODYNAMICS DETAILS %
+% This coefficients are intended to be obtained through MISSILE DATCOM
+% (than parsed with the tool datcom_parser.py)
+% The files are stored in the ../data folder with a naming convention of
+% rocket_name_full.mat | rocket_name_empty.mat
+% e.g. R1X_full.mat etc..
+
+%Relative Path of the data files (default: ../data/). Remember the trailing
+% slash!!
+
+DATA_PATH = '../data/';
+filename = strcat(DATA_PATH, settings.rocket_name);
+
+%Coefficients in full configuration (with all the propellant embarqued)
+filename_full = strcat(filename,'_full.mat');
+CoeffsF = load(filename_full,'Coeffs');
+settings.CoeffsF = CoeffsF.Coeffs;
+clear('CoeffsF');
+
+%Coefficients in empty configuration (all the propellant consumed)
+filename_empty = strcat(filename,'_empty.mat');
+CoeffsE = load(filename_empty,'Coeffs');
+settings.CoeffsE = CoeffsE.Coeffs;
+clear('CoeffsE');
+
+%Note: All the parameters (AoA,Betas,Altitudes,Machs) must be the same for
+%empty and full configuration
+s = load(filename_full,'State');
+settings.Alphas = s.State.Alphas';
+settings.Betas = s.State.Betas';
+settings.Altitudes = s.State.Altitudes';
+settings.Machs = s.State.Machs';
+clear('s');
+
+
+%PARACHUTES DETAILS %
+%%% DROGUE 1 %%%
+settings.para1.S = 1.55;            %m2   Surface
+settings.para1.mass = 0.577;        %kg   Parachute Mass
+settings.para1.CD = 0.8;            %Parachute Drag Coefficient
+settings.para1.CL = 0;              %Parachute Lift Coefficient
+
+%Altitude of Drogue 2 Opening
+settings.zdrg2 = 5000;
+
+%%% DROGUE 2 %%%
+settings.para2.S = 17.5;            %m2   Surface
+settings.para2.mass = 1.140;        %kg   Parachute Mass
+settings.para2.CD = 0.59;           %Parachute Drag Coefficient
+settings.para2.CL = 0;              %Parachute Lift Coefficient
+
+%Altitude of Main Parachute Opening
+settings.zmain = 2000;
+
+%%% MAIN - ROGALLO %%%
+%The drogue parachute effects are neglected
+
+settings.para3.S = 15;              %m2   Surface
+settings.para3.mass = 1.466;        %kg   Parachute Mass
+settings.para3.CD = 0.4;            %Parachute Drag Coeff
+settings.para3.CL = 0.8;            %Parachute Lift Coefficient
+
+% INTEGRATION OPTIONS %
+settings.ode.timeasc = 0:0.01:2000;  %sec   %Time span for ascend
+settings.ode.timedrg1 = 0:0.01:2000; %sec   %Time span for drogue 1
+settings.ode.timedrg2 = 0:0.01:2000; %sec   %Time span for drogue 2
+settings.ode.timemain = 0:0.01:2000; %sec   %Time span for main (rogallo)
+settings.ode.timedesc = 0:0.01:2000; %sec   %Time span for ballistic descent
+
+settings.ode.optionsasc = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+    'Events',@apogee,'InitialStep',1); %ODE options for ascend
+
+settings.ode.optionsdrg1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+    'Events',@drg2_opening); %ODE options for drogue
+
+settings.ode.optionsdrg2 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+    'Events',@main_opening); %ODE options for drogue
+
+settings.ode.optionsmain = odeset('AbsTol',1E-3,'RelTol',1E-12,...
+    'Events',@crash);        %ODE options for ascend
+
+settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
+    'Events',@crash);        %ODE options for ballistic descent
+
+
+% WIND DETAILS %
+
+%Wind calculator model
+settings.wind.model = false;
+%true for hwsm wind model
+%false for constant wind model
+
+% Wind is randomly generated. Setting the same values for min and max will
+% fix the parameters of the wind.
+
+settings.wind.MagMin = 3;                    %Minimum Magnitude
+settings.wind.MagMax = 3;                    %Maximum Magnitude
+settings.wind.ElMin = 0*pi/180;              %Minimum Elevation
+settings.wind.ElMax = 0*pi/180;              %Maximum Elevation (Max == 90 Deg)
+settings.wind.AzMin = (90)*pi/180;  %Minimum Azimuth
+settings.wind.AzMax = (90)*pi/180;  %Maximum Azimuth
+
+% NOTE: wind aziumt angle indications (wind directed towards):
+% 0 deg (use 360 instead of 0)  -> North
+% 90 deg -> East
+% 180 deg -> South
+% 270 deg -> West
+
+% Settings for the Wind Model
+settings.wind.Lat = 39.552709;      %Latitude of launching site
+settings.wind.Long = 9.652400;      %Longitude of launching site
+settings.wind.Day = 290;            %Day of the launch
+settings.wind.Seconds = 13*60*60;   %Second of the day (UTM)
+
+% settings.wind.ww = vert_windgen(settings.wind.MagMin,settings.wind.MagMax);
+%Vertical wind speed
+settings.wind.ww = 0; % no vertical wind
+
+% BALLISTIC SIMULATION
+settings.ballistic = true;     % Set to True to run a standard ballistic simulation
+
+% LAST DROGUE FAILURE SIMULATION
+% simulation in which rogallo wing does not open, therefore landing is
+% achieved thanks to the 2nd parachute
+settings.ldf = false;
+
+% APOGEE ONLY
+% simulation stopped when reaching the apogee, therefore there is no
+% descend phase. Only available for stochastic runs
+settings.ao = false;
+
+% STOCHASTIC DETAILS %
+%If N>1 the stochastic routine is fired (different standard plots)
+settings.stoch.N = 1;            % Number of iterations
+settings.stoch.parallel = false; % Using parallel or not parallel
+
+% PLOT DETAILS %
+settings.plot = true;         % Set to True to Plot with default plots
+settings.tSteps = 250;         % Set the number of time steps to visualize
+settings.DefaultFontSize = 10; % Default font size for plot
+settings.DefaultLineWidth = 1; % Default Line Width for plot

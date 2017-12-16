@@ -94,7 +94,7 @@ T = 0;                       % Thrust
 if -z<0     % z is directed as the gravity vector
     z = 0;
 end
-[~, a, ~, rho] = atmoscoesa(-z+settings.z0);
+[~, a, ~, rho] = atmosisa(-z+settings.z0);
 M = V_norm/a;
 
 %% AERODYNAMICS ANGLES

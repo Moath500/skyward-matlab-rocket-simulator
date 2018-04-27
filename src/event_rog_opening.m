@@ -1,4 +1,4 @@
-function [value,isterminal,direction] = event_main_opening(t,Y,settings,varargin)
+function [value,isterminal,direction] = event_rog_opening(t,Y,settings,varargin)
 %Event that sets the main parachute opening altitude
 
 
@@ -7,7 +7,7 @@ function [value,isterminal,direction] = event_main_opening(t,Y,settings,varargin
 % email: francesco.colombi@skywarder.eu
 % Release date: 16/04/2016
 
-value = Y(3)+settings.zmain;
+value = Y(3)+settings.zrog;
 isterminal = 1;
 direction = 1;
 

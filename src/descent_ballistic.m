@@ -1,4 +1,4 @@
-function [dY] = ballistic_descent(t,Y,settings,uw,vw,ww)
+function [dY] = descent_ballistic(t,Y,settings,uw,vw,ww)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 )
 %
@@ -40,10 +40,10 @@ function [dY] = ballistic_descent(t,Y,settings,uw,vw,ww)
   q1 = Y(11);
   q2 = Y(12);
   q3 = Y(13);
-  m = Y(14);
-  Ixx = Y(15);
-  Iyy = Y(16);
-  Izz = Y(17);
+  m = settings.m0;
+  Ixx = settings.Ixxe;
+  Iyy = settings.Iyye;
+  Izz = settings.Izze;
 
 
 Q = [ q0 q1 q2 q3];
@@ -83,10 +83,6 @@ C = settings.C;              % [m]   caliber
 CoeffsE = settings.CoeffsE;  % [/] Empty Rocket Coefficients
 g = 9.80655;                 % [N/kg] module of gravitational field at zero
 
-mdot = 0;                    % Mass flow rate
-Ixxdot = 0;                  % Inertia to x-axis rate
-Iyydot = 0;                  % Inertia to y-axis rate
-Izzdot = 0;                  % Inertia to z-axis rate
 T = 0;                       % Thrust
     
 %% ATMOSPHERE DATA
@@ -186,11 +182,9 @@ dv = F(2)/m-r*u+p*w;
 dw = F(3)/m-p*v+q*u;
 
 % Rotation
-dp = (Iyy-Izz)/Ixx*q*r + qdynL_V/Ixx*(V_norm*Cl+Clp*p*C/2)-Ixxdot*p/Ixx;
-dq = (Izz-Ixx)/Iyy*p*r + qdynL_V/Iyy*(V_norm*Cma*alpha + (Cmad+Cmq)*q*C/2)...
-    -Iyydot*q/Iyy;
-dr = (Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r+Cnp*p)*C/2)...
-    -Izzdot*r/Izz;
+dp = (Iyy-Izz)/Ixx*q*r + qdynL_V/Ixx*(V_norm*Cl+Clp*p*C/2);
+dq = (Izz-Ixx)/Iyy*p*r + qdynL_V/Iyy*(V_norm*Cma*alpha + (Cmad+Cmq)*q*C/2);
+dr = (Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r+Cnp*p)*C/2);
 
 % Quaternion
 OM = 1/2* [ 0 -p -q -r  ;
@@ -210,10 +204,6 @@ dY(7) = dp;
 dY(8) = dq;
 dY(9) = dr;
 dY(10:13) = dQQ;
-dY(14) = mdot;
-dY(15) = Ixxdot;
-dY(16) = Iyydot;
-dY(17) = Izzdot;
 dY=dY';
 
 end

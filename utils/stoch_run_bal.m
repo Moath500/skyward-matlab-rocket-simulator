@@ -1,5 +1,5 @@
-function [LP,Z] = stoch_run_p(settings)
-%STD RUN - This function runs a stochastic simulation (parallel)
+function [LP ,Z] = stoch_run_bal(settings)
+% STOCH RUN BAL - This function runs a stochastic ballistic simulation
 % OUTPUTS
 % LP: Landing Points
 % Z: Apogee Altitudes
@@ -22,16 +22,15 @@ V0 = [0 0 0]';
 W0 = [0 0 0]';
 X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 
-%PreAllocation
+% PreAllocation
 LP = zeros(settings.stoch.N,3);
 Z = zeros(settings.stoch.N,1);
 ApoTime = zeros(settings.stoch.N,1);
 
-%% PARFOR LOOP
-parfor_progress(settings.stoch.N);
-parpool;
 
-parfor i=1:settings.stoch.N
+%% FOR LOOP
+
+for i=1:settings.stoch.N
     
     %% WIND GENERATION
     
@@ -39,59 +38,32 @@ parfor i=1:settings.stoch.N
         settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
         settings.wind.MagMax);
 
-    %% ASCEND
+    %% ASCEND 
 
     [Ta,Ya] = ode45(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
         settings,uw,vw,ww);
 
-    %% DROGUE 1
-    % Initial Condition are the last from ascend (need to rotate because
-    % velocities are outputted in body axes)
-
-    para = 1; % Flag for Drogue 1
-    X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
-    [~,Yd1] = ode45(@descent_parachute,settings.ode.timedrg1,X0d1,...
-        settings.ode.optionsdrg1,settings,uw,vw,ww,para);
-
-    %% DROGUE 2 %% 
-    %Initial Condition are the last from drogue 1 descent
     
-    para = 2; %Flag for Drogue 2
-    X0d2 = Yd1(end,:);
-    [~,Yd2] = ode45(@descent_parachute,settings.ode.timedrg2,X0d2,...
-        settings.ode.optionsdrg2,settings,uw,vw,ww,para);
+    %% DESCEND 
 
-    %% MAIN - ROGALLO WING
-    % Initial Condition are the last from drogue 2 descent
-    
-    if not(settings.ldf)
-    para = 3;              % Flag for Main (Rogall)
-    end
+    [~,Yd] = ode45(@ballistic_descent,settings.ode.timedesc,Ya(end,:),settings.ode.optionsdesc,...
+    settings,uw,vw,ww);
 
-    X0m = Yd2(end,:);
-    [~,Ym] = ode45(@descent_parachute,settings.ode.timemain,X0m,...
-        settings.ode.optionsmain,settings,uw,vw,ww,para);
 
-    %% FINAL STATE ASSEMBLING 
+    %% FINAL STATE ASSEMBLING
 
-    % Total State
-    if settings.ao
-    Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6))];
-    else
-    Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1; Yd2;Ym];
-    end
+    %Total State
+    Yf = [Ya;Yd];
 
     LP(i,:) = Yf(end,1:3);
     Z(i) = -Ya(end,3);
     ApoTime(i) = Ta(end);
 
-    parfor_progress;
 
 end
 
 %% CHECKING BAD SIMULATION
-
-if numel(LP(LP(:,3) < -10,:))
+if numel(LP(LP(:,3)<-10,:))
     fprintf(['Some landing points might be incorrect' ...
         'please check parameters!\n']);
 end
@@ -114,8 +86,11 @@ Zm = mean(Z);
 % Std. Deviation Altitude
 Zstd = std(Z);
 
+% Best Fit Ellipse
+plot(LP(:,1),LP(:,2),'k*');
+
 % Printing to screen
-text =['Mean Landing Point:X:%3.3f m, Y:%3.3f m\n',...
+text = ['Mean Landing Point:X:%3.3f m, Y:%3.3f m\n',...
     'Mean Altitude: %3.3f m || STD: %3.3f m\n',...
     'Mean Apogee Time: %3.3f s || STD: %3.3f s\n'];
 fprintf(text,xm,ym,Zm,Zstd,ApoTimem,ApoTimestd);
@@ -148,15 +123,17 @@ if settings.default_plot == 1
     xlabel('Apogee [m]')
     ylabel('n_i/n_{tot}')
 
+    
 end
-
-delete(gcp);
 
 % Resizing
 h = get(0,'children');
 scrsz = get(0,'ScreenSize');
-for i = 1:length(h)
+for i=1:length(h)
   set(h(i),'OuterPosition',[0 0 scrsz(4) scrsz(4)])
 end
+
+
+
 
 end

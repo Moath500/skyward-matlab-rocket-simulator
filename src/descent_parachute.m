@@ -24,7 +24,7 @@ function [dY] = descent_parachute(t,Y,settings,uw,vw,ww,para)
 %% ADDING WIND (supposed to be added in NED axes);
 
 if settings.wind.model
-    [uw,vw,ww] = wind_matlab_generator(settings,z,t);
+    [uw,vw,ww] = wind_matlab_generator(settings,-z,t);
     wind = [uw,vw,ww];
 
 else

@@ -33,6 +33,7 @@ settings.PHI = 90*pi/180;      %[rad] Azimuth Angle from North Direction, user i
 % engine = 2 -> Cesaroni PRO 150 SkidMark
 % engine = 3 -> Cesaroni PRO 150 BlueStreak
 engine = 3;
+
 switch engine
     case 1
         % Cesaroni PRO 150 White Thunder
@@ -77,7 +78,6 @@ switch engine
         settings.mnc = 6.13;                     % [kg]   Nosecone Mass
         settings.tb = 7.60;                      % [s]    Burning Time
         settings.mfr = settings.mp/settings.tb;  % [kg/s] Mass Flow Rate
-    otherwise
 end
 
 
@@ -156,20 +156,20 @@ settings.para2.CD = 0.59;            % [/] Parachute Drag Coefficient
 settings.para2.CL = 0;               % [/] Parachute Lift Coefficient
 settings.zdrg2 = 5000;               % [m] Altitude of drogue 2 opening
 
-% main - rogallo wing
+% rogallo wing
 % The drogue parachute effects are neglected
 settings.para3.S = 15;               % [m^2]   Surface
 settings.para3.mass = 1.466;         % [kg]   Parachute Mass
 settings.para3.CD = 0.4;             % [/] Parachute Drag Coeff
 settings.para3.CL = 0.8;             % [/] Parachute Lift Coefficient
-settings.zmain = 2000;               % [m] Altitude of Main Parachute Opening
+settings.zrog = 2000;                % [m] Altitude of Rogallo Opening
 
 %% INTEGRATION OPTIONS
 
 settings.ode.timeasc = 0:0.01:2000;  % [s]   Time span for ascend
 settings.ode.timedrg1 = 0:0.01:2000; % [s]   Time span for drogue 1
 settings.ode.timedrg2 = 0:0.01:2000; % [s]   Time span for drogue 2
-settings.ode.timemain = 0:0.01:2000; % [s]   Time span for main (rogallo)
+settings.ode.timerog = 0:0.01:2000; % [s]   Time span for rogallo
 settings.ode.timedesc = 0:0.01:2000; % [s]   Time span for ballistic descent
 
 
@@ -189,9 +189,9 @@ settings.ode.optionsdrg1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_drg2_opening);              %ODE options for drogue
 
 settings.ode.optionsdrg2 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
-    'Events',@event_main_opening);              %ODE options for drogue
+    'Events',@event_rog_opening);              %ODE options for drogue
 
-settings.ode.optionsmain = odeset('AbsTol',1E-3,'RelTol',1E-12,...
+settings.ode.optionsrog = odeset('AbsTol',1E-3,'RelTol',1E-12,...
     'Events',@event_landing);                   %ODE options for descent
 
 settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
@@ -200,9 +200,21 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 
 %% WIND DETAILS
 
-settings.wind.model = true; % Wind calculator model
+
+% Settings for the Wind Model
+
+settings.wind.model = true;
 % set to true for hwsm wind model
-% set to false for constant wind model
+% set to false for random wind model
+
+settings.wind.Lat = 39.552709;               % [deg] Latitude of launching site
+settings.wind.Long = 9.652400;               % [deg] Longitude of launching site
+settings.wind.Day = 290;                     % [/] Day of the launch
+settings.wind.Seconds = 13*60*60;            % [/] Second of the day (UTM)
+settings.wind.ww = 0;                        % [m/s] Vertical wind speed
+
+
+% Random wind model
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
@@ -219,16 +231,15 @@ settings.wind.AzMax = (90)*pi/180;           % [rad] Maximum Azimuth, user input
 % 180 deg                       -> South
 % 270 deg                       -> West
 
-% Settings for the Wind Model
-settings.wind.Lat = 39.552709;               % [deg] Latitude of launching site
-settings.wind.Long = 9.652400;               % [deg] Longitude of launching site
-settings.wind.Day = 290;                     % [/] Day of the launch
-settings.wind.Seconds = 13*60*60;            % [/] Second of the day (UTM)
-settings.wind.ww = 0;                        % [m/s] Vertical wind speed
-
 %% BALLISTIC SIMULATION
 
-settings.ballistic = true;                  % Set to True to run a standard ballistic (without drogues) simulation
+settings.ballistic = false;                  % Set to True to run a standard ballistic (without drogues) simulation
+
+%% SECOND DROGUE FAILURE
+% simulation in wich second drogue does not open and thus landing is
+% achieved in ballistic (settings.ballistic must be true)
+
+settings.sdf = false;
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is
@@ -238,24 +249,18 @@ settings.ldf = false;
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee and thus there is no
-% descend phase.   Only available for stochastic runs!!!
+% descend phase.   Only available for standard stochastic runs!!!
 
 settings.ao = false;
 
 %% STOCHASTIC DETAILS
-% If N > 1 the stochastic routine is started (different standard plots)
+% If N > 1 the stochastic routine is started
 
-settings.stoch.N = 50;             % Number of cases
-settings.stoch.parallel = true;   % Using parallel or not parallel tool
+settings.stoch.N = 1;             % Number of cases
 
 %% PLOT DETAILS
 
-settings.ascend_plot = true;      % Set to True to Plot with 'trend' plots (ascendplot.m)
-settings.standard_plot = true;    % Set to True to Plot with standard plots (standard_plot.m)
-settings.default_plot = true;    % Set to True to Plot with default plots (check the chosen simulation function, ex. std_run.m)
-settings.tSteps = 250;            % Set the number of time steps to visualize
-settings.DefaultFontSize = 10;    % Default font size for plot
-settings.DefaultLineWidth = 1;    % Default Line Width for plot
+settings.plots = true;  
 
 %% CLEARING VARIABLES NOT NEEDED
 

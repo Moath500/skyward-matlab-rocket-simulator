@@ -339,7 +339,7 @@ persistent XCP contatore t_plot ...
 
 %% SAVING THE QUANTITIES FOR THE PLOTS
 
-if settings.ascend_plot
+if settings.plots
     
     if isempty (contatore)
         contatore = 1;
@@ -377,7 +377,8 @@ if settings.ascend_plot
         ascend.Forces = Forces_plot;
         
         
-        
-        save ('ascend_plot.mat', 'ascend')
+        if settings.stoch.N >1
+            save ('ascend_plot.mat', 'ascend')
+        end
     end
 end

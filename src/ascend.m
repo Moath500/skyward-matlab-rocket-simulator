@@ -377,7 +377,7 @@ if settings.plots
         ascend.Forces = Forces_plot;
         
         
-        if settings.stoch.N >1
+        if settings.stoch.N == 1
             save ('ascend_plot.mat', 'ascend')
         end
     end

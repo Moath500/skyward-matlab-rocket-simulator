@@ -18,8 +18,8 @@
 settings.rocket_name = 'R2A';
 
 % launchpad 6
-settings.z0 = 5;       %[m] Launchpad Altitude
-settings.lrampa = 6.5; %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+settings.z0 = 5;                %[m] Launchpad Altitude
+settings.lrampa = 4.5;          %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
 
 
 % starting altitude
@@ -58,11 +58,11 @@ switch engine
         settings.motor.exp_thrust = [0 3400 3100 3000 3300 3400 3500 3700 3700 ...
             3800 4000 4081.6 3900 3800 3700 3500 3350 3200 3000 2000 750 0]; % [N]
         
-        settings.m0 = 64.9;                     % [kg]    Overall Mass
-        settings.ms = 46.8;                     % [kg]    Structural Mass (Burnout)
-        settings.mp = settings.m0-settings.ms;  % [kg]    Propellant Mass
-        settings.tb = 8.19;                     % [s]     Burning Time
-        settings.mfr = settings.mp/settings.tb; % [kg/s]  Mass Flow Rate
+        settings.m0 = 64.9;                       % [kg]    Overall Mass
+        settings.ms = 46.8;                       % [kg]    Structural Mass (Burnout)
+        settings.mp = settings.m0-settings.ms;    % [kg]    Propellant Mass
+        settings.tb = 8.19;                       % [s]     Burning Time
+        settings.mfr = settings.mp/settings.tb;   % [kg/s]  Mass Flow Rate
     case 3
         % Cesaroni PRO 150 BlueStreak
         % Sampling for thrust interpolation
@@ -72,12 +72,12 @@ switch engine
         settings.motor.exp_thrust = [0 800 4000 5500 5160 5130 5400 5300 5450 5347 ...
             5160 4950 4700 4400 4400 3800 300 0]; % [N]
         
-        settings.m0 = 66.2;                      % [kg]   Overall Mass
-        settings.ms = 47.3;                      % [kg]   Structural Mass (Burnout)
-        settings.mp = settings.m0-settings.ms;   % [kg]   Propellant Mass
-        settings.mnc = 6.13;                     % [kg]   Nosecone Mass
-        settings.tb = 7.60;                      % [s]    Burning Time
-        settings.mfr = settings.mp/settings.tb;  % [kg/s] Mass Flow Rate
+        settings.m0 = 66.2;                       % [kg]   Overall Mass
+        settings.ms = 47.3;                       % [kg]   Structural Mass (Burnout)
+        settings.mp = settings.m0-settings.ms;    % [kg]   Propellant Mass
+        settings.mnc = 6.13;                      % [kg]   Nosecone Mass
+        settings.tb = 7.60;                       % [s]    Burning Time
+        settings.mfr = settings.mp/settings.tb;   % [kg/s] Mass Flow Rate
 end
 
 
@@ -85,9 +85,9 @@ end
 % This parameters should be the same parameters set up in MISSILE DATCOM
 % simulation.
 
-settings.C = 0.174;     % [m]      Caliber (Fuselage Diameter)
-settings.S = 0.02378;   % [m^2]    Cross-sectional Surface
-L = 4.4;                % [m]      Rocket length
+settings.C = 0.174;         % [m]      Caliber (Fuselage Diameter)
+settings.S = 0.02378;       % [m^2]    Cross-sectional Surface
+L = 4.41319;                % [m]      Rocket length
 
 %% MASS GEOMERTY DETAILS
 % x-axis: along the fuselage
@@ -95,14 +95,14 @@ L = 4.4;                % [m]      Rocket length
 % z-axis: downward
 
 % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-settings.Ixxf = 0.27;   % [kg*m^2] Inertia to x-axis
-settings.Iyyf = 86.02;  % [kg*m^2] Inertia to y-axis
-settings.Izzf = 86.02;  % [kg*m^2] Inertia to z-axis
+settings.Ixxf = 0.27;       % [kg*m^2] Inertia to x-axis
+settings.Iyyf = 84.73;      % [kg*m^2] Inertia to y-axis
+settings.Izzf = 84.73;      % [kg*m^2] Inertia to z-axis
 
 % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-settings.Ixxe = 0.21;   % [kg*m^2] Inertia to x-axis
-settings.Iyye = 66.84;  % [kg*m^2] Inertia to y-axis
-settings.Izze = 66.84;  % [kg*m^2] Inertia to z-axis
+settings.Ixxe = 0.21;       % [kg*m^2] Inertia to x-axis
+settings.Iyye = 65.80;      % [kg*m^2] Inertia to y-axis
+settings.Izze = 65.80;      % [kg*m^2] Inertia to z-axis
 
 %% AERODYNAMICS DETAILS
 % These coefficients are obtained using MISSILE DATCOM
@@ -115,7 +115,7 @@ settings.Izze = 66.84;  % [kg*m^2] Inertia to z-axis
 % Coeffs is a 4D matrix given by Datcom that contains the aerodynamics
 % coefficient computed for the input parameters (AoA,Betas,Altitudes,Machs)
 % Note: All the parameters (AoA,Betas,Altitudes,Machs) must be the same for
-%empty and full configuration
+% empty and full configuration
 
 DATA_PATH = '../data/';
 filename = strcat(DATA_PATH, settings.rocket_name);
@@ -169,7 +169,7 @@ settings.zrog = 2000;                % [m] Altitude of Rogallo Opening
 settings.ode.timeasc = 0:0.01:2000;  % [s]   Time span for ascend
 settings.ode.timedrg1 = 0:0.01:2000; % [s]   Time span for drogue 1
 settings.ode.timedrg2 = 0:0.01:2000; % [s]   Time span for drogue 2
-settings.ode.timerog = 0:0.01:2000; % [s]   Time span for rogallo
+settings.ode.timerog = 0:0.01:2000;  % [s]   Time span for rogallo
 settings.ode.timedesc = 0:0.01:2000; % [s]   Time span for ballistic descent
 
 
@@ -219,7 +219,7 @@ settings.wind.ww = 0;                        % [m/s] Vertical wind speed
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 3;                    % [m/s] Minimum Magnitude
-settings.wind.MagMax = 3;                    % [m/s] Maximum Magnitude
+settings.wind.MagMax = 6;                    % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;              % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (90)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)

@@ -1,4 +1,4 @@
-function [uw,vw,ww] = wind_generator(settings,z,t,Q)
+function [uw,vw,ww] = wind_matlab_generator(settings,z,t,Q)
 % wind_generator( settings,z,t,Q )
 % Function that generates wind components in body reference frame
 % Based on hwm07 model

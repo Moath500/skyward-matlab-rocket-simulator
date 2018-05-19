@@ -45,7 +45,7 @@ parfor i = 1:settings.stoch.N
 
     %% ASCEND
 
-    [Ta,Ya] = ode45(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
+    [Ta,Ya] = ode113(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
         settings,uw,vw,ww);
 
     %% DROGUE 1
@@ -54,7 +54,7 @@ parfor i = 1:settings.stoch.N
 
     para = 1; % Flag for Drogue 1
     X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
-    [~,Yd1] = ode45(@descent_parachute,settings.ode.timedrg1,X0d1,...
+    [~,Yd1] = ode113(@descent_parachute,settings.ode.timedrg1,X0d1,...
         settings.ode.optionsdrg1,settings,uw,vw,ww,para);
 
     %% DROGUE 2 
@@ -62,7 +62,7 @@ parfor i = 1:settings.stoch.N
     
     para = 2; %Flag for Drogue 2
     X0d2 = Yd1(end,:);
-    [~,Yd2] = ode45(@descent_parachute,settings.ode.timedrg2,X0d2,...
+    [~,Yd2] = ode113(@descent_parachute,settings.ode.timedrg2,X0d2,...
         settings.ode.optionsdrg2,settings,uw,vw,ww,para);
 
     %% ROGALLO WING
@@ -73,7 +73,7 @@ parfor i = 1:settings.stoch.N
     end
 
     X0m = Yd2(end,:);
-    [~,Ym] = ode45(@descent_parachute,settings.ode.timerog,X0m,...
+    [~,Ym] = ode113(@descent_parachute,settings.ode.timerog,X0m,...
         settings.ode.optionsrog,settings,uw,vw,ww,para);
 
     %% FINAL STATE ASSEMBLING 

@@ -156,6 +156,7 @@ if settings.stoch.N == 1
     
     
 %% STOCHASTIC SIMULATIONS (N>1)
+
 else
     
     % CHECKING BAD SIMULATION
@@ -207,5 +208,6 @@ if settings.plots
     run('plots.m')
 end
 
-delete('ascend_plot.mat')
-    
+if settings.stoch.N == 1
+    delete('ascend_plot.mat')
+end

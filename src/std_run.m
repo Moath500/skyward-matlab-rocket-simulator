@@ -41,7 +41,7 @@ end
 
 %% ASCEND
 
-[Ta,Ya] = ode45(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
+[Ta,Ya] = ode113(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
     settings,uw,vw,ww);
 
 %% DROGUE 1
@@ -50,7 +50,7 @@ end
 
 para = 1; % Flag for Drogue 1
 X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
-[Td1,Yd1] = ode45(@descent_parachute,settings.ode.timedrg1,X0d1,...
+[Td1,Yd1] = ode113(@descent_parachute,settings.ode.timedrg1,X0d1,...
     settings.ode.optionsdrg1,settings,uw,vw,ww,para);
 
 %% DROGUE 2
@@ -58,7 +58,7 @@ X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
 
 para = 2; % Flag for Drogue 2
 X0d2 = Yd1(end,:);
-[Td2,Yd2] = ode45(@descent_parachute,settings.ode.timedrg2,X0d2,...
+[Td2,Yd2] = ode113(@descent_parachute,settings.ode.timedrg2,X0d2,...
     settings.ode.optionsdrg2,settings,uw,vw,ww,para);
 
 %% ROGALLO WING
@@ -69,7 +69,7 @@ para = 3;             % Flag for Main (Rogall)
 end
 
 X0m = Yd2(end,:);
-[Trog,Yrog] = ode45(@descent_parachute,settings.ode.timerog,X0m,...
+[Trog,Yrog] = ode113(@descent_parachute,settings.ode.timerog,X0m,...
     settings.ode.optionsrog,settings,uw,vw,ww,para);
 
 

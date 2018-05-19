@@ -1,6 +1,23 @@
-load('ascend_plot.mat')
+% Author: Adriano Filippo Inno
+% Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
+% email: adriano.filippo.inno@skywarder.eu
+% Release date: 13/01/2018
 
 if settings.stoch.N == 1
+    
+%     load('ascend_plot.mat') 
+    
+    %% SORTING VECTOR FOR ASCEND
+    
+    [ascend.t,I] = sort(ascend.t);
+    ascend.T = ascend.T(I);
+    ascend.Drag = ascend.Drag(I);
+    ascend.Forces = ascend.Forces(I);
+    ascend.alpha = ascend.alpha(I);
+    ascend.beta = ascend.beta(I);
+    ascend.CA = ascend.CA(I);
+    ascend.XCP = ascend.XCP(I);
+    
     
     %% ASCEND PLOTS
     

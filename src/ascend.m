@@ -46,6 +46,7 @@ Iyy = Y(16);
 Izz = Y(17);
 
 
+%% QUATERION ATTITUDE
 
 Q = [q0 q1 q2 q3];
 Q_conj = [q0 -q1 -q2 -q3];
@@ -59,13 +60,13 @@ end
 %% ADDING WIND (supposed to be added in NED axes);
 
 if settings.wind.model
-    [uw,vw,ww] = wind_matlab_generator(settings,z,t,Q); 
+    [uw,vw,ww] = wind_matlab_generator(settings,z,t,Q);
     wind = [uw,vw,ww];
-
+    
 else
-
-wind = quatrotate(Q, [uw vw ww]); % constant wind
-
+    
+    wind = quatrotate(Q, [uw vw ww]); % constant wind
+    
 end
 
 % Relative velocities (plus wind);
@@ -77,7 +78,14 @@ wr = w - wind(3);
 Vels = quatrotate(Q_conj,[u v w]);
 V_norm = norm([ur vr wr]);
 
+%% ATMOSPHERE DATA
 
+if -z < 0     % z is directed as the gravity vector
+    z = 0;
+end
+[~, a, ~, rho] = atmosisa(-z+settings.z0);
+M = V_norm/a;
+M_value = M;
 
 %% CONSTANTS
 
@@ -88,6 +96,7 @@ CoeffsF = settings.CoeffsF;  % Full Rocket Coefficients
 g = 9.80655;                 % [N/kg] module of gravitational field at zero
 tb = settings.tb;            % [s]     Burning Time
 mfr = settings.mfr;          % [kg/s]  Mass Flow Rate
+OMEGA = settings.OMEGA;      %[rad] Elevation Angle in the launch pad
 
 % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
 Ixxf = settings.Ixxf;        % [kg*m^2] Inertia to x-axis
@@ -99,6 +108,7 @@ Ixxe = settings.Ixxe;        % [kg*m^2] Inertia to x-axis
 Iyye = settings.Iyye;        % [kg*m^2] Inertia to y-axis
 Izze = settings.Izze;        % [kg*m^2] Inertia to z-axis
 
+
 %% TIME-DEPENDENTS VARIABLES
 
 dI = 1/tb*([Ixxf Iyyf Izzf]'-[Ixxe Iyye Izze]');
@@ -109,7 +119,7 @@ if t<tb
     Iyydot = -dI(2);
     Izzdot = -dI(3);
     T = interp1(settings.motor.exp_time, settings.motor.exp_thrust, t);
-
+    
 else             % for t >= tb the fligth condition is the empty one(no interpolation needed)
     mdot = 0;
     Ixxdot = 0;
@@ -119,17 +129,6 @@ else             % for t >= tb the fligth condition is the empty one(no interpol
 end
 
 T_value = T;
-
-%% ATMOSPHERE DATA
-
-if -z < 0     % z is directed as the gravity vector
-    z = 0;
-end
-[~, a, ~, rho] = atmosisa(-z+settings.z0);
-M = V_norm/a;
-M_value = M;
-
-
 
 %% AERODYNAMICS ANGLES
 
@@ -156,25 +155,25 @@ givM = settings.Machs;
 %% INTERPOLATION AT THE BOUNDARIES
 
 if M > givM(end)
-   
+    
     M = givM(end);
-
+    
 end
 
 if M < givM(1)
-   
+    
     M = givM(1);
-
+    
 end
 
 if alpha > givA(end)
     
     alpha = givA(end);
-
+    
 elseif alpha < givA(1)
-       
-        alpha = givA(1);
-
+    
+    alpha = givA(1);
+    
 end
 
 if beta > givB(end)
@@ -183,7 +182,7 @@ if beta > givB(end)
     
 elseif beta < givB(1)
     
-        beta = givB(1);
+    beta = givB(1);
 end
 
 if -z > givH(end)
@@ -192,12 +191,12 @@ if -z > givH(end)
     
 elseif -z < givH(1)
     
-        z = -givH(1);
-        
+    z = -givH(1);
+    
 end
 
 %% CHOSING THE FULL CONDITION VALUE
-% interpolation of the coefficients with the value in the nearest condition of the Coeffs matrix    
+% interpolation of the coefficients with the value in the nearest condition of the Coeffs matrix
 
 CAf = interp4_easy(givA,givM,givB,givH,CoeffsF.CA,alpha,M,beta,-z);
 CYBf = interp4_easy(givA,givM,givB,givH,CoeffsF.CYB,alpha,M,beta,-z);
@@ -231,7 +230,7 @@ CDe = interp4_easy(givA,givM,givB,givH,CoeffsE.CD,alpha,M,beta,-z);
 XCPe = interp4_easy(givA,givM,givB,givH,CoeffsE.X_C_P,alpha,M,beta,-z);
 
 %% LINEAR INTERPOLATION BETWEEN THE TWO CONDITIONS
-% Computing the value of the aerodynamics coefficients at a certain time              
+% Computing the value of the aerodynamics coefficients at a certain time
 % Needed only for t<tb because for t>=tb the condition is the empty one
 
 if t < tb
@@ -246,8 +245,8 @@ if t < tb
     Cnb = t/tb*(Cnbe-Cnbf)+Cnbf;
     Cnr = t/tb*(Cnre-Cnrf)+Cnrf;
     Cnp = t/tb*(Cnpe-Cnpf)+Cnpf;
-CD = t/tb*(CDe-CDf)+CDf;
-XCP_value = t/tb*(XCPe-XCPf)+XCPf;
+    CD = t/tb*(CDe-CDf)+CDf;
+    XCP_value = t/tb*(XCPe-XCPf)+XCPf;
 else
     CA = CAe;
     CYB = CYBe;
@@ -260,59 +259,70 @@ else
     Cnb = Cnbe;
     Cnr = Cnre;
     Cnp = Cnpe;
-CD = CDe;
-XCP_value = XCPe;
+    CD = CDe;
+    XCP_value = XCPe;
 end
 
-
-%% FORCES
-% first computed in the body-frame reference system
-
-qdyn = 0.5*rho*V_norm^2;        %[Pa] dynamics pressure
-qdynL_V = 0.5*rho*V_norm*S*C;   % 
-
-X = qdyn*S*CA;                  %[N] x-body component of the aerodynamics force
-Y = qdyn*S*CYB*beta;            %[N] y-body component of the aerodynamics force
-Z = qdyn*S*CNA*alpha;           %[N] z-body component of the aerodynamics force
-Fg = quatrotate(Q,[0 0 m*g])';  %[N] force due to the gravity
-
-F = Fg +[-X+T,+Y,-Z]';          %[N] total forces vector
-
-%% STATE DERIVATIVES
-
-% velocity
-du = F(1)/m-q*w+r*v;
-dv = F(2)/m-r*u+p*w;
-dw = F(3)/m-p*v+q*u;
-
-% Rotation
-dp = (Iyy-Izz)/Ixx*q*r + qdynL_V/Ixx*(V_norm*Cl+Clp*p*C/2)-Ixxdot*p/Ixx;
-dq = (Izz-Ixx)/Iyy*p*r + qdynL_V/Iyy*(V_norm*Cma*alpha + (Cmad+Cmq)*q*C/2)...
-    -Iyydot*q/Iyy;
-dr = (Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r+Cnp*p)*C/2)...
-    -Izzdot*r/Izz;
-Xb = quatrotate(Q,[x y z]);     % Launch Pad-relative coordinates
-
-if Xb(1) < settings.lrampa      % No torque on the Launch
+if -z < settings.lrampa*sin(OMEGA)      % No torque on the Launch
+    
+    Fg = m*g*sin(OMEGA);                %[N] force due to the gravity
+    X = 0.5*rho*V_norm^2*S*CA;
+    F = -Fg +T -X;
+    du = F/m;
+    dv = 0;
+    dw = 0;
     dp = 0;
     dq = 0;
     dr = 0;
+    alpha_value = NaN;
+    beta_value = 0;
+    qdyn = NaN;
+    Y = NaN;
+    Z = NaN;
+    XCP_value = 0;
     
-    if T < m*g                 % No velocity untill T = Fg
-    du = 0;
-    dv = 0;
-    dw = 0;
     
-   end
+    if T < Fg                           % No velocity untill T = Fg
+        du = 0;
+    end
+    
+else
+    
+    %% FORCES
+    % first computed in the body-frame reference system
+    
+    qdyn = 0.5*rho*V_norm^2;        %[Pa] dynamics pressure
+    qdynL_V = 0.5*rho*V_norm*S*C;   %
+    
+    X = qdyn*S*CA;                  %[N] x-body component of the aerodynamics force
+    Y = qdyn*S*CYB*beta;            %[N] y-body component of the aerodynamics force
+    Z = qdyn*S*CNA*alpha;           %[N] z-body component of the aerodynamics force
+    Fg = quatrotate(Q,[0 0 m*g])';  %[N] force due to the gravity
+    
+    F = Fg +[-X+T,+Y,-Z]';          %[N] total forces vector
+    
+    %% STATE DERIVATIVES
+    
+    % velocity
+    du = F(1)/m-q*w+r*v;
+    dv = F(2)/m-r*u+p*w;
+    dw = F(3)/m-p*v+q*u;
+    
+    % Rotation
+    dp = (Iyy-Izz)/Ixx*q*r + qdynL_V/Ixx*(V_norm*Cl+Clp*p*C/2)-Ixxdot*p/Ixx;
+    dq = (Izz-Ixx)/Iyy*p*r + qdynL_V/Iyy*(V_norm*Cma*alpha + (Cmad+Cmq)*q*C/2)...
+        -Iyydot*q/Iyy;
+    dr = (Ixx-Iyy)/Izz*p*q + qdynL_V/Izz*(V_norm*Cnb*beta + (Cnr*r+Cnp*p)*C/2)...
+        -Izzdot*r/Izz;
+    
 end
-
 % Quaternion
 OM = 1/2* [ 0 -p -q -r  ;
             p  0  r -q  ;
             q -r  0  p  ;
             r  q -p  0 ];
 
-dQQ = OM*Q'; 
+dQQ = OM*Q';
 
 %% FINAL DERIVATIVE STATE ASSEMBLING
 
@@ -331,10 +341,11 @@ dY(17) = Izzdot;
 dY = dY';
 
 
+
 %% PERSISTENT VARIABLES
 
 persistent XCP contatore t_plot ...
-    T_plot M_plot CA_plot alpha_plot beta_plot Drag_plot Forces_plot
+    T_plot M_plot CA_plot alpha_plot beta_plot Drag_plot Forces_plot F_aero_x F_aero_y F_aero_z
 
 
 %% SAVING THE QUANTITIES FOR THE PLOTS
@@ -352,6 +363,10 @@ if settings.plots
         XCP(contatore) = 0;
         alpha_plot(contatore) = 0;
         beta_plot(contatore) = 0;
+        F_aero_x(contatore) = 0;
+        F_aero_y(contatore) = 0;
+        F_aero_z(contatore) = 0;
+        
     end
     t_plot(contatore) = t;
     beta_plot(contatore) = beta_value;
@@ -362,8 +377,12 @@ if settings.plots
     CA_plot(contatore) = CD;
     Drag_plot(contatore) = qdyn*S*CD;
     Forces_plot(contatore) = F(1);
+    F_aero_x(contatore) = X;
+    F_aero_y(contatore) = Y;
+    F_aero_z(contatore) = Z;
     contatore = contatore + 1;
-
+    
+    
     if Vels(3) <= 0 && t > tb
         
         ascend.XCP = XCP;
@@ -375,10 +394,13 @@ if settings.plots
         ascend.beta = beta_plot;
         ascend.Drag = Drag_plot;
         ascend.Forces = Forces_plot;
-        
+        ascend.Dyn_Forces(1,:) = F_aero_x; 
+        ascend.Dyn_Forces(2,:) = F_aero_y;
+        ascend.Dyn_Forces(3,:) = F_aero_z;
         
         if settings.stoch.N == 1
             save ('ascend_plot.mat', 'ascend')
         end
     end
 end
+

@@ -1,0 +1,197 @@
+1         ***** THE USAF AUTOMATED MISSILE DATCOM * REV 3/99 *****
+               AERODYNAMIC METHODS FOR MISSILE CONFIGURATIONS     
+
+    CONERR - INPUT ERROR CHECKING
+
+    ERROR CODES - N* DENOTES THE NUMBER OF OCCURENCES OF EACH ERROR
+    A - UNKNOWN VARIABLE NAME
+    B - MISSING EQUAL SIGN FOLLOWING VARIABLE NAME
+    C - NON-ARRAY VARIABLE HAS AN ARRAY ELEMENTDESIGNATION - (N)
+    D - NON-ARRAY VARIABLE HAS MULTIPLE VALUES ASSIGNED
+    E - ASSIGNED VALUES EXCEED ARRAY DIMENSION
+    F - SYNTAX ERROR
+
+    ************************* INPUT DATA CARDS *************************
+
+   1  $FLTCON                                                                        
+   2   ALT=13*0.,                                                                    
+   3   BETA=0.05,                                                                    
+   4   NMACH=1.,                                                                     
+   5   MACH=0.4,                                                                     
+   6   NALPHA=6.,                                                                    
+   7   ALPHA=1.3,1.4,1.5,1.6,1.7,1.8,$                                               
+   8  $REFQ                                                                          
+   9   XCG=2.71357,                                                                  
+  10   SREF=0.02378,                                                                 
+  11   LREF=0.174,                                                                   
+  12   LATREF=0.174,$                                                                
+  13  $AXIBOD                                                                        
+  14   TNOSE=KARMAN,                                                                 
+               ** SUBSTITUTING NUMERIC FOR NAME KARMAN
+  15   LNOSE=0.958,                                                                  
+  16   DNOSE=0.174,                                                                  
+  17   LCENTR=3.442,                                                                 
+  18   DCENTR=0.174,                                                                 
+  19   DEXIT=0.161,                                                                  
+  20   BASE=.FALSE.,$                                                                
+  21  $FINSET1                                                                       
+  22   XLE=4.050,                                                                    
+  23   NPANEL=4.0,                                                                   
+  24   PHIF=0.0,90.0,180.0,270.0,                                                    
+  25   LER=2*0.0030,                                                                 
+  26   SWEEP=64.0,                                                                   
+  27   STA=0.0,                                                                      
+  28   SSPAN=0.087,0.207,                                                            
+  29   CHORD=0.250,0.048,                                                            
+  30   SECTYP=HEX,                                                                   
+               ** SUBSTITUTING NUMERIC FOR NAME HEX
+  31   ZUPPER=0.0057,0.0206,                                                         
+  32   LMAXU=0.0857,0.3091,                                                          
+  33   LFLATU=0.8286,0.3818,$                                                        
+  34 DERIV RAD                                                                       
+  35 DIM M                                                                           
+  36 DAMP                                                                            
+  37 SAVE                                                                            
+  38 NEXT CASE                                                                       
+1         ***** THE USAF AUTOMATED MISSILE DATCOM * REV 3/99 *****     CASE   1
+               AERODYNAMIC METHODS FOR MISSILE CONFIGURATIONS          PAGE   1
+    CASE INPUTS
+    FOLLOWING ARE THE CARDS INPUT FOR THIS CASE
+
+  $FLTCON                                                                        
+   ALT=13*0.,                                                                    
+   BETA=0.05,                                                                    
+   NMACH=1.,                                                                     
+   MACH=0.4,                                                                     
+   NALPHA=6.,                                                                    
+   ALPHA=1.3,1.4,1.5,1.6,1.7,1.8,$                                               
+  $REFQ                                                                          
+   XCG=2.71357,                                                                  
+   SREF=0.02378,                                                                 
+   LREF=0.174,                                                                   
+   LATREF=0.174,$                                                                
+  $AXIBOD                                                                        
+   TNOSE=4.,                                                                     
+   LNOSE=0.958,                                                                  
+   DNOSE=0.174,                                                                  
+   LCENTR=3.442,                                                                 
+   DCENTR=0.174,                                                                 
+   DEXIT=0.161,                                                                  
+   BASE=.FALSE.,$                                                                
+  $FINSET1                                                                       
+   XLE=4.050,                                                                    
+   NPANEL=4.0,                                                                   
+   PHIF=0.0,90.0,180.0,270.0,                                                    
+   LER=2*0.0030,                                                                 
+   SWEEP=64.0,                                                                   
+   STA=0.0,                                                                      
+   SSPAN=0.087,0.207,                                                            
+   CHORD=0.250,0.048,                                                            
+   SECTYP=0.,                                                                    
+   ZUPPER=0.0057,0.0206,                                                         
+   LMAXU=0.0857,0.3091,                                                          
+   LFLATU=0.8286,0.3818,$                                                        
+ DERIV RAD                                                                       
+ DIM M                                                                           
+ DAMP                                                                            
+ SAVE                                                                            
+ NEXT CASE                                                                       
+    THE BOUNDARY LAYER IS ASSUMED TO BE TURBULENT
+    THE INPUT UNITS ARE IN METERS, THE SCALE FACTOR IS   1.0000
+1         ***** THE USAF AUTOMATED MISSILE DATCOM * REV 3/99 *****     CASE   1
+               AERODYNAMIC METHODS FOR MISSILE CONFIGURATIONS          PAGE   2
+                   STATIC AERODYNAMICS FOR BODY-FIN SET 1
+
+       ******* FLIGHT CONDITIONS AND REFERENCE QUANTITIES *******
+     MACH NO  =       0.40                REYNOLDS NO = 9.274E+06 /M
+     ALTITUDE =        0.0 M         DYNAMIC PRESSURE =  11348.42 N/M**2
+     SIDESLIP =       0.05 DEG                   ROLL =      0.00 DEG     
+     REF AREA =      0.024 M**2         MOMENT CENTER =     2.714 M
+     REF LENGTH =     0.17 M           LAT REF LENGTH =      0.17 M
+
+                   ----- LONGITUDINAL -----     -- LATERAL DIRECTIONAL --
+         ALPHA       CN        CM        CA        CY       CLN       CLL
+
+          1.30     0.201    -0.694     0.283    -0.008     0.026    -0.000
+          1.40     0.218    -0.750     0.282    -0.008     0.026    -0.000
+          1.50     0.234    -0.806     0.282    -0.008     0.026    -0.000
+          1.60     0.251    -0.863     0.282    -0.008     0.026    -0.000
+          1.70     0.269    -0.920     0.282    -0.008     0.026    -0.000
+          1.80     0.286    -0.978     0.281    -0.008     0.025    -0.000
+
+         ALPHA       CL        CD      CL/CD     X-C.P.
+
+          1.30     0.194     0.287     0.677    -3.456
+          1.40     0.211     0.288     0.732    -3.447
+          1.50     0.227     0.288     0.787    -3.439
+          1.60     0.243     0.289     0.843    -3.431
+          1.70     0.260     0.290     0.899    -3.424
+          1.80     0.277     0.290     0.955    -3.418
+
+    X-C.P. MEAS. FROM MOMENT CENTER IN REF. LENGTHS, NEG. AFT OF MOMENT CENTER
+1         ***** THE USAF AUTOMATED MISSILE DATCOM * REV 3/99 *****     CASE   1
+               AERODYNAMIC METHODS FOR MISSILE CONFIGURATIONS          PAGE   3
+                   STATIC AERODYNAMICS FOR BODY-FIN SET 1
+
+       ******* FLIGHT CONDITIONS AND REFERENCE QUANTITIES *******
+     MACH NO  =       0.40                REYNOLDS NO = 9.274E+06 /M
+     ALTITUDE =        0.0 M         DYNAMIC PRESSURE =  11348.42 N/M**2
+     SIDESLIP =       0.05 DEG                   ROLL =      0.00 DEG     
+     REF AREA =      0.024 M**2         MOMENT CENTER =     2.714 M
+     REF LENGTH =     0.17 M           LAT REF LENGTH =      0.17 M
+
+                   ---------- DERIVATIVES (PER RADIAN) ----------
+         ALPHA       CNA         CMA         CYB         CLNB        CLLB
+          1.30      9.4714    -31.6498     -8.9315     29.9928     -0.0007
+          1.40      9.5869    -31.9857     -8.9539     29.9332     -0.0012
+          1.50      9.7023    -32.3216     -8.9768     29.8718     -0.0017
+          1.60      9.8170    -32.6500     -9.0003     29.8087     -0.0022
+          1.70      9.9300    -32.9644     -9.0242     29.7441     -0.0028
+          1.80     10.0423    -33.2721     -9.0485     29.6781     -0.0035
+
+    PANEL DEFLECTION ANGLES (DEGREES)
+    SET    FIN 1   FIN 2   FIN 3   FIN 4   FIN 5   FIN 6   FIN 7   FIN 8
+      1    0.00    0.00    0.00    0.00
+1         ***** THE USAF AUTOMATED MISSILE DATCOM * REV 3/99 *****     CASE   1
+               AERODYNAMIC METHODS FOR MISSILE CONFIGURATIONS          PAGE   4
+                        BODY + 1 FIN SET DYNAMIC DERIVATIVES
+
+       ******* FLIGHT CONDITIONS AND REFERENCE QUANTITIES *******
+     MACH NO  =       0.40                REYNOLDS NO = 9.274E+06 /M
+     ALTITUDE =        0.0 M         DYNAMIC PRESSURE =  11348.42 N/M**2
+     SIDESLIP =       0.05 DEG                   ROLL =      0.00 DEG     
+     REF AREA =      0.024 M**2         MOMENT CENTER =     2.714 M
+     REF LENGTH =     0.17 M           LAT REF LENGTH =      0.17 M
+
+                    ------------ DYNAMIC DERIVATIVES (PER RADIAN) -----------
+         ALPHA       CNQ        CMQ        CAQ       CNAD       CMAD
+          1.30    155.484  -1214.447    -15.123     47.952    -14.846
+          1.40    155.424  -1213.934    -15.227     47.952    -14.846
+          1.50    155.352  -1213.325    -15.329     47.952    -14.846
+          1.60    155.270  -1212.625    -15.431     47.952    -14.846
+          1.70    155.178  -1211.839    -15.532     47.952    -14.846
+          1.80    155.076  -1210.971    -15.632     47.952    -14.846
+
+    PITCH RATE DERIVATIVES NON-DIMENSIONALIZED BY Q*LREF/2*V
+1         ***** THE USAF AUTOMATED MISSILE DATCOM * REV 3/99 *****     CASE   1
+               AERODYNAMIC METHODS FOR MISSILE CONFIGURATIONS          PAGE   5
+                        BODY + 1 FIN SET DYNAMIC DERIVATIVES
+
+       ******* FLIGHT CONDITIONS AND REFERENCE QUANTITIES *******
+     MACH NO  =       0.40                REYNOLDS NO = 9.274E+06 /M
+     ALTITUDE =        0.0 M         DYNAMIC PRESSURE =  11348.42 N/M**2
+     SIDESLIP =       0.05 DEG                   ROLL =      0.00 DEG     
+     REF AREA =      0.024 M**2         MOMENT CENTER =     2.714 M
+     REF LENGTH =     0.17 M           LAT REF LENGTH =      0.17 M
+
+                    ------------ DYNAMIC DERIVATIVES (PER RADIAN) -----------
+         ALPHA       CYR       CLNR       CLLR        CYP       CLNP       CLLP
+          1.30    157.530  -1214.396     -0.095     -0.015      0.126     -7.773
+          1.40    157.519  -1214.306     -0.089     -0.015      0.126     -7.794
+          1.50    157.506  -1214.193     -0.085     -0.015      0.126     -7.814
+          1.60    157.491  -1214.060     -0.080     -0.015      0.126     -7.836
+          1.70    157.474  -1213.912     -0.077     -0.015      0.125     -7.858
+          1.80    157.455  -1213.750     -0.074     -0.015      0.125     -7.881
+
+    YAW AND ROLL RATE DERIVATIVES NON-DIMENSIONALIZED BY R*LATREF/2*V
+    *** END OF JOB ***

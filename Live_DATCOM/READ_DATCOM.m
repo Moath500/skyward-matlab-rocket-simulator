@@ -1,49 +1,69 @@
-function coefficients=READ_DATCOM(alpha,Beta,Mach,Alt)
+% Author: Adriano Filippo Inno && Fernando Soler
+% Skyward Experimental Rocketry | AFD Dept
+% email: adriano.filippo.inno@skywarder.eu
+% Release date: 20/05/2018
 
-% Input of the timestep: This elements would not bedefined here, but they
-% are an input for this script as a function, coming from the values at
-% that time step.
+% This function given a single fligth condition computes the related
+% cofficients using datcom and then datcomimport
 
-alpha=1.5267894;
-Beta=0.0585679;
-Mach=0.4;
-Alt=0;
+% function Run_datcom needed
 
-%% Create alpha values for DATCOM computation:
 
-Beta=floor(Beta*100)/100;
+function coeff = read_datcom(Alpha,Beta,Mach,Alt,Xcg)
 
-alphad=floor(alpha*10);
-alphau=ceil(alpha*10);
+%% SETTING DATCOM PRECISION
 
-alphav=[alphad-2, alphad-1, alphad, alphau, alphau+1, alphau+2];
-alphav=alphav/10;
+if abs(Alpha) < 2
+    N_Alpha = 7;
+    STEP_Alpha = 0.1;
+elseif abs(Alpha) > 2 && abs(Alpha) < 5
+    N_Alpha = 9;
+    STEP_Alpha = 0.5;
+else
+    N_Alpha = 9;
+    STEP_Alpha = 2;
+end
 
-%% Create the for005.dat and for006.dat
+%% CREATE FLIGHT CONDITION VALUES FOR DATCOM
 
-% -------------------> Calling "Auto_Matrices.m"
+Beta_datc = round(Beta,2);               % rounded to the 2nd decimal place
+Mach_datc = round(Mach,2);               % rounded to the 2nd decimal place
+Alt_datc = round(Alt);                   % rounded to the nearest integer
+Alpha_centered = round(Alpha,2);         % rounded to the 2nd decimal place
 
-% Auto_Matrices_sim
+Alpha_datc = Alpha_centered*ones(1,N_Alpha)+((-(N_Alpha-1)/2):((N_Alpha-1)/2))...
+        *STEP_Alpha;  % vector of alphas needed in datcom
+    
 
-AERO=datcomimport('for006.dat');
-AERO=AERO{1,1};
+%% CREATE FOR005.DAT AND RUN DATCOM
 
-%% Take coeficients:
+Run_datcom(Alpha_datc,Beta_datc,Alt_datc,Mach_datc,Xcg)
 
-alphas=alphav(3:4);
+AERO = datcomimport('for006.dat');
+AERO = AERO{1,1};
 
-coefficients.cl=interp1(alphas,AERO.cl(3:4),alpha);
-coefficients.cd=interp1(alphas,AERO.cd(3:4),alpha);
-coefficients.ca=interp1(alphas,AERO.ca(3:4),alpha);
-coefficients.xcp=interp1(alphas,AERO.xcp(3:4),alpha);
-coefficients.cma=interp1(alphas,AERO.cma(3:4),alpha);
-coefficients.cyb=interp1(alphas,AERO.cyb(3:4),alpha);
-coefficients.cnb=interp1(alphas,AERO.cnb(3:4),alpha);
-coefficients.cna=interp1(alphas,AERO.cna(3:4),alpha);
-coefficients.cmq=interp1(alphas,AERO.cmq(3:4),alpha);
-coefficients.cnr=interp1(alphas,AERO.cnr(3:4),alpha);
-coefficients.clp=interp1(alphas,AERO.clp(3:4),alpha);
-coefficients.cmad=interp1(alphas,AERO.cmad(3:4),alpha);
-coefficients.cnp=interp1(alphas,AERO.cnp(3:4),alpha);
+%% INTERPOLATION
+
+if Alpha > Alpha_datc((N_Alpha+1)/2)
+    i = (N_Alpha+1)/2;
+else
+    i = (N_Alpha+1)/2-1;
+end
+
+Alpha_interp = Alpha_datc(i:(i+1));
+
+coeff.cl   = interp1(Alpha_interp,AERO.cl(i:(i+1)),Alpha);
+coeff.cd   = interp1(Alpha_interp,AERO.cd(i:(i+1)),Alpha);
+coeff.ca   = interp1(Alpha_interp,AERO.ca(i:(i+1)),Alpha);
+coeff.xcp  = interp1(Alpha_interp,AERO.xcp(i:(i+1)),Alpha);
+coeff.cma  = interp1(Alpha_interp,AERO.cma(i:(i+1)),Alpha);
+coeff.cyb  = interp1(Alpha_interp,AERO.cyb(i:(i+1)),Alpha);
+coeff.cnb  = interp1(Alpha_interp,AERO.cnb(i:(i+1)),Alpha);
+coeff.cna  = interp1(Alpha_interp,AERO.cna(i:(i+1)),Alpha);
+coeff.cmq  = interp1(Alpha_interp,AERO.cmq(i:(i+1)),Alpha);
+coeff.cnr  = interp1(Alpha_interp,AERO.cnr(i:(i+1)),Alpha);
+coeff.clp  = interp1(Alpha_interp,AERO.clp(i:(i+1)),Alpha);
+coeff.cmad = interp1(Alpha_interp,AERO.cmad(i:(i+1)),Alpha);
+coeff.cnp  = interp1(Alpha_interp,AERO.cnp(i:(i+1)),Alpha);
 
 end

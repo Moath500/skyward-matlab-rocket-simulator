@@ -87,7 +87,7 @@ T = 0;                       % Thrust
     
 %% ATMOSPHERE DATA
 
-if -z<0     % z is directed as the gravity vector
+if -z < 0     % z is directed as the gravity vector
     z = 0;
 end
 [~, a, ~, rho] = atmoscoesa(-z+settings.z0);
@@ -102,6 +102,10 @@ else
     alpha =0;
     beta = 0;
 end
+
+alpha_value = alpha;
+beta_value = beta;
+
 
 %% DATCOM COEFFICIENTS
 
@@ -205,5 +209,33 @@ dY(8) = dq;
 dY(9) = dr;
 dY(10:13) = dQQ;
 dY=dY';
+
+%% PERSISTENT VARIABLES
+
+persistent t_plot contatore beta_plot alpha_plot
+
+
+%% SAVING THE QUANTITIES FOR THE PLOTS
+
+if isempty (contatore)
+    contatore = 1;
+    t_plot(contatore) = 0;
+end
+
+t_plot(contatore) = t;
+beta_plot(contatore) = beta_value;
+alpha_plot(contatore) = alpha_value;
+contatore = contatore + 1;
+
+
+descent.t = t_plot;
+descent.alpha = alpha_plot;
+descent.beta = beta_plot;
+
+
+if settings.stoch.N == 1
+    save ('descent_plot.mat', 'descent')
+end
+
 
 end

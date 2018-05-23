@@ -72,8 +72,8 @@ switch engine
         settings.motor.exp_thrust = [0 800 4000 5500 5160 5130 5400 5300 5450 5347 ...
             5160 4950 4700 4400 4400 3800 300 0]; % [N]
         
-        settings.m0 = 66.2;                       % [kg]   Overall Mass
-        settings.ms = 47.3;                       % [kg]   Structural Mass (Burnout)
+        settings.m0 = 63.3;                       % [kg]   Overall Mass
+        settings.ms = 44.4;                       % [kg]   Structural Mass (Burnout)
         settings.mp = settings.m0-settings.ms;    % [kg]   Propellant Mass
         settings.mnc = 6.13;                      % [kg]   Nosecone Mass
         settings.tb = 7.60;                       % [s]    Burning Time
@@ -87,7 +87,7 @@ end
 
 settings.C = 0.174;         % [m]      Caliber (Fuselage Diameter)
 settings.S = 0.02378;       % [m^2]    Cross-sectional Surface
-L = 4.41319;                % [m]      Rocket length
+L = 4.43619;                % [m]      Rocket length
 
 %% MASS GEOMERTY DETAILS
 % x-axis: along the fuselage
@@ -96,13 +96,13 @@ L = 4.41319;                % [m]      Rocket length
 
 % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
 settings.Ixxf = 0.27;       % [kg*m^2] Inertia to x-axis
-settings.Iyyf = 84.73;      % [kg*m^2] Inertia to y-axis
-settings.Izzf = 84.73;      % [kg*m^2] Inertia to z-axis
+settings.Iyyf = 84.19;      % [kg*m^2] Inertia to y-axis
+settings.Izzf = 84.19;      % [kg*m^2] Inertia to z-axis
 
 % inertias for empty configuration (all the propellant consumed) obtained with CAD's
 settings.Ixxe = 0.21;       % [kg*m^2] Inertia to x-axis
-settings.Iyye = 65.80;      % [kg*m^2] Inertia to y-axis
-settings.Izze = 65.80;      % [kg*m^2] Inertia to z-axis
+settings.Iyye = 65.43;      % [kg*m^2] Inertia to y-axis
+settings.Izze = 65.43;      % [kg*m^2] Inertia to z-axis
 
 %% AERODYNAMICS DETAILS
 % These coefficients are obtained using MISSILE DATCOM
@@ -218,12 +218,12 @@ settings.wind.ww = 0;                        % [m/s] Vertical wind speed
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 3;                    % [m/s] Minimum Magnitude
-settings.wind.MagMax = 6;                    % [m/s] Maximum Magnitude
+settings.wind.MagMin = 8;                    % [m/s] Minimum Magnitude
+settings.wind.MagMax = 8;                    % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;              % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (90)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (90)*pi/180;           % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (0)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (0)*pi/180;           % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -260,7 +260,8 @@ settings.stoch.N = 1;             % Number of cases
 
 %% PLOT DETAILS
 
-settings.plots = true;  
+settings.plots = true;
+settings.only_XCP = true; % plot only the stability margin
 
 %% CLEARING VARIABLES NOT NEEDED
 

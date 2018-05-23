@@ -5,7 +5,7 @@
 
 if settings.stoch.N == 1
     
-%     load('ascend_plot.mat') 
+    load('ascend_plot.mat') 
     
     %% SORTING VECTOR FOR ASCEND
     
@@ -20,6 +20,17 @@ if settings.stoch.N == 1
     
     
     %% ASCEND PLOTS
+    
+    if settings.only_XCP
+        
+        figure('Name','Stability Margin - Ascend Phase','NumberTitle','off');
+        plot(ascend.t, -ascend.XCP,'.'), title('Stability margin vs time'), grid on;
+        xlabel('Time [s]'); ylabel('S.M.[/]')
+    else
+        
+        figure('Name','Stability Margin - Ascend Phase','NumberTitle','off');
+        plot(ascend.t, -ascend.XCP,'.'), title('Stability margin vs time'), grid on;
+        xlabel('Time [s]'); ylabel('S.M.[/]')
     
     figure('Name','Forces - Ascend Phase','NumberTitle','off');
     suptitle('Forces')
@@ -50,9 +61,6 @@ if settings.stoch.N == 1
     plot(ascend.t, ascend.CA), title('Drag Coefficient vs time'), grid on;
     xlabel('Time [s]'); ylabel('Drag Coeff CD [/]')
     
-    figure('Name','Stability Margin - Ascend Phase','NumberTitle','off');
-    plot(ascend.t, -ascend.XCP,'.'), title('Stability margin vs time'), grid on;
-    xlabel('Time [s]'); ylabel('S.M.[/]')
     
     %% 3D TRAJECTORY
     
@@ -327,7 +335,7 @@ if settings.stoch.N == 1
     subplot(3,1,3)
     plot(Ta, roll_angle)
     grid on, xlabel('time [s]'), ylabel('roll angle [deg]')
-    
+    end  
     
     
     %% STOCHASTIC PLOTS (only if N>1)

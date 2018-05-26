@@ -9,7 +9,7 @@
 % function Run_datcom needed
 
 
-function coeff = read_datcom(Alpha,Beta,Mach,Alt,Xcg)
+function coeff = READ_DATCOM(Alpha,Beta,Mach,Alt,Xcg)
 
 %% SETTING DATCOM PRECISION
 

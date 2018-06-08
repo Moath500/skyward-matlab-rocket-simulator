@@ -4,8 +4,7 @@
 % Release date: 16/04/2016
 
 close all
-clear all
-
+clear all 
 clc
 
 %% LOAD DATA
@@ -17,15 +16,16 @@ run('config.m');
 % Y = State = ( x y z | u v w | p q r | q0 q1 q2 q3 ) also for Ya,Yf corresponding to T
 
 tic
-
-if settings.stoch.N >1 && settings.ballistic && settings.ao
-    warning('off')
-end
     
 % Checking if stochastic or standard simulation needed
 if settings.ballistic
     if settings.stoch.N > 1
-        fprintf('Stochastic Ballistic Simulation Started...\n\n');
+        if settings.wind.model 
+            fprintf('Stochastic Ballistic Simulation With Wind Model Started...\n\n');
+        else
+            fprintf('Stochastic Ballistic Simulation With Random Wind Started...\n\n');
+        end
+            
         [LP,X,ApoTime] = stoch_run_bal(settings);
     else
         fprintf('Standard Ballistic Simulation Started...\n\n');
@@ -33,7 +33,11 @@ if settings.ballistic
     end
 else
     if settings.stoch.N > 1
-        fprintf('Stochastic Simulation Started...\n\n');
+        if settings.wind.model 
+            fprintf('Stochastic Simulation With Wind Model Started...\n\n');
+        else
+            fprintf('Stochastic Simulation With Random Wind Started...\n\n');
+        end
         [LP,X,ApoTime] = stoch_run(settings);
     else
         fprintf('Standard Simulation Started...\n\n');
@@ -45,7 +49,7 @@ toc
 
 %% NOT-STOCHASTIC SIMULATIONS (N=1)
 
-if settings.stoch.N == 1
+if settings.stoch.N == 1 
     
     N = length(Y(:,1));
     n = length(Ya(:,1));
@@ -199,6 +203,7 @@ else
     
     delete(gcp('nocreate'))
     delete('parfor_progress.txt')
+    
 end
 
 
@@ -209,5 +214,7 @@ if settings.plots
 end
 
 if settings.stoch.N == 1
-    delete('ascend_plot.mat')
+    delete('ascent_plot.mat')    
 end
+
+clearvars -except ascent descent_bal descent_para T Ta Y Ya

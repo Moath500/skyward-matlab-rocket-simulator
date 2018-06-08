@@ -1,4 +1,4 @@
-function [dY] = ascend(t,Y,settings,uw,vw,ww)
+function [dY] = ascent(t,Y,settings,uw,vw,ww,Hour,Day)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 )
 %
@@ -27,23 +27,23 @@ function [dY] = ascend(t,Y,settings,uw,vw,ww)
 % email: francesco.colombi@skywarder.eu
 % Release date: 16/04/2016
 
-x = Y(1);
-y = Y(2);
-z = Y(3);
-u = Y(4);
-v = Y(5);
-w = Y(6);
-p = Y(7);
-q = Y(8);
-r = Y(9);
-q0 = Y(10);
-q1 = Y(11);
-q2 = Y(12);
-q3 = Y(13);
-m = Y(14);
-Ixx = Y(15);
-Iyy = Y(16);
-Izz = Y(17);
+% x = Y(1);
+% y = Y(2);
+  z = Y(3);
+  u = Y(4);
+  v = Y(5);
+  w = Y(6);
+  p = Y(7);
+  q = Y(8);
+  r = Y(9); 
+  q0 = Y(10);
+  q1 = Y(11);
+  q2 = Y(12);
+  q3 = Y(13);
+  m = Y(14);
+  Ixx = Y(15);
+  Iyy = Y(16);
+  Izz = Y(17);
 
 
 %% QUATERION ATTITUDE
@@ -59,13 +59,20 @@ end
 
 %% ADDING WIND (supposed to be added in NED axes);
 
+
 if settings.wind.model
-    [uw,vw,ww] = wind_matlab_generator(settings,z,t,Q);
-    wind = [uw,vw,ww];
+    
+    if settings.stoch.N > 1
+        [uw,vw,ww] = wind_matlab_generator(settings,z,t,Hour,Day);
+    else
+        [uw,vw,ww] = wind_matlab_generator(settings,z,t);
+    end
+    
+    wind = quatrotate(Q, [uw vw ww]);
     
 else
     
-    wind = quatrotate(Q, [uw vw ww]); % constant wind
+    wind = quatrotate(Q, [uw vw ww]);  % constant wind
     
 end
 
@@ -209,7 +216,6 @@ Cmqf = interp4_easy(givA,givM,givB,givH,CoeffsF.CMQ,alpha,M,beta,-z);
 Cnbf = interp4_easy(givA,givM,givB,givH,CoeffsF.CLNB,alpha,M,beta,-z);
 Cnrf = interp4_easy(givA,givM,givB,givH,CoeffsF.CLNR,alpha,M,beta,-z);
 Cnpf = interp4_easy(givA,givM,givB,givH,CoeffsF.CLNP,alpha,M,beta,-z);
-CDf = interp4_easy(givA,givM,givB,givH,CoeffsF.CD,alpha,M,beta,-z);
 XCPf = interp4_easy(givA,givM,givB,givH,CoeffsF.X_C_P,alpha,M,beta,-z);
 
 %% CHOSING THE EMPTY CONDITION VALUE
@@ -226,7 +232,6 @@ Cmqe = interp4_easy(givA,givM,givB,givH,CoeffsE.CMQ,alpha,M,beta,-z);
 Cnbe = interp4_easy(givA,givM,givB,givH,CoeffsE.CLNB,alpha,M,beta,-z);
 Cnre = interp4_easy(givA,givM,givB,givH,CoeffsE.CLNR,alpha,M,beta,-z);
 Cnpe = interp4_easy(givA,givM,givB,givH,CoeffsE.CLNP,alpha,M,beta,-z);
-CDe = interp4_easy(givA,givM,givB,givH,CoeffsE.CD,alpha,M,beta,-z);
 XCPe = interp4_easy(givA,givM,givB,givH,CoeffsE.X_C_P,alpha,M,beta,-z);
 
 %% LINEAR INTERPOLATION BETWEEN THE TWO CONDITIONS
@@ -245,7 +250,6 @@ if t < tb
     Cnb = t/tb*(Cnbe-Cnbf)+Cnbf;
     Cnr = t/tb*(Cnre-Cnrf)+Cnrf;
     Cnp = t/tb*(Cnpe-Cnpf)+Cnpf;
-    CD = t/tb*(CDe-CDf)+CDf;
     XCP_value = t/tb*(XCPe-XCPf)+XCPf;
 else
     CA = CAe;
@@ -259,7 +263,6 @@ else
     Cnb = Cnbe;
     Cnr = Cnre;
     Cnp = Cnpe;
-    CD = CDe;
     XCP_value = XCPe;
 end
 
@@ -269,17 +272,18 @@ if -z < settings.lrampa*sin(OMEGA)      % No torque on the Launch
     X = 0.5*rho*V_norm^2*S*CA;
     F = -Fg +T -X;
     du = F/m;
+    
     dv = 0;
     dw = 0;
     dp = 0;
     dq = 0;
     dr = 0;
+    
     alpha_value = NaN;
-    beta_value = 0;
-    qdyn = NaN;
+    beta_value = NaN;
     Y = NaN;
     Z = NaN;
-    XCP_value = 0;
+    XCP_value = NaN;
     
     
     if T < Fg                           % No velocity untill T = Fg
@@ -297,7 +301,7 @@ else
     X = qdyn*S*CA;                  %[N] x-body component of the aerodynamics force
     Y = qdyn*S*CYB*beta;            %[N] y-body component of the aerodynamics force
     Z = qdyn*S*CNA*alpha;           %[N] z-body component of the aerodynamics force
-    Fg = quatrotate(Q,[0 0 m*g])';  %[N] force due to the gravity
+    Fg = quatrotate(Q,[0 0 m*g])';  %[N] force due to the gravity in body frame
     
     F = Fg +[-X+T,+Y,-Z]';          %[N] total forces vector
     
@@ -344,8 +348,8 @@ dY = dY';
 
 %% PERSISTENT VARIABLES
 
-persistent XCP contatore t_plot ...
-    T_plot M_plot CA_plot alpha_plot beta_plot Drag_plot Forces_plot F_aero_x F_aero_y F_aero_z
+persistent XCP contatore t_plot T_plot M_plot CA_plot alpha_plot beta_plot...
+     F_aero_plot alt_plot wind_plot
 
 
 %% SAVING THE QUANTITIES FOR THE PLOTS
@@ -357,15 +361,13 @@ if settings.plots
         t_plot(contatore) = 0;
         T_plot(contatore) = 0;
         CA_plot(contatore) = 0;
-        Drag_plot(contatore) = 0;
-        Forces_plot(contatore) = 0;
         M_plot(contatore) = 0;
         XCP(contatore) = 0;
         alpha_plot(contatore) = 0;
         beta_plot(contatore) = 0;
-        F_aero_x(contatore) = 0;
-        F_aero_y(contatore) = 0;
-        F_aero_z(contatore) = 0;
+        wind_plot(:,contatore) = zeros(3,1);
+        F_aero_plot(:,contatore) = zeros(3,1);
+        alt_plot(contatore) = 0;
         
     end
     t_plot(contatore) = t;
@@ -374,33 +376,30 @@ if settings.plots
     XCP(contatore) = XCP_value;
     M_plot(contatore) = M_value;
     T_plot(contatore) = T_value;
-    CA_plot(contatore) = CD;
-    Drag_plot(contatore) = qdyn*S*CD;
-    Forces_plot(contatore) = F(1);
-    F_aero_x(contatore) = X;
-    F_aero_y(contatore) = Y;
-    F_aero_z(contatore) = Z;
+    CA_plot(contatore) = CA;
+    alt_plot(contatore) = -z;
+    wind_plot(:,contatore) = [uw,vw,ww];
+    F_aero_plot(:,contatore) = [X Y Z];
     contatore = contatore + 1;
     
     
-    if Vels(3) <= 0 && t > tb
+    if Vels(3) >= 0  && t > tb
         
-        ascend.XCP = XCP;
-        ascend.t = t_plot;
-        ascend.T = T_plot;
-        ascend.M = M_plot;
-        ascend.CA = CA_plot;
-        ascend.alpha = alpha_plot;
-        ascend.beta = beta_plot;
-        ascend.Drag = Drag_plot;
-        ascend.Forces = Forces_plot;
-        ascend.Dyn_Forces(1,:) = F_aero_x; 
-        ascend.Dyn_Forces(2,:) = F_aero_y;
-        ascend.Dyn_Forces(3,:) = F_aero_z;
+        ascent.XCP = XCP;
+        ascent.t = t_plot;
+        ascent.T = T_plot;
+        ascent.M = M_plot;
+        ascent.CA = CA_plot;
+        ascent.alpha = alpha_plot;
+        ascent.beta = beta_plot;
+        ascent.alt = alt_plot;
+        ascent.wind = wind_plot;
+        ascent.AeroDyn_Forces = F_aero_plot; 
         
         if settings.stoch.N == 1
-            save ('ascend_plot.mat', 'ascend')
+            save ('ascent_plot.mat', 'ascent')
         end
     end
+    
 end
 

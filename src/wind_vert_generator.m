@@ -1,4 +1,4 @@
-function [ww] = vert_windgen(MagMin,MagMax)
+function [ww] = wind_vert_generator(MagMin,MagMax)
 % vert_windgen(MagMin,MagMax)
 %function that generates vertical wind component
 

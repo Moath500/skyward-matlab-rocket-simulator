@@ -145,7 +145,7 @@ clear('s');
 
 % drogue 1
 settings.para1.S = 1.55;             % [m^2]   Surface
-settings.para1.mass = 0.25;         % [kg]   Parachute Mass
+settings.para1.mass = 0.25;          % [kg]   Parachute Mass
 settings.para1.CD = 0.8;             % [/] Parachute Drag Coefficient
 settings.para1.CL = 0;               % [/] Parachute Lift Coefficient
 
@@ -191,10 +191,10 @@ settings.ode.optionsdrg1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
 settings.ode.optionsdrg2 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_rog_opening);              %ODE options for drogue
 
-settings.ode.optionsrog = odeset('AbsTol',1E-3,'RelTol',1E-12,...
+settings.ode.optionsrog = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_landing);                   %ODE options for descent
 
-settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
+settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_landing);                   %ODE options for ballistic descent
 
 
@@ -203,23 +203,26 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 
 % Settings for the Wind Model
 
-settings.wind.model = false;
+settings.wind.model = true;
 % set to true for hwsm wind model
 % set to false for random wind model
+% input Day and Hour as arrays to run stochastic simulations
 
-settings.wind.Lat = 39.552709;               % [deg] Latitude of launching site
-settings.wind.Long = 9.652400;               % [deg] Longitude of launching site
-settings.wind.Day = 290;                     % [/] Day of the launch
-settings.wind.Seconds = 13*60*60;            % [/] Second of the day (UTM)
-settings.wind.ww = 0;                        % [m/s] Vertical wind speed
+settings.wind.Lat = 39.552709;                      % [deg] Latitude of launching site
+settings.wind.Long = 9.652400;                      % [deg] Longitude of launching site
+settings.wind.DayMin = 270;                         % [d] Minimum Day of the launch 
+settings.wind.DayMax = 300;                         % [d] Maximum Day of the launch
+settings.wind.HourMin = 8;                          % [h] Minimum Hour of the day
+settings.wind.HourMax = 20;                         % [h] Maximum Hour of the day
+settings.wind.ww = 0;                               % [m/s] Vertical wind speed
 
 
 % Random wind model
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 3;                    % [m/s] Minimum Magnitude
-settings.wind.MagMax = 3;                    % [m/s] Maximum Magnitude
+settings.wind.MagMin = 6;                    % [m/s] Minimum Magnitude
+settings.wind.MagMax = 8;                    % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;              % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (90)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
@@ -239,13 +242,13 @@ settings.ballistic = false;                  % Set to True to run a standard bal
 % simulation in wich second drogue does not open and thus landing is
 % achieved in ballistic (settings.ballistic must be true)
 
-settings.sdf = false;
+settings.sdf = true;
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is
 % achieved thanks to the 2nd parachute
 
-settings.ldf = true;
+settings.ldf = false;
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee and thus there is no
@@ -256,13 +259,11 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;             % Number of cases
+settings.stoch.N = 5;             % Number of cases
 
 %% PLOT DETAILS
 
 settings.plots = true;
 settings.only_XCP = true; % plot only the stability margin
+settings.landing_map = true;
 
-%% CLEARING VARIABLES NOT NEEDED
-
-clear('DATA_PATH','engine','filename','filename_empty','filename_full');

@@ -16,6 +16,14 @@ function [Tf,Yf,Ta,Ya,bound_value] = std_run_ballistic(settings)
 % email: francesco.colombi@skywarder.eu
 % Release date: 16/04/2016
 
+if settings.ldf
+    warning('Landing with the second drogue can be simulated just in standard simulations, check settings.ldf & settings.ballistic in config.m')
+end
+
+if settings.wind.HourMin ~= settings.wind.HourMax || settings.wind.HourMin ~= settings.wind.HourMax
+    error('In standard simulations with the wind model the day and the hour of launch must be unique, check config.m')
+end
+
 %% STARTING CONDITIONS
 
 % Attitude
@@ -30,18 +38,16 @@ X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 %% WIND GENERATION
 
 if settings.wind.model  % will be computed inside the integrations
-    uw = 0;
-    vw = 0;
-    ww = 0;
+    uw = 0; vw = 0; ww = 0;
 else 
     [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
     settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
     settings.wind.MagMax);
 end
 
-%% ASCEND 
+%% ASCENT
 
-[Ta,Ya] = ode113(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
+[Ta,Ya] = ode113(@ascent,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
     settings,uw,vw,ww);
 
 %% DESCEND 
@@ -55,7 +61,7 @@ if settings.sdf
     [Td1,Yd1] = ode113(@descent_parachute,settings.ode.timedrg1,X0d1,...
     settings.ode.optionsdrg1,settings,uw,vw,ww,para);
 
-    % after failure of drogue 2 ballistic descent
+    % ballistic descent after failure of drogue 2 
     
     X0b1 = Yd1(end,:);
     Q0 = angle2quat(90*pi/180,0,0,'ZYX')';

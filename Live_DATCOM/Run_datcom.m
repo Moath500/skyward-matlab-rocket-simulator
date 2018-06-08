@@ -66,7 +66,7 @@ Xle = 3.8432;
 % Define Fin Set n
 radius = 0.087;
 height = 0.15;
-Sspan = [0.87 radius+height];
+Sspan = [0.087 radius+height];
 Chord = [0.32 0.067];
 Npanel = 4;
 Phif = [0 90 180 270];

@@ -1,4 +1,4 @@
-function [uw,vw,ww] = windgen(AzMin,AzMax,ElMin,ElMax,MagMin,MagMax)
+function [uw,vw,ww] = wind_const_generator(AzMin,AzMax,ElMin,ElMax,MagMin,MagMax)
 % windgen(AzMin,AzMax,ElMin,ElMax,MagMin,MagMax)
 % function that generates wind components in NED axes based on altitude
 %
@@ -22,11 +22,22 @@ Mag = MagMin+(MagMax-MagMin)*rand;
 
 % Random Wind Vector
 R = Mag*angle2dcm(Az,El,0,'ZYX');
+
 uw = R(1,1);
 vw = R(1,2);
 ww = R(1,3);
 
+if abs(uw) < 1e-3
+    uw = 0;
+end
 
+if abs(vw) < 1e-3
+    vw = 0;
+end
+
+if abs(ww) < 1e-3
+    ww = 0;
+end
 
 
 

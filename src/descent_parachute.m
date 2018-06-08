@@ -1,4 +1,4 @@
-function [dY] = descent_parachute(t,Y,settings,uw,vw,ww,para)
+function [dY] = descent_parachute(t,Y,settings,uw,vw,ww,para,Hour,Day)
 % ODE-Function for Parachute descent 
 % State = ( x y z | u v w  )
 
@@ -24,12 +24,16 @@ function [dY] = descent_parachute(t,Y,settings,uw,vw,ww,para)
 %% ADDING WIND (supposed to be added in NED axes);
 
 if settings.wind.model
-    [uw,vw,ww] = wind_matlab_generator(settings,-z,t);
+    if settings.stoch.N > 1
+        [uw,vw,ww] = wind_matlab_generator(settings,z,t,Hour,Day);
+    else
+        [uw,vw,ww] = wind_matlab_generator(settings,z,t);
+    end
     wind = [uw,vw,ww];
-
+    
 else
-
-wind = [uw vw ww]; % constant wind
+    
+    wind = [uw vw ww]; % constant wind
 
 end
 
@@ -90,7 +94,7 @@ n_vect = cross(t_vers, h_vers);          % Normal vector
 n_vers = n_vect/norm(n_vect);            % Normal versor
 
 if (n_vers(3) > 0)                       % If the normal vector is downward directed
-    n_vect = cross(h_vers, t_vers); 
+    n_vect = cross(h_vers, t_vers);
     n_vers = n_vect/norm(n_vect);
 end
 
@@ -98,7 +102,7 @@ end
 
 D = 0.5*rho*V_norm^2*S*CD*t_vers';       % [N] Drag vector
 L = 0.5*rho*V_norm^2*S*CL*n_vers';       % [N] Lift vector
-Fg = m*g*[0 0 1]';                       % [N] Gravitational Force vector                  
+Fg = m*g*[0 0 1]';                       % [N] Gravitational Force vector
 F = -D+L+Fg;                             % [N] total forces vector
 
 %% STATE DERIVATIVES
@@ -117,4 +121,44 @@ dY(6) = dw;
 
 dY = dY';
 
+%% PERSISTENT VARIABLES
+
+persistent t_plot contatore alt_plot wind_plot
+
+
+%% SAVING THE QUANTITIES FOR THE PLOTS
+
+if settings.plots
+    
+    if settings.stoch.N == 1
+        
+        if isempty (contatore)
+            contatore = 1;
+            t_plot(contatore) = 0;
+            alt_plot(contatore) = 0;
+            wind_plot(:,contatore) = zeros(3,1);
+        end
+        
+        t_plot(contatore) = t;
+        contatore = contatore + 1;
+        alt_plot(contatore) = -z;
+        wind_plot(:,contatore) = [uw,vw,ww];
+        
+        descent_para.t = t_plot;
+        descent_para.alt = alt_plot;
+        descent_para.wind = wind_plot;
+        
+        if not(settings.sdf)
+            
+            if -z <= 0
+                save ('descent_para_plot.mat', 'descent_para')
+            end
+        else
+            if -z <= settings.zdrg2
+                save ('descent_para_plot.mat', 'descent_para')
+                
+            end
+        end
+    end
+    
 end

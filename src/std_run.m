@@ -16,6 +16,14 @@ function [Tf,Yf,Ta,Ya,bound_value] = std_run(settings)
 % email: francesco.colombi@skywarder.eu
 % Release date: 16/04/2016
 
+if settings.sdf
+    warning('The second drogue failure can be simulated just in ballistic simulations, check settings.sdf & settings.ballistic in config.m')
+end
+
+if settings.wind.HourMin ~= settings.wind.HourMax || settings.wind.HourMin ~= settings.wind.HourMax
+    error('In standard simulations with the wind model the day and the hour of launch must be unique, check config.m')
+end
+
 %% STARTING CONDITIONS
 
 % Attitude
@@ -30,22 +38,23 @@ X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 %% WIND GENERATION
 
 if settings.wind.model  % will be computed inside the integrations
-    uw = 0;
-    vw = 0;
-    ww = 0;
-else 
+    uw = 0; vw = 0; ww = 0;
+else
     [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
-    settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
-    settings.wind.MagMax);
+        settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
+        settings.wind.MagMax);
+    if ww ~= 0
+        warning('Pay attention using vertical wind, there might be computational errors')
+    end
 end
 
-%% ASCEND
+%% ASCENT
 
-[Ta,Ya] = ode113(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
+[Ta,Ya] = ode113(@ascent,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
     settings,uw,vw,ww);
 
 %% DROGUE 1
-% Initial Condition are the last from ascend (need to rotate because
+% Initial Condition are the last from ascent (need to rotate because
 % velocities are outputted in body axes)
 
 para = 1; % Flag for Drogue 1

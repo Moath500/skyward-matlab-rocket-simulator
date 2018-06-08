@@ -1,4 +1,4 @@
-function [dY] = descent_ballistic(t,Y,settings,uw,vw,ww)
+function [dY] = descent_ballistic(t,Y,settings,uw,vw,ww,Hour,Day)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 )
 %
@@ -56,13 +56,18 @@ end
 
 %% ADDING WIND (supposed to be added in NED axes);
 
+
 if settings.wind.model
-    [uw,vw,ww] = wind_matlab_generator(settings,z,t,Q); 
+    if settings.stoch.N > 1
+        [uw,vw,ww] = wind_matlab_generator(settings,z,t,Hour,Day);
+    else
+        [uw,vw,ww] = wind_matlab_generator(settings,z,t);
+    end
     wind = [uw,vw,ww];
-
+    
 else
-
-wind = quatrotate(Q, [uw vw ww]); % constant wind
+    
+    wind = [uw vw ww]; % constant wind
 
 end
 
@@ -90,6 +95,7 @@ T = 0;                       % Thrust
 if -z < 0     % z is directed as the gravity vector
     z = 0;
 end
+
 [~, a, ~, rho] = atmoscoesa(-z+settings.z0);
 M = V_norm/a;
 
@@ -212,30 +218,43 @@ dY=dY';
 
 %% PERSISTENT VARIABLES
 
-persistent t_plot contatore beta_plot alpha_plot
+persistent t_plot contatore beta_plot alpha_plot wind_plot alt_plot
 
 
 %% SAVING THE QUANTITIES FOR THE PLOTS
 
-if isempty (contatore)
-    contatore = 1;
-    t_plot(contatore) = 0;
-end
-
-t_plot(contatore) = t;
-beta_plot(contatore) = beta_value;
-alpha_plot(contatore) = alpha_value;
-contatore = contatore + 1;
-
-
-descent.t = t_plot;
-descent.alpha = alpha_plot;
-descent.beta = beta_plot;
-
-
-if settings.stoch.N == 1
-    save ('descent_plot.mat', 'descent')
-end
-
-
+if settings.plots
+    
+    if settings.stoch.N == 1
+        
+        if isempty (contatore)
+            contatore = 1;
+            t_plot(contatore) = 0;
+            beta_plot(contatore) = 0;
+            alpha_plot(contatore) = 0;
+            wind_plot(:,contatore) = zeros(3,1);
+            alt_plot(contatore) = 0;
+        end
+        
+        t_plot(contatore) = t;
+        beta_plot(contatore) = beta_value;
+        alpha_plot(contatore) = alpha_value;
+        wind_plot(:,contatore) = [uw,vw,ww];
+        alt_plot(contatore) = -z;
+        contatore = contatore + 1;
+        
+        
+        descent_bal.t = t_plot;
+        descent_bal.alpha = alpha_plot;
+        descent_bal.beta = beta_plot;
+        descent_bal.wind = wind_plot;
+        descent_bal.alt = alt_plot;
+        
+        
+        if -z <= 0
+            save ('descent_plot.mat', 'descent_bal')
+        end
+        
+        
+    end
 end

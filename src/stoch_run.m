@@ -11,8 +11,16 @@ function [LP,X,ApoTime] = stoch_run(settings)
 % April 2014; Last revision: 29.V.2014
 % License:  2-clause BSD
 
-if settings.wind.model || (settings.wind.MagMin == settings.wind.MagMax && settings.wind.ElMin == settings.wind.ElMax)
-    error('In stochastic simulations the wind must setted with the random model, check config.m')
+warning off
+
+if not(settings.wind.model)
+    if settings.wind.MagMin == settings.wind.MagMax && settings.wind.ElMin == settings.wind.ElMax
+        error('In stochastic simulations the wind must setted with the random model, check config.m')
+    end 
+else
+    if settings.wind.DayMin == settings.wind.DayMax && settings.wind.HourMin == settings.wind.HourMax
+        error('In stochastic simulations with the wind model the day or the hour of launch must vary, check config.m')
+    end
 end
 
 %% STARTING CONDITIONS
@@ -39,23 +47,30 @@ parfor i = 1:settings.stoch.N
     
     %% WIND GENERATION
     
+    if not(settings.wind.model)
+        
     [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
         settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
         settings.wind.MagMax);
+    else
+        Day = randi([settings.wind.DayMin,settings.wind.DayMax]);
+        Hour = randi([settings.wind.HourMin,settings.wind.HourMax]);
+        uw = 0; vw = 0; ww = 0;
+    end
 
-    %% ASCEND
+    %% ASCENT
 
-    [Ta,Ya] = ode113(@ascend,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
-        settings,uw,vw,ww);
+    [Ta,Ya] = ode113(@ascent,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
+        settings,uw,vw,ww,Hour,Day);
 
     %% DROGUE 1
-    % Initial Condition are the last from ascend (need to rotate because
+    % Initial Condition are the last from ascent (need to rotate because
     % velocities are outputted in body axes)
 
     para = 1; % Flag for Drogue 1
     X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
     [~,Yd1] = ode113(@descent_parachute,settings.ode.timedrg1,X0d1,...
-        settings.ode.optionsdrg1,settings,uw,vw,ww,para);
+        settings.ode.optionsdrg1,settings,uw,vw,ww,para,Hour,Day);
 
     %% DROGUE 2 
     % Initial Condition are the last from drogue 1 descent
@@ -63,7 +78,7 @@ parfor i = 1:settings.stoch.N
     para = 2; %Flag for Drogue 2
     X0d2 = Yd1(end,:);
     [~,Yd2] = ode113(@descent_parachute,settings.ode.timedrg2,X0d2,...
-        settings.ode.optionsdrg2,settings,uw,vw,ww,para);
+        settings.ode.optionsdrg2,settings,uw,vw,ww,para,Hour,Day);
 
     %% ROGALLO WING
     % Initial Condition are the last from drogue 2 descent
@@ -74,7 +89,7 @@ parfor i = 1:settings.stoch.N
 
     X0m = Yd2(end,:);
     [~,Ym] = ode113(@descent_parachute,settings.ode.timerog,X0m,...
-        settings.ode.optionsrog,settings,uw,vw,ww,para);
+        settings.ode.optionsrog,settings,uw,vw,ww,para,Hour,Day);
 
     %% FINAL STATE ASSEMBLING 
     

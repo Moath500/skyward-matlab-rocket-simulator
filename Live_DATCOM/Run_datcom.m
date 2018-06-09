@@ -208,7 +208,7 @@ if ismac   % mac procedure
     system(command);
 else       % win procedure
     path = strcat(pwd,'/datcom.exe');
-    command = strcat('strt',{' '}, path);
+    command = strcat('start',{' '}, path);
     command = command{1};
     system(command);
     

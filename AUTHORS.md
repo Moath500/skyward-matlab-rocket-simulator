@@ -12,3 +12,6 @@ email: gabriele.poiana@skywarder.eu
 
 ## Salvatore Andrea Bella
 email: salvatore.andrea.bella@skywarder.eu
+
+## Mauro De Francesco
+email: mauro.defrancesco@skywarder.eu

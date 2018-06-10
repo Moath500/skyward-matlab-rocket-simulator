@@ -23,7 +23,7 @@ settings.lrampa = 5.5;          %[m] LaunchPad route (launchpad length-distance 
 
 
 % starting altitude
-settings.OMEGA = 85*pi/180;    %[rad] Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGA = 80*pi/180;    %[rad] Elevation Angle, user input in degrees (ex. 80)
 settings.PHI = 90*pi/180;      %[rad] Azimuth Angle from North Direction, user input in degrees (ex. 90)
 
 %% ENGINE DETAILS

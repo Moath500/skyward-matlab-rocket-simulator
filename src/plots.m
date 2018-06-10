@@ -244,10 +244,9 @@ if settings.stoch.N == 1
             
             h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
-            h5 = plot(bound_value.Xrog(1),bound_value.Xrog(2),'sr','MarkerSize',7,...
-                'MarkerFaceColor','r');
-            legend([h1,h2,h3,h4,h5],'Apogee/1st Drogue Deployment','Launch Point',...
-                'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
+
+            legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
+                'Landing Point','2nd Drogue Deployment','Location','Best');
         else
             legend([h1,h2,h3],'Launch point','Apogee','Landing point',...
                 'Location','northeast');
@@ -271,10 +270,9 @@ if settings.stoch.N == 1
             
             h4 = plot(bound_value.Xd2(2),bound_value.Xd2(3),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
-            h5 = plot(bound_value.Xrog(2),bound_value.Xrog(3),'sr','MarkerSize',7,...
-                'MarkerFaceColor','r');
-            legend([h1,h2,h3,h4,h5],'Apogee/1st Drogue Deployment','Launch Point',...
-                'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
+
+            legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
+                'Landing Point','2nd Drogue Deployment','Location','Best');
         else
             
             if settings.sdf
@@ -295,10 +293,9 @@ if settings.stoch.N == 1
             
             h4 = plot(bound_value.Xd2(1),bound_value.Xd2(3),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
-            h5 = plot(bound_value.Xrog(1),bound_value.Xrog(3),'sr','MarkerSize',7,...
-                'MarkerFaceColor','r');
+
             legend([h1,h2,h3,h4,h5],'Apogee/1st Drogue Deployment','Launch Point',...
-                'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
+                'Landing Point','2nd Drogue Deployment','Location','Best');
         else
             
             if settings.sdf

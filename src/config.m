@@ -19,11 +19,11 @@ settings.rocket_name = 'R2A';
 
 % launchpad 6
 settings.z0 = 5;                %[m] Launchpad Altitude
-settings.lrampa = 4.5;          %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+settings.lrampa = 5.5;          %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
 
 
 % starting altitude
-settings.OMEGA = 80*pi/180;    %[rad] Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGA = 85*pi/180;    %[rad] Elevation Angle, user input in degrees (ex. 80)
 settings.PHI = 90*pi/180;      %[rad] Azimuth Angle from North Direction, user input in degrees (ex. 90)
 
 %% ENGINE DETAILS
@@ -72,8 +72,8 @@ switch engine
         settings.motor.exp_thrust = [0 800 4000 5500 5160 5130 5400 5300 5450 5347 ...
             5160 4950 4700 4400 4400 3800 300 0]; % [N]
         
-        settings.m0 = 63.29017;                       % [kg]   Overall Mass
-        settings.ms = 44.39217;                       % [kg]   Structural Mass (Burnout)
+        settings.m0 = 63.30421;                       % [kg]   Overall Mass
+        settings.ms = 44.40621;                       % [kg]   Structural Mass (Burnout)
         settings.mp = settings.m0-settings.ms;    % [kg]   Propellant Mass
         settings.mnc = 6.21;                      % [kg]   Nosecone Mass
         settings.tb = 7.60;                       % [s]    Burning Time
@@ -211,8 +211,8 @@ settings.wind.model = true;
 settings.wind.Lat = 39.552709;                      % [deg] Latitude of launching site
 settings.wind.Long = 9.652400;                      % [deg] Longitude of launching site
 settings.wind.DayMin = 270;                         % [d] Minimum Day of the launch 
-settings.wind.DayMax = 300;                         % [d] Maximum Day of the launch
-settings.wind.HourMin = 8;                          % [h] Minimum Hour of the day
+settings.wind.DayMax = 270;                         % [d] Maximum Day of the launch
+settings.wind.HourMin = 20;                          % [h] Minimum Hour of the day
 settings.wind.HourMax = 20;                         % [h] Maximum Hour of the day
 settings.wind.ww = 0;                               % [m/s] Vertical wind speed
 
@@ -242,13 +242,13 @@ settings.ballistic = false;                  % Set to True to run a standard bal
 % simulation in wich second drogue does not open and thus landing is
 % achieved in ballistic (settings.ballistic must be true)
 
-settings.sdf = true;
+settings.sdf = false;
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is
 % achieved thanks to the 2nd parachute
 
-settings.ldf = false;
+settings.ldf = true;
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee and thus there is no
@@ -259,11 +259,11 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 5;             % Number of cases
+settings.stoch.N = 1;             % Number of cases
 
 %% PLOT DETAILS
 
 settings.plots = true;
-settings.only_XCP = true; % plot only the stability margin
-settings.landing_map = true;
+settings.only_XCP = false; % plot only the stability margin
+settings.landing_map = false;
 

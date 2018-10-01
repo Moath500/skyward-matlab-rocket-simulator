@@ -275,8 +275,8 @@ for j=1:length(Alt)
     end
 end
 fclose(fid);
-end        
-end
+        
+
  %% Creating .dat files+parsing
 
 dos('datcoming')
@@ -303,6 +303,8 @@ end
 end
 
         end
+    end
+end
 
 beep %gives an alarm when the program stopped working
 toc

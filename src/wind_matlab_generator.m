@@ -29,7 +29,7 @@ Seconds = Hour*3600;
 %% HORIZONTAL WIND
 
 [uw,vw] = atmoshwm(settings.wind.Lat,settings.wind.Long,h,'day',Day,...
-    'seconds',Seconds+t,'model','quiet','version','14');    %NED reference
+    'seconds',Seconds+t,'model','quiet','version','14');    % NED reference
 ww = settings.wind.ww;
 
 

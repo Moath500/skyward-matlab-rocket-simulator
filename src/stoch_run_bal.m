@@ -16,6 +16,8 @@ warning off
 if not(settings.wind.model)
     if settings.wind.MagMin == settings.wind.MagMax && settings.wind.ElMin == settings.wind.ElMax
         error('In stochastic simulations the wind must setted with the random model, check config.m')
+    elseif settings.wind.input
+        error('In stochastic simulations the wind can''t be setted with the input model, check config.m')
     end 
 else
     if settings.wind.DayMin == settings.wind.DayMax && settings.wind.HourMin == settings.wind.HourMax

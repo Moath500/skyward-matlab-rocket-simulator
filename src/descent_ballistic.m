@@ -56,7 +56,6 @@ end
 
 %% ADDING WIND (supposed to be added in NED axes);
 
-
 if settings.wind.model
     if settings.stoch.N > 1
         [uw,vw,ww] = wind_matlab_generator(settings,z,t,Hour,Day);
@@ -65,6 +64,10 @@ if settings.wind.model
     end
     wind = [uw,vw,ww];
     
+elseif settings.wind.input
+    
+    [uw,vw,ww] = wind_input_generator(settings,z);
+    wind = [uw,vw,ww];
 else
     
     wind = [uw vw ww]; % constant wind

@@ -16,7 +16,9 @@ warning off
 if not(settings.wind.model)
     if settings.wind.MagMin == settings.wind.MagMax && settings.wind.ElMin == settings.wind.ElMax
         error('In stochastic simulations the wind must setted with the random model, check config.m')
-    end 
+    elseif settings.wind.input
+        error('In stochastic simulations the wind can''t be setted with the input model, check config.m')
+    end
 else
     if settings.wind.DayMin == settings.wind.DayMax && settings.wind.HourMin == settings.wind.HourMax
         error('In stochastic simulations with the wind model the day or the hour of launch must vary, check config.m')
@@ -49,9 +51,10 @@ parfor i = 1:settings.stoch.N
     
     if not(settings.wind.model)
         
-    [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
+        [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
         settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
         settings.wind.MagMax);
+        Day = 0; Hour = 0;
     else
         Day = randi([settings.wind.DayMin,settings.wind.DayMax]);
         Hour = randi([settings.wind.HourMin,settings.wind.HourMax]);

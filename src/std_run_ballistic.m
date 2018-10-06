@@ -16,6 +16,9 @@ function [Tf,Yf,Ta,Ya,bound_value] = std_run_ballistic(settings)
 % email: francesco.colombi@skywarder.eu
 % Release date: 16/04/2016
 
+if settings.wind.model && settings.wind.input
+    error('Both wind model and input wind are true, select just one of them')
+end
 if settings.ldf
     warning('Landing with the second drogue can be simulated just in standard simulations, check settings.ldf & settings.ballistic in config.m')
 end
@@ -37,12 +40,15 @@ X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 
 %% WIND GENERATION
 
-if settings.wind.model  % will be computed inside the integrations
+if settings.wind.model || settings.wind.input   % will be computed inside the integrations
     uw = 0; vw = 0; ww = 0;
 else 
     [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
     settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
     settings.wind.MagMax);
+    if ww ~= 0
+        warning('Pay attention using vertical wind, there might be computational errors')
+    end
 end
 
 %% ASCENT

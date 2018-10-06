@@ -216,6 +216,18 @@ settings.wind.HourMin = 20;                          % [h] Minimum Hour of the d
 settings.wind.HourMax = 20;                         % [h] Maximum Hour of the day
 settings.wind.ww = 0;                               % [m/s] Vertical wind speed
 
+% Input wind 
+
+% Wind is generated for every altitude interpolating with the coefficient defined below
+
+% first row: wind magnitude [m/s]
+% secon row: wind azimut angle [deg]
+% third row: altitude
+
+settings.wind.input = true;
+settings.wind.input_matr = [ 5    7    9   10    11    11   13   12   13   13   14   12   10 10
+                             250  260  260 260   260   260  270  270  270  270  270  270  270 270
+                             0    100  600 750   900   1500 2000 3000 4200 5500 7000 9000 10000 11000];
 
 % Random wind model
 

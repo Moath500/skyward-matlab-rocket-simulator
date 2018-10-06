@@ -94,6 +94,8 @@ if settings.stoch.N == 1
             plot3(y_plot, x_plot, z_plot, '--r')
         end
         
+        [~,i_tb] = min(abs(settings.tb-Ta));
+        
         h1 = plot3(bound_value.Xd1(1),bound_value.Xd1(2),bound_value.Xd1(3),'ro',...
             'MarkerSize',7,'MarkerFaceColor','r');
         h4 = plot3(Y(end,2),Y(end,1),Y(end,3),'rx','markersize',7);
@@ -105,8 +107,12 @@ if settings.stoch.N == 1
                 'MarkerSize',7,'MarkerFaceColor','r');
             h3 = plot3(bound_value.Xrog(1),bound_value.Xrog(2),bound_value.Xrog(3),'rs',...
                 'MarkerSize',7,'MarkerFaceColor','r');
-            legend([h5,h1,h2,h3,h4],{'Launch point','Apogee/1st Drogue Deployment',...
-                '2nd Drogue Deployment','Rogallo Deployment','Landing point'},'Location','northeast');
+            h6 = plot3(Y(i_tb,2),Y(i_tb,1),-Y(i_tb,3),'ro','MarkerSize',9);
+            
+            legend([h5,h1,h2,h3,h4,h6],{'Launch point','Apogee/1st Drogue Deployment',...
+                '2nd Drogue Deployment','Rogallo Deployment','Landing point',...
+                'burning time position'},'Location','northeast');
+            
         else
             legend([h5,h1,h4],'Launch point','Apogee',...
                 'Landing point','Location','northeast');
@@ -244,11 +250,12 @@ if settings.stoch.N == 1
             
             h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
-
-            legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
-                'Landing Point','2nd Drogue Deployment','Location','Best');
+            h5 = plot(bound_value.Xrog(1),bound_value.Xrog(2),'sr','MarkerSize',7,...
+                'MarkerFaceColor','r');
+            legend([h1,h2,h3,h4,h5],'Apogee/1st Drogue Deployment','Launch Point',...
+                'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
         else
-            legend([h1,h2,h3],'Launch point','Apogee','Landing point',...
+            legend([h2,h1,h3],'Launch point','Apogee','Landing point',...
                 'Location','northeast');
             if settings.sdf
                 h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
@@ -270,9 +277,10 @@ if settings.stoch.N == 1
             
             h4 = plot(bound_value.Xd2(2),bound_value.Xd2(3),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
-
-            legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
-                'Landing Point','2nd Drogue Deployment','Location','Best');
+            h5 = plot(bound_value.Xrog(2),bound_value.Xrog(3),'sr','MarkerSize',7,...
+                'MarkerFaceColor','r');
+            legend([h1,h2,h3,h4,h5],'Apogee/1st Drogue Deployment','Launch Point',...
+                'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
         else
             
             if settings.sdf
@@ -293,9 +301,10 @@ if settings.stoch.N == 1
             
             h4 = plot(bound_value.Xd2(1),bound_value.Xd2(3),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
-
+            h5 = plot(bound_value.Xrog(1),bound_value.Xrog(3),'sr','MarkerSize',7,...
+                'MarkerFaceColor','r');
             legend([h1,h2,h3,h4,h5],'Apogee/1st Drogue Deployment','Launch Point',...
-                'Landing Point','2nd Drogue Deployment','Location','Best');
+                'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
         else
             
             if settings.sdf
@@ -383,11 +392,10 @@ else
                 'Punti di atterraggio'},'Box','off','Location','southeast',...
                 'TextColor','w');
             title('Atterraggio con secondo drogue');
-            xlabel('Km')
-            ylabel('Km')
+            xlabel('m')
+            ylabel('m')
             axis image
             pause(1)
-            delete('landing_points.fig')
         end
     else
         h = figure('Name','Landing Points','NumberTitle','off');

@@ -31,6 +31,10 @@ if settings.wind.model
     end
     wind = [uw,vw,ww];
     
+elseif settings.wind.input
+    
+    [uw,vw,ww] = wind_input_generator(settings,z);
+    wind = [uw,vw,ww];
 else
     
     wind = [uw vw ww]; % constant wind

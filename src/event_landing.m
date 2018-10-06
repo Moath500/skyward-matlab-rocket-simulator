@@ -15,7 +15,7 @@ function [value,isterminal,direction] = event_landing(t,Y,settings,varargin)
 
 value = Y(3);
 isterminal = 1;
-direction = 1;
+direction = 0;
 
 
 end

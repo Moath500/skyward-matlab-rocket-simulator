@@ -61,13 +61,18 @@ end
 
 
 if settings.wind.model
-    
+   
     if settings.stoch.N > 1
         [uw,vw,ww] = wind_matlab_generator(settings,z,t,Hour,Day);
     else
         [uw,vw,ww] = wind_matlab_generator(settings,z,t);
     end
     
+    wind = quatrotate(Q, [uw vw ww]);
+    
+elseif settings.wind.input
+    
+    [uw,vw,ww] = wind_input_generator(settings,z);
     wind = quatrotate(Q, [uw vw ww]);
     
 else
@@ -268,7 +273,7 @@ end
 
 if -z < settings.lrampa*sin(OMEGA)      % No torque on the Launch
     
-    Fg = m*g*sin(OMEGA);                %[N] force due to the gravity
+    Fg = m*g*sin(OMEGA);                % [N] force due to the gravity
     X = 0.5*rho*V_norm^2*S*CA;
     F = -Fg +T -X;
     du = F/m;
@@ -296,7 +301,7 @@ else
     % first computed in the body-frame reference system
     
     qdyn = 0.5*rho*V_norm^2;        %[Pa] dynamics pressure
-    qdynL_V = 0.5*rho*V_norm*S*C;   %
+    qdynL_V = 0.5*rho*V_norm*S*C;   
     
     X = qdyn*S*CA;                  %[N] x-body component of the aerodynamics force
     Y = qdyn*S*CYB*beta;            %[N] y-body component of the aerodynamics force
@@ -370,6 +375,7 @@ if settings.plots
         alt_plot(contatore) = 0;
         
     end
+    
     t_plot(contatore) = t;
     beta_plot(contatore) = beta_value;
     alpha_plot(contatore) = alpha_value;
@@ -381,7 +387,6 @@ if settings.plots
     wind_plot(:,contatore) = [uw,vw,ww];
     F_aero_plot(:,contatore) = [X Y Z];
     contatore = contatore + 1;
-    
     
     if Vels(3) >= 0  && t > tb
         

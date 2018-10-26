@@ -10,12 +10,12 @@ Before starting the simulation, data and parameters to be used must be specified
 * Launchpad data (height, inclination)
 * Geometry, mass, aerodyanmic properties (length, mass, moments of inertia, reference surface etc..)
 * Motor data
-* Wind model to be used (constant wind or hwsm wind model)
+* Wind model to be used (constant wind or atmoshwm wind model)
 * Integration options
 * Type of simulation to be performed (ascend phase + parachute descend, ballistic, stochastic, parachute failure etc..) 
 * Plot settings
 
-The simulation is then started running `start_simulation.m` according to the input settings
+The appropriate simulation is then started running `start_simulation.m`,based on the settings specified
 
 ## Types of simulation
 The standard simulation is a 6 d.o.f. dynamics in the ascend phase and 3 d.o.f. descent with a parachute. However it is possible to simulate the descend phase using a 6 d.o.f. dynamics for a ballistic flight or in the case of the parachute failure. <br/>

@@ -1,4 +1,5 @@
-function [uw,vw,ww] = wind_input_generator(settings,z)
+function [uw,vw,ww] = wind_input_generator(settings,z,uncert)
+
 % Author: Adriano Filippo Inno
 % Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
 % email: adriano.filippo.inno@skywarder.eu
@@ -6,11 +7,15 @@ function [uw,vw,ww] = wind_input_generator(settings,z)
 
 % This function allows to use a custom set of wind, defined in config.m 
 
-uw_vect = settings.wind.input_matr(1,:).*cosd(360-settings.wind.input_matr(2,:));
-vw_vect = settings.wind.input_matr(1,:).*sind(360-settings.wind.input_matr(2,:));
+magn = (1 + uncert(1)/100).*settings.wind.input_matr(1,:);
+dir = 360 - (1 + uncert(2)/100).*settings.wind.input_matr(2,:);
+
+uw_vect = magn.*cosd(dir);
+vw_vect = magn.*sind(dir);
 h_vect = settings.wind.input_matr(3,:);
 
-h = -z+settings.z0;
+h = -z + settings.z0;
+
 if h < 0
     h = 0;
 end

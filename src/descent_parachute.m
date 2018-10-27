@@ -1,4 +1,4 @@
-function [dY] = descent_parachute(t,Y,settings,uw,vw,ww,para,Hour,Day)
+function [dY] = descent_parachute(t,Y,settings,uw,vw,ww,para,uncert,Hour,Day)
 % ODE-Function for Parachute descent 
 % State = ( x y z | u v w  )
 
@@ -24,22 +24,20 @@ function [dY] = descent_parachute(t,Y,settings,uw,vw,ww,para,Hour,Day)
 %% ADDING WIND (supposed to be added in NED axes);
 
 if settings.wind.model
+    
     if settings.stoch.N > 1
         [uw,vw,ww] = wind_matlab_generator(settings,z,t,Hour,Day);
     else
         [uw,vw,ww] = wind_matlab_generator(settings,z,t);
     end
-    wind = [uw,vw,ww];
     
 elseif settings.wind.input
     
-    [uw,vw,ww] = wind_input_generator(settings,z);
-    wind = [uw,vw,ww];
-else
+    [uw,vw,ww] = wind_input_generator(settings,z,uncert);
     
-    wind = [uw vw ww]; % constant wind
-
 end
+
+wind = [uw vw ww];
 
 % Relative velocities (plus wind);
 ur = u - wind(1);
@@ -146,7 +144,7 @@ if settings.plots
         t_plot(contatore) = t;
         contatore = contatore + 1;
         alt_plot(contatore) = -z;
-        wind_plot(:,contatore) = [uw,vw,ww];
+        wind_plot(:,contatore) = wind;
         
         descent_para.t = t_plot;
         descent_para.alt = alt_plot;

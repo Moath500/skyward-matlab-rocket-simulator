@@ -19,8 +19,11 @@ function [Tf,Yf,Ta,Ya,bound_value] = std_run_ballistic(settings)
 if settings.wind.model && settings.wind.input
     error('Both wind model and input wind are true, select just one of them')
 end
-if settings.ldf
-    warning('Landing with the second drogue can be simulated just in standard simulations, check settings.ldf & settings.ballistic in config.m')
+
+if settings.rocket_name == 'R2A'
+    if settings.ldf
+        error('Landing with the second drogue can be simulated just in standard simulations, check settings.ldf & settings.ballistic in config.m')
+    end
 end
 
 if settings.wind.HourMin ~= settings.wind.HourMax || settings.wind.HourMin ~= settings.wind.HourMax
@@ -46,15 +49,24 @@ else
     [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
     settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
     settings.wind.MagMax);
+
     if ww ~= 0
         warning('Pay attention using vertical wind, there might be computational errors')
     end
+    
 end
+
+if settings.wind.input && settings.wind.input_uncertainty ~= 0
+    uncert = randi(settings.wind.input_uncertainty,[1,2]);
+else
+    uncert = [0,0];
+end
+    
 
 %% ASCENT
 
 [Ta,Ya] = ode113(@ascent,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
-    settings,uw,vw,ww);
+    settings,uw,vw,ww,uncert);
 
 %% DESCEND 
 
@@ -65,21 +77,22 @@ if settings.sdf
     para = 1; % Flag for Drogue 1
     X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
     [Td1,Yd1] = ode113(@descent_parachute,settings.ode.timedrg1,X0d1,...
-    settings.ode.optionsdrg1,settings,uw,vw,ww,para);
+    settings.ode.optionsdrg1,settings,uw,vw,ww,para,uncert);
 
     % ballistic descent after failure of drogue 2 
     
     X0b1 = Yd1(end,:);
-    Q0 = angle2quat(90*pi/180,0,0,'ZYX')';
+    Q0 = angle2quat(0,0,0,'ZYX')';
     X0b = [X0b1,0,0,0,Q0'];
-    [Tb,Yb] = ode113(@descent_ballistic,settings.ode.timedesc,X0b,settings.ode.optionsdesc,...
+    [Tb,Yb] = ode45(@descent_ballistic,settings.ode.timedesc,X0b,settings.ode.optionsdesc,...
         settings,uw,vw,ww);
     
 else 
+
 % total ballistic descend, so no drogue will be used
 
 [Td,Yd] = ode113(@descent_ballistic,settings.ode.timedesc,Ya(end,1:13),settings.ode.optionsdesc,...
-    settings,uw,vw,ww);
+    settings,uw,vw,ww,uncert);
 end
 
 %% FINAL STATE ASSEMBLING 
@@ -106,10 +119,10 @@ end
 bound_value.td1 = Ta(end);
 bound_value.Xd1 = [Ya(end,2), Ya(end,1), -Ya(end,3)];
 bound_value.Vd1 = quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6));
+
 if settings.sdf 
     bound_value.td2 = Ta(end)+Td1(end);
     bound_value.Xd2 = [Yd1(end,2), Yd1(end,1), -Yd1(end,3)];
     bound_value.Vd2 = [Yd1(end,4), Yd1(end,5), -Yd1(end,6)];
 end
 
-% bound_value.Vd2 = Yd2(end,)

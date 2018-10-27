@@ -15,7 +15,7 @@
 %% LAUNCH SETUP
 
 % rocket name
-settings.rocket_name = 'R2A';
+settings.rocket_name = "R2A";
 
 % launchpad 6
 settings.z0 = 5;                %[m] Launchpad Altitude
@@ -166,11 +166,11 @@ settings.zrog = 2000;                % [m] Altitude of Rogallo Opening
 
 %% INTEGRATION OPTIONS
 
-settings.ode.timeasc = 0:0.01:2000;  % [s]   Time span for ascend
-settings.ode.timedrg1 = 0:0.01:2000; % [s]   Time span for drogue 1
-settings.ode.timedrg2 = 0:0.01:2000; % [s]   Time span for drogue 2
-settings.ode.timerog = 0:0.01:2000;  % [s]   Time span for rogallo
-settings.ode.timedesc = 0:0.01:2000; % [s]   Time span for ballistic descent
+settings.ode.timeasc =  [0 100];     % [s]   Time span for ascend
+settings.ode.timedrg1 = [0 200];     % [s]   Time span for drogue 1
+settings.ode.timedrg2 = [0 200];     % [s]   Time span for drogue 2
+settings.ode.timerog =  [0 1000];     % [s]   Time span for rogallo
+settings.ode.timedesc = [0 100];     % [s]   Time span for ballistic descent
 
 
 
@@ -194,7 +194,7 @@ settings.ode.optionsdrg2 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
 settings.ode.optionsrog = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_landing);                   %ODE options for descent
 
-settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-2,...
     'Events',@event_landing);                   %ODE options for ballistic descent
 
 
@@ -203,7 +203,7 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-3,...
 
 % Settings for the Wind Model
 
-settings.wind.model = true;
+settings.wind.model = false;
 % set to true for hwsm wind model
 % set to false for random wind model
 % input Day and Hour as arrays to run stochastic simulations
@@ -212,7 +212,7 @@ settings.wind.Lat = 39.552709;                      % [deg] Latitude of launchin
 settings.wind.Long = 9.652400;                      % [deg] Longitude of launching site
 settings.wind.DayMin = 270;                         % [d] Minimum Day of the launch 
 settings.wind.DayMax = 270;                         % [d] Maximum Day of the launch
-settings.wind.HourMin = 20;                          % [h] Minimum Hour of the day
+settings.wind.HourMin = 20;                         % [h] Minimum Hour of the day
 settings.wind.HourMax = 20;                         % [h] Maximum Hour of the day
 settings.wind.ww = 0;                               % [m/s] Vertical wind speed
 
@@ -225,16 +225,20 @@ settings.wind.ww = 0;                               % [m/s] Vertical wind speed
 % third row: altitude
 
 settings.wind.input = true;
-settings.wind.input_matr = [ 5    7    9   10    11    11   13   12   13   13   14   12   10 10
-                             250  260  260 260   260   260  270  270  270  270  270  270  270 270
-                             0    100  600 750   900   1500 2000 3000 4200 5500 7000 9000 10000 11000];
+settings.wind.input_matr = [ 5    7    9   10   11   11   13   12   13   13   14   12   10    10
+                             250  260  260 260  260  260  270  270  270  270  270  270  270   270
+                             0    100  600 750  900  1500 2000 3000 4200 5500 7000 9000 10000 18000];
+                         
+settings.wind.input_uncertainty = 5;              % [perc] uncertainty percentage
+                         
+                         
 
 % Random wind model
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 6;                    % [m/s] Minimum Magnitude
-settings.wind.MagMax = 8;                    % [m/s] Maximum Magnitude
+settings.wind.MagMax = 10;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;              % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (90)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
@@ -260,7 +264,7 @@ settings.sdf = false;
 % simulation in which rogallo wing does not open and thus landing is
 % achieved thanks to the 2nd parachute
 
-settings.ldf = true;
+settings.ldf = false;
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee and thus there is no
@@ -271,7 +275,7 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;             % Number of cases
+settings.stoch.N = 10;             % Number of cases
 
 %% PLOT DETAILS
 

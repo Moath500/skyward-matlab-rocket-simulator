@@ -1,4 +1,4 @@
-function [dY] = descent_ballistic(t,Y,settings,uw,vw,ww,Hour,Day)
+function [dY] = descent_ballistic(t,Y,settings,uw,vw,ww,uncert,Hour,Day)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 )
 %
@@ -50,29 +50,25 @@ Q = [ q0 q1 q2 q3];
 Q_conj = [ q0 -q1 -q2 -q3];
 normQ = norm(Q);
 
-if abs(normQ-1) > 0.1
-    Q = Q/normQ;
-end
+Q = Q/normQ;
 
 %% ADDING WIND (supposed to be added in NED axes);
 
 if settings.wind.model
+   
     if settings.stoch.N > 1
         [uw,vw,ww] = wind_matlab_generator(settings,z,t,Hour,Day);
     else
         [uw,vw,ww] = wind_matlab_generator(settings,z,t);
     end
-    wind = [uw,vw,ww];
     
 elseif settings.wind.input
     
-    [uw,vw,ww] = wind_input_generator(settings,z);
-    wind = [uw,vw,ww];
-else
+    [uw,vw,ww] = wind_input_generator(settings,z,uncert);
     
-    wind = [uw vw ww]; % constant wind
-
 end
+
+    wind = quatrotate(Q, [uw vw ww]);
 
 % Relative velocities (plus wind);
 ur = u - wind(1);
@@ -91,7 +87,6 @@ C = settings.C;              % [m]   caliber
 CoeffsE = settings.CoeffsE;  % [/] Empty Rocket Coefficients
 g = 9.80655;                 % [N/kg] module of gravitational field at zero
 
-T = 0;                       % Thrust
     
 %% ATMOSPHERE DATA
 
@@ -99,16 +94,17 @@ if -z < 0     % z is directed as the gravity vector
     z = 0;
 end
 
-[~, a, ~, rho] = atmoscoesa(-z+settings.z0);
+[~, a, P, rho] = atmoscoesa(-z+settings.z0);
 M = V_norm/a;
+M_value = M;
 
 %% AERODYNAMICS ANGLES
 
-if not(u<1e-1 || V_norm<1e-3)
+if not(u < 1e-3 || V_norm < 1e-3)
     alpha = atan(wr/ur);
     beta = asin(vr/V_norm);
 else
-    alpha =0;
+    alpha = 0;
     beta = 0;
 end
 
@@ -155,6 +151,7 @@ end
 
 if -z > givH(end)
     z = -givH(end);
+    
 elseif -z < givH(1)
         z = -givH(1);
 end
@@ -185,7 +182,7 @@ Y = qdyn*S*CYB*beta;            % [N] y-body component of the aerodynamics force
 Z = qdyn*S*CNA*alpha;           % [N] z-body component of the aerodynamics force
 Fg = quatrotate(Q,[0 0 m*g])';  % [N] force due to the gravity
 
-F = Fg +[-X+T,+Y,-Z]';          % [N] total forces vector
+F = Fg +[-X,+Y,-Z]';            % [N] total forces vector
 
 %% STATE DERIVATIVES
 
@@ -221,7 +218,8 @@ dY=dY';
 
 %% PERSISTENT VARIABLES
 
-persistent t_plot contatore beta_plot alpha_plot wind_plot alt_plot
+persistent contatore t_plot M_plot CA_plot alpha_plot beta_plot...
+     F_aero_plot alt_plot wind_plot P_plot
 
 
 %% SAVING THE QUANTITIES FOR THE PLOTS
@@ -233,31 +231,48 @@ if settings.plots
         if isempty (contatore)
             contatore = 1;
             t_plot(contatore) = 0;
-            beta_plot(contatore) = 0;
+            CA_plot(contatore) = 0;
+            M_plot(contatore) = 0;
             alpha_plot(contatore) = 0;
+            beta_plot(contatore) = 0;
             wind_plot(:,contatore) = zeros(3,1);
+            F_aero_plot(:,contatore) = zeros(3,1);
             alt_plot(contatore) = 0;
+            P_plot(contatore) = 0;
+            
         end
         
         t_plot(contatore) = t;
         beta_plot(contatore) = beta_value;
         alpha_plot(contatore) = alpha_value;
-        wind_plot(:,contatore) = [uw,vw,ww];
+        M_plot(contatore) = M_value;
+        CA_plot(contatore) = CA;
         alt_plot(contatore) = -z;
+        P_plot(contatore) = P;
+        wind_plot(:,contatore) = [uw vw ww];
+        F_aero_plot(:,contatore) = [X Y Z];
         contatore = contatore + 1;
         
-        
-        descent_bal.t = t_plot;
-        descent_bal.alpha = alpha_plot;
-        descent_bal.beta = beta_plot;
-        descent_bal.wind = wind_plot;
-        descent_bal.alt = alt_plot;
-        
-        
         if -z <= 0
+            
+            descent_bal.P = P_plot;
+            descent_bal.t = t_plot;
+            descent_bal.M = M_plot;
+            descent_bal.CA = CA_plot;
+            descent_bal.alpha = alpha_plot;
+            descent_bal.beta = beta_plot;
+            descent_bal.alt = alt_plot;
+            descent_bal.wind = wind_plot;
+            descent_bal.AeroDyn_Forces = F_aero_plot;
+            
+            
+            
             save ('descent_plot.mat', 'descent_bal')
         end
         
         
     end
+end
+
+
 end

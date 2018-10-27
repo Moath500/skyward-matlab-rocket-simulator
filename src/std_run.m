@@ -19,8 +19,9 @@ function [Tf,Yf,Ta,Ya,bound_value] = std_run(settings)
 if settings.wind.model && settings.wind.input
     error('Both wind model and input wind are true, select just one of them')
 end
+
 if settings.sdf
-    warning('The second drogue failure can be simulated just in ballistic simulations, check settings.sdf & settings.ballistic in config.m')
+    error('The second drogue failure can be simulated just in ballistic simulations, check settings.sdf & settings.ballistic in config.m')
 end
 
 if settings.wind.HourMin ~= settings.wind.HourMax || settings.wind.HourMin ~= settings.wind.HourMax
@@ -41,20 +42,30 @@ X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 %% WIND GENERATION
 
 if settings.wind.model || settings.wind.input   % will be computed inside the integrations
-    uw = 0; vw = 0; ww = 0;
+    uw = 0; vw = 0; ww = 0; 
 else
     [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
         settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
         settings.wind.MagMax);
+    
     if ww ~= 0
         warning('Pay attention using vertical wind, there might be computational errors')
     end
+    
 end
+
+if settings.wind.input && settings.wind.input_uncertainty ~= 0
+    uncert = randi(settings.wind.input_uncertainty,[1,2]);
+else
+    uncert = [0,0];
+end
+    
+
 
 %% ASCENT
 
 [Ta,Ya] = ode113(@ascent,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
-    settings,uw,vw,ww);
+    settings,uw,vw,ww,uncert);
 
 %% DROGUE 1
 % Initial Condition are the last from ascent (need to rotate because
@@ -63,7 +74,7 @@ end
 para = 1; % Flag for Drogue 1
 X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
 [Td1,Yd1] = ode113(@descent_parachute,settings.ode.timedrg1,X0d1,...
-    settings.ode.optionsdrg1,settings,uw,vw,ww,para);
+    settings.ode.optionsdrg1,settings,uw,vw,ww,para,uncert);
 
 %% DROGUE 2
 % Initial Condition are the last from drogue 1 descent
@@ -71,28 +82,37 @@ X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
 para = 2; % Flag for Drogue 2
 X0d2 = Yd1(end,:);
 [Td2,Yd2] = ode113(@descent_parachute,settings.ode.timedrg2,X0d2,...
-    settings.ode.optionsdrg2,settings,uw,vw,ww,para);
+    settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
 
-%% ROGALLO WING
+%% ROGALLO WING AND FINAL STATE ASSEMBLING
 % Initial Condition are the last from drogue 2 descent
 
-if not(settings.ldf)
-para = 3;             % Flag for Main (Rogall)
+switch settings.rocket_name
+    
+    case 'R2A'
+        
+        if not(settings.ldf)
+            para = 3;             % Flag for Main (Rogall)
+        end
+        
+        
+        X0m = Yd2(end,:);
+        [Trog,Yrog] = ode113(@descent_parachute,settings.ode.timerog,X0m,...
+            settings.ode.optionsrog,settings,uw,vw,ww,para,uncert);
+        % Total State
+        Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2;Yrog];
+        
+        % Total Time
+        Tf = [Ta; Ta(end)+Td1; Ta(end)+Td1(end)+Td2;Ta(end)+Td1(end)+Td2(end)+Trog];
+        
+    case 'R2A_hermes'
+        
+        % Total State
+        Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2];
+        
+        % Total Time
+        Tf = [Ta; Ta(end)+Td1; Ta(end)+Td1(end)+Td2];
 end
-
-X0m = Yd2(end,:);
-[Trog,Yrog] = ode113(@descent_parachute,settings.ode.timerog,X0m,...
-    settings.ode.optionsrog,settings,uw,vw,ww,para);
-
-
-
-%% FINAL STATE ASSEMBLING
-
-% Total State
-Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2;Yrog];
-
-% Total Time
-Tf = [Ta; Ta(end)+Td1; Ta(end)+Td1(end)+Td2;Ta(end)+Td1(end)+Td2(end)+Trog];
 
 %% TIME, POSITION AND VELOCITY AT DROGUES DEPLOYMENT
 

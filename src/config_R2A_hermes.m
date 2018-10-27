@@ -213,12 +213,12 @@ settings.wind.ww = 0;                               % [m/s] Vertical wind speed
 % secon row: wind azimut angle [deg]
 % third row: altitude
 
-settings.wind.input = true;
+settings.wind.input = false;
 settings.wind.input_matr = [ 5    7    9   10    11    11   13   12   13  
                              250  260  260 260   260   260  270  270  270   
                              0    100  600 750   900   1500 2000 3000 6000 ];
                          
-settings.wind.input_uncertainty = 10;              % [perc] uncertainty percentage
+settings.wind.input_uncertainty = 0;              % [perc] uncertainty percentage
 
 % Random wind model
 
@@ -256,7 +256,7 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 5;             % Number of cases
+settings.stoch.N = 1;             % Number of cases
 
 %% PLOT DETAILS
 

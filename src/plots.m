@@ -9,72 +9,55 @@ if settings.stoch.N == 1
     if settings.ballistic
         load('descent_plot.mat')
         delete('descent_plot.mat')
-        if settings.sdf
-            load('descent_para_plot.mat')
-            delete('descent_para_plot.mat')
-        end
     else
         load('descent_para_plot.mat')
         delete('descent_para_plot.mat')
-    end
-    
-    %% SORTING VECTOR FOR ascent
-    
-    [ascent.t,I] = sort(ascent.t);
-    
-    ascent.XCP = ascent.XCP(I);
-    ascent.T = ascent.T(I);
-    ascent.M = ascent.M(I);
-    ascent.CA = ascent.CA(I);
-    ascent.alpha = ascent.alpha(I);
-    ascent.beta = ascent.beta(I);
-    ascent.AeroDyn_Forces = ascent.AeroDyn_Forces(:,I);
-    
+    end    
     
     %% ascent PLOTS
     
     if settings.only_XCP
         
         figure('Name','Stability Margin - ascent Phase','NumberTitle','off');
-        plot(ascent.t, -ascent.XCP,'.'), title('Stability margin vs time'), grid on;
+        plot(data_ascent.integration.t, -data_ascent.coeff.XCP,'.'), title('Stability margin vs time'), grid on;
         xlabel('Time [s]'); ylabel('S.M.[/]')
         
     else
         
         figure('Name','Stability Margin - ascent Phase','NumberTitle','off');
-        plot(ascent.t, -ascent.XCP,'.'), title('Stability margin vs time'), grid on;
+        plot(data_ascent.integration.t, -data_ascent.coeff.XCP,'.'), title('Stability margin vs time'), grid on;
         xlabel('Time [s]'); ylabel('S.M.[/]')
         
         figure('Name','Forces - ascent Phase','NumberTitle','off');
         suptitle('Forces')
         subplot(2,2,1)
-        plot(ascent.t, ascent.T, '.'), grid on;
+        plot(data_ascent.integration.t, data_ascent.forces.T, '.'), grid on;
         xlabel('Time [s]'); ylabel('Thrust [N]');
         
         subplot(2,2,2)
-        plot(ascent.t, ascent.AeroDyn_Forces(1,:)),grid on;
+        plot(data_ascent.integration.t, data_ascent.forces.AeroDyn_Forces(1,:)),grid on;
         xlabel('Time [s]'); ylabel('X-body force [N]')
         
         subplot(2,2,3)
-        plot(ascent.t, ascent.AeroDyn_Forces(2,:)), grid on;
+        plot(data_ascent.integration.t, data_ascent.forces.AeroDyn_Forces(2,:)), grid on;
         xlabel('Time [s]'); ylabel('Y-body force [N]')
         
         subplot(2,2,4)
-        plot(ascent.t, ascent.AeroDyn_Forces(3,:)), grid on;
+        plot(data_ascent.integration.t, data_ascent.forces.AeroDyn_Forces(3,:)), grid on;
         xlabel('Time [s]'); ylabel('Z-body force [N]')
         
         figure('Name','Aerodynamics Angles - ascent Ahase','NumberTitle','off');
         suptitle('Aerodynamics Angles')
         subplot(2,1,1)
-        plot(ascent.t, ascent.alpha*180/pi), grid on;
+        plot(data_ascent.integration.t, data_ascent.interp.alpha*180/pi), grid on;
         xlabel('Time [s]'); ylabel('alpha [deg]')
         
         subplot(2,1,2)
-        plot(ascent.t, ascent.beta*180/pi), grid on;
+        plot(data_ascent.integration.t, data_ascent.interp.beta*180/pi), grid on;
         xlabel('Time [s]'); ylabel('beta [deg]')
         
         figure('Name','Drag Coefficient - ascent Phase','NumberTitle','off');
-        plot(ascent.t, ascent.CA), title('Drag Coefficient vs time'), grid on;
+        plot(data_ascent.integration.t, data_ascent.coeff.CA), title('Drag Coefficient vs time'), grid on;
         xlabel('Time [s]'); ylabel('Drag Coeff CD [/]')
         
         
@@ -134,13 +117,6 @@ if settings.stoch.N == 1
             legend([h5,h1,h4],'Launch point','Apogee',...
                 'Landing point','Location','northeast');
             
-            if settings.sdf
-                h2 = plot3(bound_value.Xd2(1),bound_value.Xd2(2),bound_value.Xd2(3),'rs',...
-                    'MarkerSize',7,'MarkerFaceColor','r');
-                legend([h5,h1,h2,h4],'Launch point','Apogee','2nd Drogue Failure',...
-                    'Landing point','Location','northeast');
-            end
-            
         end
         
         
@@ -192,13 +168,6 @@ if settings.stoch.N == 1
             
             legend(h1,'Apogee','Location','southeast');
             
-            if settings.sdf
-                h2 = plot(bound_value.td2,bound_value.Vd2(1),'rs','MarkerSize',7,...
-                    'MarkerFaceColor','r');
-                legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Failure',...
-                    'Location','southeast');
-            end
-            
         end
         
         subplot(3,1,2)
@@ -232,14 +201,7 @@ if settings.stoch.N == 1
         else
             
             legend(h1,'Apogee','Location','southeast');
-            
-            if settings.sdf
-                h2 = plot(bound_value.td2,bound_value.Vd2(2),'rs','MarkerSize',7,...
-                    'MarkerFaceColor','r');
-                legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Failure',...
-                    'Location','southeast');
-            end
-            
+
         end
         
         subplot(3,1,3)
@@ -274,14 +236,7 @@ if settings.stoch.N == 1
         else
             
             legend(h1,'Apogee','Location','southeast');
-            
-            if settings.sdf
-                h2 = plot(bound_value.td2,bound_value.Vd2(3),'rs','MarkerSize',7,...
-                    'MarkerFaceColor','r');
-                legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Failure',...
-                    'Location','southeast');
-            end
-            
+
         end
         
         %% ALTITUDE,MACH,VELOCITY,ACCELERATION(subplotted)
@@ -292,7 +247,7 @@ if settings.stoch.N == 1
         plot(Ta, z_a), grid on, xlabel('time [s]'), ylabel('altitude [m]');
         
         subplot(2,3,4)
-        plot(ascent.t(1:end-1), ascent.M(1:end-1)), grid on;
+        plot(data_ascent.integration.t(1:end-1), data_ascent.interp.M(1:end-1)), grid on;
         xlabel('Time [s]'); ylabel('Mach M [/]')
         
         
@@ -348,15 +303,7 @@ if settings.stoch.N == 1
             
             legend([h2,h1,h3],'Launch point','Apogee','Landing point',...
                 'Location','northeast');
-            
-            if settings.sdf
-                
-                h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
-                    'MarkerFaceColor','r');
-                legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
-                    'Landing Point','2nd Drogue Failure','Location','Best');
-            end
-            
+
         end
         
         
@@ -392,12 +339,6 @@ if settings.stoch.N == 1
                     'Landing Point','2nd Drogue Deployment','Location','Best');
             end
             
-        else
-            
-            if settings.sdf
-                h4 = plot(bound_value.Xd2(2),bound_value.Xd2(3),'sr','MarkerSize',7,...
-                    'MarkerFaceColor','r');
-            end
         end
         
         
@@ -431,13 +372,6 @@ if settings.stoch.N == 1
             else
                 legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
                     'Landing Point','2nd Drogue Deployment','Location','Best');
-            end
-            
-        else
-            
-            if settings.sdf
-                h4 = plot(bound_value.Xd2(1),bound_value.Xd2(3),'sr','MarkerSize',7,...
-                    'MarkerFaceColor','r');
             end
         end
         
@@ -501,9 +435,9 @@ else
             xlabel('North [m]'), ylabel('East [m]'),title('Landing Points');
             savefig('landing_points.fig')
             pause(1)
-            origin='landing_points.fig';
+            origin = 'landing_points.fig';
             addpath('landing_map');
-            [x,y]=get_data(origin);
+            [x,y] = get_data(origin);
             
             % Position Scaled map in background
             figure()
@@ -533,9 +467,6 @@ else
         legend('Mean Landing Point','Landing Points','Launch Site');
         xlabel('North [m]'), ylabel('East [m]'),title('Landing Points');
     end
-    
-    
-
     
     
     % APOGEE POINTS

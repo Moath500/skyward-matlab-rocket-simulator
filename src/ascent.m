@@ -1,4 +1,4 @@
-function [dY] = ascent(t,Y,settings,uw,vw,ww,uncert,Hour,Day)
+function [dY,parout] = ascent(t,Y,settings,uw,vw,ww,uncert,Hour,Day)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 | m | Ixx Iyy Izz )
 %
@@ -93,7 +93,7 @@ if -z < 0     % z is directed as the gravity vector
     z = 0;
 end
 
-[~, a, P, rho] = atmosisa(-z+settings.z0);
+[P, a, ~, rho] = atmosisa(-z+settings.z0);
 M = V_norm/a;
 M_value = M;
 
@@ -135,10 +135,8 @@ else             % for t >= tb the fligth condition is the empty one(no interpol
     Ixxdot = 0;
     Iyydot = 0;
     Izzdot = 0;
-    T=0;
+    T = 0;
 end
-
-T_value = T;
 
 %% AERODYNAMICS ANGLES
 
@@ -347,67 +345,34 @@ dY(16) = Iyydot;
 dY(17) = Izzdot;
 dY = dY';
 
-
-
-%% PERSISTENT VARIABLES
-
-persistent XCP contatore t_plot T_plot M_plot CA_plot alpha_plot beta_plot...
-     F_aero_plot alt_plot wind_plot P_plot
-
-
 %% SAVING THE QUANTITIES FOR THE PLOTS
 
-if settings.plots
-    
-    if settings.stoch.N == 1
-        
-        if isempty (contatore)
-            contatore = 1;
-            t_plot(contatore) = 0;
-            T_plot(contatore) = 0;
-            CA_plot(contatore) = 0;
-            M_plot(contatore) = 0;
-            XCP(contatore) = 0;
-            alpha_plot(contatore) = 0;
-            beta_plot(contatore) = 0;
-            wind_plot(:,contatore) = zeros(3,1);
-            F_aero_plot(:,contatore) = zeros(3,1);
-            alt_plot(contatore) = 0;
-            P_plot(contatore) = 0;
-            
-        end
-        
-        t_plot(contatore) = t;
-        beta_plot(contatore) = beta_value;
-        alpha_plot(contatore) = alpha_value;
-        XCP(contatore) = XCP_value;
-        M_plot(contatore) = M_value;
-        T_plot(contatore) = T_value;
-        CA_plot(contatore) = CA;
-        alt_plot(contatore) = -z;
-        P_plot(contatore) = P;
-        wind_plot(:,contatore) = [uw vw ww];
-        F_aero_plot(:,contatore) = [X Y Z];
-        contatore = contatore + 1;
-        
-        if Vels(3) >= 0  && t > tb
-            
-            ascent.P = P_plot;
-            ascent.XCP = XCP;
-            ascent.t = t_plot;
-            ascent.T = T_plot;
-            ascent.M = M_plot;
-            ascent.CA = CA_plot;
-            ascent.alpha = alpha_plot;
-            ascent.beta = beta_plot;
-            ascent.alt = alt_plot;
-            ascent.wind = wind_plot;
-            ascent.AeroDyn_Forces = F_aero_plot;
-            
-            
-            save ('ascent_plot.mat', 'ascent')
-        end
-    end
-    
-end
+parout.integration.t = t;
+
+parout.interp.M = M_value;
+parout.interp.alpha = alpha_value;
+parout.interp.beta = beta_value;
+parout.interp.alt = -z;
+
+parout.wind.body_wind = [uw vw ww];
+
+parout.forces.AeroDyn_Forces = [X Y Z];
+parout.forces.T = T;
+
+parout.air.rho = rho;
+parout.air.P = P;
+
+parout.coeff.CA = CA;
+parout.coeff.CYB = CYB;
+parout.coeff.CNA = CNA;
+parout.coeff.Cl = Cl;
+parout.coeff.Clp = Clp;
+parout.coeff.Cma = Cma;
+parout.coeff.Cmad = Cmad;
+parout.coeff.Cmq = Cmq;
+parout.coeff.Cnb = Cnb;
+parout.coeff.Cnr = Cnr;
+parout.coeff.Cnp = Cnp;
+parout.coeff.XCP = XCP_value;
+
 

@@ -1,4 +1,4 @@
-function [LP,X,ApoTime] = stoch_run(settings)
+function [LP,X,ApoTime,data_ascent,data_para] = stoch_run(settings)
 %STD RUN - This function runs a stochastic simulation (parallel)
 % OUTPUTS
 % LP: Landing Points
@@ -79,12 +79,15 @@ parfor i = 1:settings.stoch.N
         uw = 0; vw = 0; ww = 0; uncert = [0,0];
     end
     
-
+tf = settings.ode.final_time;
     
     %% ASCENT
 
-    [Ta,Ya] = ode113(@ascent,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
+    [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,...
         settings,uw,vw,ww,uncert,Hour,Day);
+    [data_ascent{i}] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert,Hour,Day);
+    data_ascent{i}.state.Y = Ya;
+    data_ascent{i}.state.T = Ta;
 
     %% DROGUE 1
     % Initial Condition are the last from ascent (need to rotate because
@@ -92,17 +95,23 @@ parfor i = 1:settings.stoch.N
 
     para = 1; % Flag for Drogue 1
     X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
-    [~,Yd1] = ode113(@descent_parachute,settings.ode.timedrg1,X0d1,...
+    [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,...
         settings.ode.optionsdrg1,settings,uw,vw,ww,para,uncert,Hour,Day);
-
+    [data_para1] = RecallOdeFcn(@descent_parachute,Td1,Yd1,settings,uw,vw,ww,para,uncert,Hour,Day);
+    data_para1.state.Y = Yd1;
+    data_para1.state.T = Td1;
+    
     %% DROGUE 2 
     % Initial Condition are the last from drogue 1 descent
     
     para = 2; %Flag for Drogue 2
     X0d2 = Yd1(end,:);
-    [~,Yd2] = ode113(@descent_parachute,settings.ode.timedrg2,X0d2,...
+    [Td2,Yd2] = ode113(@descent_parachute,[Td1(end),tf],X0d2,...
         settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert,Hour,Day);
-
+    [data_para2] = RecallOdeFcn(@descent_parachute,Td2,Yd2,settings,uw,vw,ww,para,uncert,Hour,Day);
+    data_para2.state.Y = Yd2;
+    data_para2.state.T = Td2;
+    
     %% ROGALLO WING
     % Initial Condition are the last from drogue 2 descent
     
@@ -115,13 +124,18 @@ parfor i = 1:settings.stoch.N
             end
             
             X0m = Yd2(end,:);
-            [~,Ym] = ode113(@descent_parachute,settings.ode.timerog,X0m,...
+            [T_rog,Y_rog] = ode113(@descent_parachute,[Td2(end),tf],X0m,...
                 settings.ode.optionsrog,settings,uw,vw,ww,para,uncert,Hour,Day);
+            [data_para3] = RecallOdeFcn(@descent_parachute,T_rog,Y_rog,settings,uw,vw,ww,para,uncert,Hour,Day);
+            data_para3.state.Y = Y_rog;
+            data_para3.state.T = T_rog;
+            data_para{i} = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),struct2cell(data_para3),'uni',0),fieldnames(data_para1),1);
+            
             
             %% FINAL STATE ASSEMBLING
             
             if not(settings.ao)
-                Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1; Yd2;Ym];
+                Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1; Yd2;Y_rog];
                 LP(i,:) = Yf(end,1:3);
             end
             
@@ -132,7 +146,7 @@ parfor i = 1:settings.stoch.N
                 Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2];
                 LP(i,:) = Yf(end,1:3);
             end
-            
+            data_para{i} = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),'uni',0),fieldnames(data_para1),1);
     end
     
     X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)]
@@ -141,4 +155,5 @@ parfor i = 1:settings.stoch.N
     parfor_progress;
 
 end
+
 end

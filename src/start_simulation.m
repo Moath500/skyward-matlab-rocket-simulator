@@ -4,12 +4,12 @@
 % Release date: 16/04/2016
 
 close all
-clear all 
+clear 
 clc
 
 %% LOAD DATA
 
-settings.project = "R2A_hermes";
+settings.project = "R2A";
 
 switch settings.project
     case "R2A"
@@ -31,11 +31,12 @@ if settings.ballistic
     if settings.stoch.N > 1
         if settings.wind.model 
             fprintf('Stochastic Ballistic Simulation With Wind Model Started...\n\n');
+        elseif settings.wind.input
+            fprintf('Stochastic Ballistic Simulation With Input Wind Started...\n\n');
         else
             fprintf('Stochastic Ballistic Simulation With Random Wind Started...\n\n');
         end
-            
-        [LP,X,ApoTime] = stoch_run_bal(settings);
+        [LP,X,ApoTime,data_ascent,data_bal] = stoch_run_bal(settings);
     else
         fprintf('Standard Ballistic Simulation Started...\n\n');
         [T,Y,Ta,Ya,bound_value] = std_run_ballistic(settings);
@@ -44,10 +45,12 @@ else
     if settings.stoch.N > 1
         if settings.wind.model 
             fprintf('Stochastic Simulation With Wind Model Started...\n\n');
+        elseif settings.wind.input
+            fprintf('Stochastic Simulation With Input Wind Started...\n\n');
         else
             fprintf('Stochastic Simulation With Random Wind Started...\n\n');
         end
-        [LP,X,ApoTime] = stoch_run(settings);
+        [LP,X,ApoTime,data_ascent,data_para] = stoch_run(settings);
     else
         fprintf('Standard Simulation Started...\n\n');
         [T,Y,Ta,Ya,bound_value] = std_run(settings);
@@ -223,7 +226,14 @@ if settings.plots
 end
 
 if settings.stoch.N == 1
-    delete('ascent_plot.mat')    
+    delete('ascent_plot.mat')  
+else
+    if settings.stoch.prob
+        [p,flag] = LaunchProb(settings,data_ascent,data_para);
+        fprintf('The launch probability is: %f/n/n',p);
+    end
 end
 
-clearvars -except ascent descent_bal descent_para T Ta Y Ya
+
+
+clearvars -except T Ta Y Ya data_ascent data_para data_bal flag p

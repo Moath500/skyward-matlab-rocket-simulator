@@ -1,4 +1,4 @@
-function [dY] = descent_ballistic(t,Y,settings,uw,vw,ww,uncert,Hour,Day)
+function [dY,parout] = descent_ballistic(t,Y,settings,uw,vw,ww,uncert,Hour,Day)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 )
 %
@@ -86,7 +86,7 @@ S = settings.S;              % [m^2] cross surface
 C = settings.C;              % [m]   caliber
 CoeffsE = settings.CoeffsE;  % [/] Empty Rocket Coefficients
 g = 9.80655;                 % [N/kg] module of gravitational field at zero
-
+T = 0;
     
 %% ATMOSPHERE DATA
 
@@ -94,7 +94,7 @@ if -z < 0     % z is directed as the gravity vector
     z = 0;
 end
 
-[~, a, P, rho] = atmoscoesa(-z+settings.z0);
+[P, a, ~, rho] = atmoscoesa(-z+settings.z0);
 M = V_norm/a;
 M_value = M;
 
@@ -216,63 +216,32 @@ dY(9) = dr;
 dY(10:13) = dQQ;
 dY=dY';
 
-%% PERSISTENT VARIABLES
-
-persistent contatore t_plot M_plot CA_plot alpha_plot beta_plot...
-     F_aero_plot alt_plot wind_plot P_plot
-
-
 %% SAVING THE QUANTITIES FOR THE PLOTS
 
-if settings.plots
-    
-    if settings.stoch.N == 1
-        
-        if isempty (contatore)
-            contatore = 1;
-            t_plot(contatore) = 0;
-            CA_plot(contatore) = 0;
-            M_plot(contatore) = 0;
-            alpha_plot(contatore) = 0;
-            beta_plot(contatore) = 0;
-            wind_plot(:,contatore) = zeros(3,1);
-            F_aero_plot(:,contatore) = zeros(3,1);
-            alt_plot(contatore) = 0;
-            P_plot(contatore) = 0;
-            
-        end
-        
-        t_plot(contatore) = t;
-        beta_plot(contatore) = beta_value;
-        alpha_plot(contatore) = alpha_value;
-        M_plot(contatore) = M_value;
-        CA_plot(contatore) = CA;
-        alt_plot(contatore) = -z;
-        P_plot(contatore) = P;
-        wind_plot(:,contatore) = [uw vw ww];
-        F_aero_plot(:,contatore) = [X Y Z];
-        contatore = contatore + 1;
-        
-        if -z <= 0
-            
-            descent_bal.P = P_plot;
-            descent_bal.t = t_plot;
-            descent_bal.M = M_plot;
-            descent_bal.CA = CA_plot;
-            descent_bal.alpha = alpha_plot;
-            descent_bal.beta = beta_plot;
-            descent_bal.alt = alt_plot;
-            descent_bal.wind = wind_plot;
-            descent_bal.AeroDyn_Forces = F_aero_plot;
-            
-            
-            
-            save ('descent_plot.mat', 'descent_bal')
-        end
-        
-        
-    end
-end
+parout.integration.t = t;
 
+parout.interp.M = M_value;
+parout.interp.alpha = alpha_value;
+parout.interp.beta = beta_value;
+parout.interp.alt = -z;
+
+parout.wind.body_wind = [uw vw ww];
+
+parout.air.rho = rho;
+parout.air.P = P;
+
+parout.forces.AeroDyn_Forces = [X Y Z];
+parout.forces.T = T;
+parout.coeff.CA = CA;
+parout.coeff.CYB = CYB;
+parout.coeff.CNA = CNA;
+parout.coeff.Cl = Cl;
+parout.coeff.Clp = Clp;
+parout.coeff.Cma = Cma;
+parout.coeff.Cmad = Cmad;
+parout.coeff.Cmq = Cmq;
+parout.coeff.Cnb = Cnb;
+parout.coeff.Cnr = Cnr;
+parout.coeff.Cnp = Cnp;
 
 end

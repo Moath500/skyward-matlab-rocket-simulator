@@ -1,4 +1,4 @@
-function [LP,X,ApoTime] = stoch_run_bal(settings)
+function [LP,X,ApoTime,data_ascent,data_bal] = stoch_run_bal(settings)
 %STD RUN - This function runs a stochastic simulation (parallel)
 % OUTPUTS
 % LP: Landing Points
@@ -42,6 +42,7 @@ if settings.project == "R2A"
     end
     
 end
+
 %% STARTING CONDITIONS
 
 % Attitude
@@ -90,46 +91,23 @@ parfor i = 1:settings.stoch.N
     
     %% ASCENT 
 
-    [Ta,Ya] = ode113(@ascent,settings.ode.timeasc,X0a,settings.ode.optionsasc,...
+    [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,...
         settings,uw,vw,ww,uncert,Hour,Day);
-
-    
+    [data_ascent{i}] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert,Hour,Day);
+    data_ascent{i}.state.Y = Ya;
+    data_ascent{i}.state.T = Ta;
     %% DESCEND
-    
-    % control if the second parachute fail
-    if settings.sdf
         
-        % first parachute descent phase
-        
-        para = 1; % Flag for Drogue 1
-        X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
-        [~,Yd1] = ode113(@descent_parachute,settings.ode.timedrg1,X0d1,...
-            settings.ode.optionsdrg1,settings,uw,vw,ww,para,uncert);
-        
-        % after failure of drogue 2 ballistic descent
-        
-        Q0 = angle2quat(90*pi/180,0,0,'ZYX')';
-        X0b = [Yd1(end,:) 0 0 0 Q0'];
-        [~,Yb] = ode45(@descent_ballistic,settings.ode.timedesc,X0b,settings.ode.optionsdesc,...
-            settings,uw,vw,ww,uncert,Hour,Day);
-        
-    else
-        % total ballistic descend, so no drogue will be used
-        
-        [~,Yd] = ode45(@descent_ballistic,settings.ode.timedesc,Ya(end,1:13),settings.ode.optionsdesc,...
-            settings,uw,vw,ww,uncert,Hour,Day);
-    end
-
-
+    [Tb,Yb] = ode113(@descent_ballistic,[Ta(end),tf],Ya(end,1:13),settings.ode.optionsdesc,...
+        settings,uw,vw,ww,uncert,Hour,Day);
+    [data_bal{i}] = RecallOdeFcn(@descent_ballistic,Tb,Yb,settings,uw,vw,ww,uncert,Hour,Day);
+    data_bal{i}.state.Y = Yd;
+    data_bal{i}.state.T = Td;
     %% FINAL STATE ASSEMBLING
     
     %Total State
     if not(settings.ao)
-        if settings.sdf
-            LP(i,:) = Yb(end,1:3);
-        else
-            LP(i,:) = Yd(end,1:3);
-        end
+        LP(i,:) = Yb(end,1:3);
     end
     
     X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)]

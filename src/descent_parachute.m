@@ -1,4 +1,4 @@
-function [dY] = descent_parachute(t,Y,settings,uw,vw,ww,para,uncert,Hour,Day)
+function [dY,parout] = descent_parachute(t,Y,settings,uw,vw,ww,para,uncert,Hour,Day)
 % ODE-Function for Parachute descent 
 % State = ( x y z | u v w  )
 
@@ -123,44 +123,12 @@ dY(6) = dw;
 
 dY = dY';
 
-%% PERSISTENT VARIABLES
-
-persistent t_plot contatore alt_plot wind_plot
-
-
 %% SAVING THE QUANTITIES FOR THE PLOTS
 
 if settings.plots
     
-    if settings.stoch.N == 1
-        
-        if isempty (contatore)
-            contatore = 1;
-            t_plot(contatore) = 0;
-            alt_plot(contatore) = 0;
-            wind_plot(:,contatore) = zeros(3,1);
-        end
-        
-        t_plot(contatore) = t;
-        contatore = contatore + 1;
-        alt_plot(contatore) = -z;
-        wind_plot(:,contatore) = wind;
-        
-        descent_para.t = t_plot;
-        descent_para.alt = alt_plot;
-        descent_para.wind = wind_plot;
-        
-        if not(settings.sdf)
-            
-            if -z <= 0
-                save ('descent_para_plot.mat', 'descent_para')
-            end
-        else
-            if -z <= settings.zdrg2
-                save ('descent_para_plot.mat', 'descent_para')
-                
-            end
-        end
-    end
+    parout.integration.t = t;
+    parout.interp.alt = -z;
+    parout.wind.body_wind = [uw vw ww];
     
 end

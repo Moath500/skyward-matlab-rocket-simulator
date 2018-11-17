@@ -158,12 +158,7 @@ settings.zdrg2 = 1000;               % [m] Altitude of drogue 2 opening
 
 %% INTEGRATION OPTIONS
 
-settings.ode.timeasc =  [0 100];     % [s]   Time span for ascend
-settings.ode.timedrg1 = [0 400];     % [s]   Time span for drogue 1
-settings.ode.timedrg2 = [0 400];     % [s]   Time span for drogue 2
-settings.ode.timedesc = [0 100];     % [s]   Time span for ballistic descent
-
-
+settings.ode.final_time =  2000;                 % [s] Final integration time
 
 % create an option structure for the integrations:
 
@@ -250,7 +245,7 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 5;             % Number of cases
+settings.stoch.N = 1;             % Number of cases
 
 %% PLOT DETAILS
 

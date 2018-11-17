@@ -51,9 +51,12 @@ LP = zeros(settings.stoch.N,3);
 X = zeros(settings.stoch.N,3);
 ApoTime = zeros(settings.stoch.N,1);
 
+tf = settings.ode.final_time;
+
 %% PARFOR LOOP
 parfor_progress(settings.stoch.N);
 parpool;
+
 
 parfor i = 1:settings.stoch.N
     
@@ -78,8 +81,7 @@ parfor i = 1:settings.stoch.N
         Hour = randi([settings.wind.HourMin,settings.wind.HourMax]);
         uw = 0; vw = 0; ww = 0; uncert = [0,0];
     end
-    
-tf = settings.ode.final_time;
+   
     
     %% ASCENT
 

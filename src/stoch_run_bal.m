@@ -59,6 +59,7 @@ LP = zeros(settings.stoch.N,3);
 X = zeros(settings.stoch.N,3);
 ApoTime = zeros(settings.stoch.N,1);
 
+tf = settings.ode.final_time;
 
 %% PARFOR LOOP
 
@@ -96,13 +97,15 @@ parfor i = 1:settings.stoch.N
     [data_ascent{i}] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert,Hour,Day);
     data_ascent{i}.state.Y = Ya;
     data_ascent{i}.state.T = Ta;
+    
     %% DESCEND
         
     [Tb,Yb] = ode113(@descent_ballistic,[Ta(end),tf],Ya(end,1:13),settings.ode.optionsdesc,...
         settings,uw,vw,ww,uncert,Hour,Day);
     [data_bal{i}] = RecallOdeFcn(@descent_ballistic,Tb,Yb,settings,uw,vw,ww,uncert,Hour,Day);
-    data_bal{i}.state.Y = Yd;
-    data_bal{i}.state.T = Td;
+    data_bal{i}.state.Y = Yb;
+    data_bal{i}.state.T = Tb;
+    
     %% FINAL STATE ASSEMBLING
     
     %Total State

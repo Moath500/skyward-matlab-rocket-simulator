@@ -62,6 +62,7 @@ else
     uncert = [0,0];
 end
     
+tf = settings.ode.final_time;
 
 %% ASCENT
 

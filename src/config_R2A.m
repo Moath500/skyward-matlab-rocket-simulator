@@ -166,7 +166,7 @@ settings.zrog = 2000;                            % [m] Altitude of Rogallo Openi
 
 %% INTEGRATION OPTIONS
 
-settings.ode.final_time =  2000;                 % [s]   Time span for ascend
+settings.ode.final_time =  2000;                 % [s] Final integration time
 
 % create an option structure for the integrations:
 
@@ -223,7 +223,7 @@ settings.wind.input_matr = [ 5    7    9   10   11   11   13   12   13   13   14
                              250  260  260 260  260  260  270  270  270  270  270  270  270   270
                              0    100  600 750  900  1500 2000 3000 4200 5500 7000 9000 10000 18000];
                          
-settings.wind.input_uncertainty = 5;             % [perc] uncertainty percentage
+settings.wind.input_uncertainty = 20;             % [perc] uncertainty percentage
                          
                          
 
@@ -246,7 +246,7 @@ settings.wind.AzMax = (90)*pi/180;                % [rad] Maximum Azimuth, user 
 
 %% BALLISTIC SIMULATION
 
-settings.ballistic = false;                      % Set to True to run a standard ballistic (without drogues) simulation
+settings.ballistic = true;                      % Set to True to run a standard ballistic (without drogues) simulation
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is
@@ -263,14 +263,14 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 5;                             % Number of cases
+settings.stoch.N = 1;                             % Number of cases
 settings.stoch.prob = true;                       % Set to true to compute the launch probability
 settings.stoch.x_lim = 2e3;                       % Max ovest displacement [m]
 settings.stoch.P_lim = 2e3;                       % Max drogue stress [Pa]
 
 %% PLOT DETAILS
 
-settings.plots = true;
+settings.plots = false;
 settings.only_XCP = false;                        % plot only the stability margin
 settings.landing_map = false;
 

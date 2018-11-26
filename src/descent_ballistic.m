@@ -29,7 +29,7 @@ function [dY,parout] = descent_ballistic(t,Y,settings,uw,vw,ww,uncert,Hour,Day)
 
 % x = Y(1);
 % y = Y(2);
-  z = Y(3)
+  z = Y(3);
   u = Y(4);
   v = Y(5);
   w = Y(6);

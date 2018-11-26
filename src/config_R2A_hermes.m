@@ -31,7 +31,7 @@ settings.PHI = 0*pi/180;           %[rad] Azimuth Angle from North Direction, us
 % sintax:
 % engine 1 -> Aerotech K1000-T
 % engine 2 -> Aerotech K560-W
-engine = 1;
+engine = 2;
 
 switch engine
        case 1 
@@ -57,25 +57,19 @@ switch engine
         settings.mp = settings.m0-settings.ms;                              % [kg]   Propellant Mass
         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
    case 2
-        settings.motor.Name = 'K560W-PS';
-        settings.motor.exp_time = [ 0   0.2900    0.4840    0.6790 ...
-            0.8740    1.0690    1.2640    1.4580  1.6530    1.8480 ...
-            2.0430    2.2370    2.4320    2.6270  2.8220    3.0170 ...
-            3.2110    3.4060    3.6010    3.7960  3.9910    4.1850 ... 
-            4.3800    4.5750    4.7700    4.9650];                          %[s]
+        settings.motor.Name = 'K550';
+        settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
+            1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                          %[s]
         
-        setting.motor.exp_thrust = [552.1230  645.4030  681.1090 ...
-               716.1670  742.6780  764.7780  775.7100  785.8590  ...
-               789.3050  789.0770  744.6220  676.8860  614.7110  ...
-               557.9080  503.6410  455.5040  412.0450  372.9630  ...
-               335.9870  307.3460  279.8560  223.4910   70.4410  ...
-               10.0280   2.4450       0];                                   % [N]
+        settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
+            178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
+            4.589 0.000  ] * 9.81/2.2;                                  % [N]
         
-        settings.m0 = 8.558;                                                % [kg]   Overall Mas
-        settings.ms = 7.134;                                                % [kg]   Structural Mass
+        settings.m0 = 8.066;                                                % [kg]   Overall Mas
+        settings.ms = 7.177;                                                % [kg]   Structural Mass
         settings.mp = settings.m0-settings.ms;                              % [kg]   Propellant Mass
-        settings.mnc = 0.149;                                               % [kg]   Nosecone Mass
-        settings.tb = 4.9;                                                  % [s]    Burning time
+        settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
+        settings.tb = 3.5;                                                  % [s]    Burning time
         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
 end
 
@@ -208,7 +202,7 @@ settings.wind.ww = 0;                               % [m/s] Vertical wind speed
 % secon row: wind azimut angle [deg]
 % third row: altitude
 
-settings.wind.input = true;
+settings.wind.input = false;
 settings.wind.input_matr = [ 5    7    9   10    11    11   13   12   13  
                              250  260  260 260   260   260  270  270  270   
                              0    100  600 750   900   1500 2000 3000 6000 ];
@@ -219,8 +213,8 @@ settings.wind.input_uncertainty = 10;              % [perc] uncertainty percenta
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 5;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 5;                   % [m/s] Maximum Magnitude
+settings.wind.MagMin = 0;                   % [m/s] Minimum Magnitude
+settings.wind.MagMax = 0;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;              % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (90)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)

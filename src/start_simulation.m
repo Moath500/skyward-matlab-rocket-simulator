@@ -9,7 +9,7 @@ clc
 
 %% LOAD DATA
 
-settings.project = "R2A";
+settings.project = "R2A_hermes";
 
 switch settings.project
     case "R2A"

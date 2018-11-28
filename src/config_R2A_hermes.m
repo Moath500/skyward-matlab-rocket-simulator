@@ -19,7 +19,7 @@ settings.rocket_name = "R2A_hermes";
 
 % launchpad 6
 settings.z0 = 1416;                %[m] Launchpad Altitude
-settings.lrampa = 4;               %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+settings.lrampa = 2.7;               %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
 
 
 % starting altitude
@@ -30,7 +30,7 @@ settings.PHI = 0*pi/180;           %[rad] Azimuth Angle from North Direction, us
 
 % sintax:
 % engine 1 -> Aerotech K1000-T
-% engine 2 -> Aerotech K560-W
+% engine 2 -> Aerotech K550W-L
 engine = 2;
 
 switch engine
@@ -65,8 +65,8 @@ switch engine
             178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
             4.589 0.000  ] * 9.81/2.2;                                  % [N]
         
-        settings.m0 = 8.066;                                                % [kg]   Overall Mas
-        settings.ms = 7.177;                                                % [kg]   Structural Mass
+        settings.ms = 6.500;                                                % [kg]   Structural Mass
+        settings.m0 = settings.ms+0.889;                                    % [kg]   Overall Mas                                       
         settings.mp = settings.m0-settings.ms;                              % [kg]   Propellant Mass
         settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
         settings.tb = 3.5;                                                  % [s]    Burning time
@@ -180,7 +180,7 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 
 % Settings for the Wind Model
 
-settings.wind.model = false;
+settings.wind.model = true;
 % set to true for hwsm wind model
 % set to false for random wind model
 % input Day and Hour as arrays to run stochastic simulations

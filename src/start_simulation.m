@@ -159,11 +159,11 @@ if settings.stoch.N == 1
     
     fprintf('max Mach reached: %g [-] \n', max_M)
     fprintf('altitude: %g [m] \n', z(imax_M))
-    fprintf('veocity: %g [m/s] \n', abs_V(imax_M))
+    fprintf('velocity: %g [m/s] \n', abs_V(imax_M))
     fprintf('time: %g [sec] \n\n', T(imax_M))
     
     fprintf('max acceleration reached: %g [m/s2] = %g [g] \n', max_a, max_a/9.80665)
-    fprintf('veocity: %g [m/s] \n', abs_V(imax_a))
+    fprintf('velocity: %g [m/s] \n', abs_V(imax_a))
     fprintf('time: %g [sec] \n\n', T(imax_a))
     
     fprintf('run on launch pad: %g [m] \n', abs_X(iexit))

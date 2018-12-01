@@ -19,7 +19,7 @@ settings.rocket_name = "R2A_hermes";
 
 % launchpad 6
 settings.z0 = 1416;                %[m] Launchpad Altitude
-settings.lrampa = 2.7;               %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+settings.lrampa = 5.3;               %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
 
 
 % starting altitude

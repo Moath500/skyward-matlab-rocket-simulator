@@ -65,7 +65,7 @@ switch engine
             178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
             4.589 0.000  ] * 9.81/2.2;                                  % [N]
         
-        settings.ms = 6.500;                                                % [kg]   Structural Mass
+        settings.ms = 6.687;                                                % [kg]   Structural Mass
         settings.m0 = settings.ms+0.889;                                    % [kg]   Overall Mas                                       
         settings.mp = settings.m0-settings.ms;                              % [kg]   Propellant Mass
         settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
@@ -79,7 +79,7 @@ end
 
 settings.C = 0.09;                          % [m]      Caliber (Fuselage Diameter)
 settings.S = 0.0064;                        % [m^2]    Cross-sectional Surface
-L = 1.91;                                   % [m]      Rocket length
+L = 1.96;                                   % [m]      Rocket length
 
 %% MASS GEOMERTY DETAILS
 % x-axis: along the fuselage

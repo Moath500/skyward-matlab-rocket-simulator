@@ -143,11 +143,11 @@ settings.para1.CD = 0.8;             % [/] Parachute Drag Coefficient
 settings.para1.CL = 0;               % [/] Parachute Lift Coefficient
 
 % rogallo wing
-settings.para2.S = 17.5;             % [m^2]   Surface
-settings.para2.mass = 1.140;         % [kg]   Parachute Mass
-settings.para2.CD = 0.59;            % [/] Parachute Drag Coefficient
-settings.para2.CL = 0;               % [/] Parachute Lift Coefficient
-settings.zdrg2 = 1000;               % [m] Altitude of drogue 2 opening
+settings.para2.S = 7;             % [m^2]   Surface
+settings.para2.mass = 0.45;         % [kg]   Parachute Mass
+settings.para2.CD = 0.4;            % [/] Parachute Drag Coefficient
+settings.para2.CL = 0.9;               % [/] Parachute Lift Coefficient
+settings.zdrg2 = 1200;               % [m] Altitude of drogue 2 opening
 
 
 %% INTEGRATION OPTIONS

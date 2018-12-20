@@ -19,7 +19,7 @@ settings.rocket_name = "R2A_hermes";
 
 % launchpad 6
 settings.z0 = 1416;                %[m] Launchpad Altitude
-settings.lrampa = 5.3;               %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+settings.lrampa = 5.3;             %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
 
 
 % starting altitude
@@ -59,15 +59,15 @@ switch engine
    case 2
         settings.motor.Name = 'K550';
         settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
-            1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                          %[s]
+            1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
         
         settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
             178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
-            4.589 0.000  ] * 9.81/2.2;                                  % [N]
+            4.589 0.000  ] * 9.81/2.2;                                      % [N]
         
         settings.ms = 6.687;                                                % [kg]   Structural Mass
-        settings.m0 = settings.ms+0.889;                                    % [kg]   Overall Mas                                       
-        settings.mp = settings.m0-settings.ms;                              % [kg]   Propellant Mass
+        settings.mp = 0.889;                                                % [kg]   Propellant Mass
+        settings.m0 = settings.ms + settings.mp;                            % [kg]   Overall Mas                                       
         settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
         settings.tb = 3.5;                                                  % [s]    Burning time
         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
@@ -87,14 +87,14 @@ L = 1.96;                                   % [m]      Rocket length
 % z-axis: downward
 
 % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-settings.Ixxf = 0.01101;                    % [kg*m^2] Inertia to x-axis
-settings.Iyyf = 2.1137;                     % [kg*m^2] Inertia to y-axis
-settings.Izzf = 2.1139;                     % [kg*m^2] Inertia to z-axis
+settings.Ixxf = 0.00985;                    % [kg*m^2] Inertia to x-axis
+settings.Iyyf = 2.04882;                    % [kg*m^2] Inertia to y-axis
+settings.Izzf = 2.04909;                    % [kg*m^2] Inertia to z-axis
 
 % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-settings.Ixxe = 0.01024;                    % [kg*m^2] Inertia to x-axis
-settings.Iyye = 1.76211;                    % [kg*m^2] Inertia to y-axis
-settings.Izze = 1.76235;                    % [kg*m^2] Inertia to z-axis
+settings.Ixxe = 0.00953;                    % [kg*m^2] Inertia to x-axis
+settings.Iyye = 1.72243;                    % [kg*m^2] Inertia to y-axis
+settings.Izze = 1.7227;                     % [kg*m^2] Inertia to z-axis
 
 
 %% AERODYNAMICS DETAILS
@@ -213,12 +213,12 @@ settings.wind.input_uncertainty = 10;              % [perc] uncertainty percenta
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 0;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 0;                   % [m/s] Maximum Magnitude
+settings.wind.MagMin = 3;                   % [m/s] Minimum Magnitude
+settings.wind.MagMax = 3;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;              % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (90)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (90)*pi/180;           % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (270)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (270)*pi/180;           % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -228,7 +228,7 @@ settings.wind.AzMax = (90)*pi/180;           % [rad] Maximum Azimuth, user input
 
 %% BALLISTIC SIMULATION
 
-settings.ballistic = true;                  % Set to True to run a standard ballistic (without drogues) simulation
+settings.ballistic = false;                  % Set to True to run a standard ballistic (without drogues) simulation
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee, thus there is no

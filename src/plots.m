@@ -436,12 +436,14 @@ else
             savefig('landing_points.fig')
             pause(1)
             origin = 'landing_points.fig';
-            addpath('landing_map');
-            [x,y] = get_data(origin);
-            
+            addpath('landing_map'); 
+            [x,y] = get_data(origin); % get x,y of landing points
+           
             % Position Scaled map in background
             figure()
-            imshow('map.png', 'YData',[-20000 20250], 'XData',[-20850 20000]);  
+            imshow(settings.map_file, 'YData',-settings.map_yaxis, 'XData',settings.map_xaxis);
+%             imshow('map_roccaraso.jpg', 'YData',-[-10000 10000], 'XData',[-10000 10000]); 
+            set(gca,'YDir','normal'); % set y axis with ascending increasing values
             axis on
             hold on
             

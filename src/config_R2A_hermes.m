@@ -71,6 +71,9 @@ switch engine
         settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
         settings.tb = 3.5;                                                  % [s]    Burning time
         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
+        
+        settings.ms = 6.687-0.3;
+        settings.m0 = settings.ms + settings.mp;
 end
 
 %% GEOMETRY DETAILS
@@ -147,7 +150,7 @@ settings.para2.S = 7;             % [m^2]   Surface
 settings.para2.mass = 0.45;         % [kg]   Parachute Mass
 settings.para2.CD = 0.4;            % [/] Parachute Drag Coefficient
 settings.para2.CL = 0.9;               % [/] Parachute Lift Coefficient
-settings.zdrg2 = 1200;               % [m] Altitude of drogue 2 opening
+settings.zdrg2 = 700;               % [m] Altitude of drogue 2 opening
 
 
 %% INTEGRATION OPTIONS
@@ -180,7 +183,7 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 
 % Settings for the Wind Model
 
-settings.wind.model = true;
+settings.wind.model = false;
 % set to true for hwsm wind model
 % set to false for random wind model
 % input Day and Hour as arrays to run stochastic simulations
@@ -213,12 +216,12 @@ settings.wind.input_uncertainty = 10;              % [perc] uncertainty percenta
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 3;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 3;                   % [m/s] Maximum Magnitude
+settings.wind.MagMin = 2;                   % [m/s] Minimum Magnitude
+settings.wind.MagMax = 5;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;              % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (270)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (270)*pi/180;           % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (150)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (200)*pi/180;           % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -239,10 +242,15 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;             % Number of cases
+settings.stoch.N = 10;             % Number of cases
 
 %% PLOT DETAILS
 
 settings.plots = true;
 settings.only_XCP = false; % plot only the stability margin
-settings.landing_map = false;
+settings.landing_map = true;
+
+% New
+settings.map_file = 'map_roccaraso.jpg'; % name of map for landing points
+settings.map_xaxis = [-10000 10000];  % limits for the data of the landing map
+settings.map_yaxis = [-10000 10000];

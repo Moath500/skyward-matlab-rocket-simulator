@@ -218,7 +218,7 @@ settings.wind.ww = 0;                            % [m/s] Vertical wind speed
 % secon row: wind azimut angle [deg]
 % third row: altitude
 
-settings.wind.input = true;
+settings.wind.input = false;
 settings.wind.input_matr = [ 5    7    9   10   11   11   13   12   13   13   14   12   10    10
                              250  260  260 260  260  260  270  270  270  270  270  270  270   270
                              0    100  600 750  900  1500 2000 3000 4200 5500 7000 9000 10000 18000];
@@ -246,7 +246,7 @@ settings.wind.AzMax = (90)*pi/180;                % [rad] Maximum Azimuth, user 
 
 %% BALLISTIC SIMULATION
 
-settings.ballistic = true;                      % Set to True to run a standard ballistic (without drogues) simulation
+settings.ballistic = false;                      % Set to True to run a standard ballistic (without drogues) simulation
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is
@@ -263,14 +263,14 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;                             % Number of cases
-settings.stoch.prob = true;                       % Set to true to compute the launch probability
+settings.stoch.N = 10;                             % Number of cases
+settings.stoch.prob = false;                       % Set to true to compute the launch probability
 settings.stoch.x_lim = 2e3;                       % Max ovest displacement [m]
 settings.stoch.P_lim = 2e3;                       % Max drogue stress [Pa]
 
 %% PLOT DETAILS
 
-settings.plots = false;
+settings.plots = true;
 settings.only_XCP = false;                        % plot only the stability margin
-settings.landing_map = false;
+settings.landing_map = true;
 

@@ -446,7 +446,7 @@ else
             set(gca,'YDir','normal'); % set y axis with ascending increasing values
             axis on
             hold on
-            
+                      
             % Draws Front Circumference
             col='b';
             [h1,h2,h3,h4,h5] = front([0 128/255 1],[204/255 229/255 1],x,y,col);

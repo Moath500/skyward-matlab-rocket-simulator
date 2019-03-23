@@ -24,7 +24,7 @@ settings.lrampa = 5.3;             %[m] LaunchPad route (launchpad length-distan
 
 % starting altitude
 settings.OMEGA = 80*pi/180;        %[rad] Elevation Angle, user input in degrees (ex. 80)
-settings.PHI = 0*pi/180;           %[rad] Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHI = 270*pi/180;           %[rad] Azimuth Angle from North Direction, user input in degrees (ex. 90)
 
 %% ENGINE DETAILS
 
@@ -217,11 +217,11 @@ settings.wind.input_uncertainty = 10;              % [perc] uncertainty percenta
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 2;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 5;                   % [m/s] Maximum Magnitude
+settings.wind.MagMax = 4;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;              % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;              % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (150)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (200)*pi/180;           % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (0)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (360)*pi/180;           % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North

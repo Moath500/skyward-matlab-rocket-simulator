@@ -35,13 +35,18 @@ theta = atan2(y,x)*180/pi;
 
 % Empirical law between landing distance and wind
 % R_landing = c*w + r0
-c = 363;
-r0 = 2.16;
+c_400 = 363;
+r0_400 = 216;
+c_500=416;
+r0_500=441;
 % Find max wind
-w = (R - r0)./ c;
-
-figure,
-plot(mod(-(theta+alpha-90),360),w,'.'),
+w_400 = (R - r0_400)./ c_400;
+w_500 = (R - r0_500)./ c_500;
+figure
+hold on
+grid on
+plot(mod(-(theta+alpha-90),360),w_400,'.'),
+plot(mod(-(theta+alpha-90),360),w_500,'.'),
 xlabel('Wind direction')
 ylabel('Max wind');
 xlim([0 360]);

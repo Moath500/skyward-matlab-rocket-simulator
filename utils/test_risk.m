@@ -1,4 +1,4 @@
-load para.mat
+load para500.mat
 norm_wind=zeros(100,1);
 norm_R=zeros(100,1);
 for i=1:100

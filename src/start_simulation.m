@@ -218,7 +218,6 @@ else
     
 end
 
-
 %% PLOTS
 
 if settings.plots
@@ -228,14 +227,12 @@ end
 if settings.stoch.N == 1
     delete('ascent_plot.mat')
 else
-    if settings.rocket_name == 'R2A'
+    if settings.rocket_name == "R2A"
         if settings.stoch.prob
             [p,flag] = LaunchProb(settings,data_ascent,data_para);
             fprintf('The launch probability is: %f/n/n',p);
         end
     end
 end
-
-
 
 clearvars -except T Ta Y Ya data_ascent data_para data_bal flag p 

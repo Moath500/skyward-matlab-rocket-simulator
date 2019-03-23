@@ -20,17 +20,22 @@ if settings.wind.model && settings.wind.input
     error('Both wind model and input wind are true, select just one of them')
 end
 
-if settings.rocket_name == 'R2A'
-    if settings.ldf
-        error('Landing with the second drogue can be simulated just in standard simulations, check settings.ldf & settings.ballistic in config.m')
-    end
+if settings.ldf
+    error('Landing with the second drogue can be simulated just in standard simulations, check settings.ldf & settings.ballistic in config.m')
 end
 
 if settings.wind.HourMin ~= settings.wind.HourMax || settings.wind.HourMin ~= settings.wind.HourMax
     error('In standard simulations with the wind model the day and the hour of launch must be unique, check config.m')
 end
 
+if settings.OMEGAmin ~= settings.OMEGAmax || settings.PHImin ~= settings.PHImax 
+    error('In a single simulation the launchpad configuration has to be unique, check config.m')
+end
+
 %% STARTING CONDITIONS
+
+settings.OMEGA = settings.OMEGAmin;
+settings.PHI = settings.PHImin;
 
 % Attitude
 Q0 = angle2quat(settings.PHI,settings.OMEGA,0*pi/180,'ZYX')';
@@ -61,7 +66,7 @@ if settings.wind.input && settings.wind.input_uncertainty ~= 0
 else
     uncert = [0,0];
 end
-    
+
 tf = settings.ode.final_time;
 
 %% ASCENT

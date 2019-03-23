@@ -24,7 +24,14 @@ if settings.wind.HourMin ~= settings.wind.HourMax || settings.wind.HourMin ~= se
     error('In standard simulations with the wind model the day and the hour of launch must be unique, check config.m')
 end
 
+if settings.OMEGAmin ~= settings.OMEGAmax || settings.PHImin ~= settings.PHImax 
+    error('In a single simulation the launchpad configuration has to be unique, check config.m')
+end
+
 %% STARTING CONDITIONS
+
+settings.OMEGA = settings.OMEGAmin;
+settings.PHI = settings.PHImin;
 
 % Attitude
 Q0 = angle2quat(settings.PHI,settings.OMEGA,0*pi/180,'ZYX')';
@@ -72,7 +79,13 @@ save('ascent_plot.mat', 'data_ascent');
 
 para = 1; % Flag for Drogue 1
 X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
-[Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdrg1,settings,uw,vw,ww,para,uncert);
+
+if settings.rocket_name == "R2A_hermes" && settings.ldf
+    [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
+else
+    [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdrg1,settings,uw,vw,ww,para,uncert);
+end
+
 [data_para1] = RecallOdeFcn(@descent_parachute,Td1,Yd1,settings,uw,vw,ww,para,uncert);
 data_para1.state.Y = Yd1;
 data_para1.state.T = Td1;
@@ -82,11 +95,14 @@ data_para1.state.T = Td1;
 
 para = 2; % Flag for Drogue 2
 X0d2 = Yd1(end,:);
-[Td2,Yd2] = ode113(@descent_parachute,[Td1(end),tf],X0d2,...
-    settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
-[data_para2] = RecallOdeFcn(@descent_parachute,Td2,Yd2,settings,uw,vw,ww,para,uncert);
-data_para2.state.Y = Yd2;
-data_para2.state.T = Td2;
+
+if settings.rocket_name == "R2A" || (settings.rocket_name == "R2A_hermes"  && not(settings.ldf))
+    [Td2,Yd2] = ode113(@descent_parachute,[Td1(end),tf],X0d2,...
+        settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
+    [data_para2] = RecallOdeFcn(@descent_parachute,Td2,Yd2,settings,uw,vw,ww,para,uncert);
+    data_para2.state.Y = Yd2;
+    data_para2.state.T = Td2;
+end
 
 %% ROGALLO WING AND FINAL STATE ASSEMBLING
 % Initial Condition are the last from drogue 2 descent
@@ -115,13 +131,19 @@ switch settings.rocket_name
         
     case 'R2A_hermes'
         
-        % Total State
-        Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2];
-        
-        % Total Time
-        Tf = [Ta; Td1; Td2];
-        
-        data_para = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),'uni',0),fieldnames(data_para1),1);
+        if not(settings.ldf)
+            % Total State
+            Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2];
+            % Total Time
+            Tf = [Ta; Td1; Td2];
+            data_para = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),'uni',0),fieldnames(data_para1),1);
+        else 
+            % Total State
+            Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1];
+            % Total Time
+            Tf = [Ta; Td1];
+            data_para = data_para1;
+        end
 end
 
 save('descent_para_plot.mat', 'data_para')
@@ -130,11 +152,16 @@ save('descent_para_plot.mat', 'data_para')
 
 bound_value.td1 = Ta(end);
 bound_value.td2 = Td1(end);
-bound_value.trog = Td2(end);
 bound_value.Xd1 = [Ya(end,2), Ya(end,1), -Ya(end,3)];
 bound_value.Xd2 = [Yd1(end,2), Yd1(end,1), -Yd1(end,3)];
-bound_value.Xrog = [Yd2(end,2), Yd2(end,1), -Yd2(end,3)];
 bound_value.Vd1 = quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6));
 bound_value.Vd2 = [Yd1(end,4) Yd1(end,5) -Yd1(end,6)];
-bound_value.Vrog = [Yd2(end,4) Yd2(end,5) -Yd2(end,6)];
+
+if settings.rocket_name == "R2A_hermes" && not(settings.ldf) || settings.rocket_name == "R2A" && not(settings.ldf)
+    bound_value.Xrog = [Yd2(end,2), Yd2(end,1), -Yd2(end,3)];
+    bound_value.trog = Td2(end);
+    bound_value.Vrog = [Yd2(end,4) Yd2(end,5) -Yd2(end,6)];
+end
+
+
 

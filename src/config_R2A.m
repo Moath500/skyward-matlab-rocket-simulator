@@ -22,9 +22,13 @@ settings.z0 = 5;                                 %[m] Launchpad Altitude
 settings.lrampa = 5.5;                           %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
 
 
-% starting altitude
-settings.OMEGA = 80*pi/180;                      %[rad] Elevation Angle, user input in degrees (ex. 80)
-settings.PHI = 90*pi/180;                        %[rad] Azimuth Angle from North Direction, user input in degrees (ex. 90)
+% launchpad directions
+% for a single run the maximum and the minimum value of the following
+% angles must be the same.
+settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.PHImin = 90*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 90*pi/180;          %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 
 %% ENGINE DETAILS
 
@@ -263,8 +267,8 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 10;                             % Number of cases
-settings.stoch.prob = false;                       % Set to true to compute the launch probability
+settings.stoch.N = 1;                             % Number of cases
+settings.stoch.prob = false;                      % Set to true to compute the launch probability
 settings.stoch.x_lim = 2e3;                       % Max ovest displacement [m]
 settings.stoch.P_lim = 2e3;                       % Max drogue stress [Pa]
 

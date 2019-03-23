@@ -29,7 +29,6 @@ if settings.stoch.N == 1
         xlabel('Time [s]'); ylabel('S.M.[/]')
         
         figure('Name','Forces - ascent Phase','NumberTitle','off');
-        suptitle('Forces')
         subplot(2,2,1)
         plot(data_ascent.integration.t, data_ascent.forces.T, '.'), grid on;
         xlabel('Time [s]'); ylabel('Thrust [N]');
@@ -47,7 +46,6 @@ if settings.stoch.N == 1
         xlabel('Time [s]'); ylabel('Z-body force [N]')
         
         figure('Name','Aerodynamics Angles - ascent Ahase','NumberTitle','off');
-        suptitle('Aerodynamics Angles')
         subplot(2,1,1)
         plot(data_ascent.integration.t, data_ascent.interp.alpha*180/pi), grid on;
         xlabel('Time [s]'); ylabel('alpha [deg]')
@@ -85,17 +83,16 @@ if settings.stoch.N == 1
             'MarkerSize',7,'MarkerFaceColor','r');
         h4 = plot3(Y(end,2),Y(end,1),Y(end,3),'rx','markersize',7);
         h5 = plot3(0, 0, 0, '*');
+        h6 = plot3(Y(i_tb,2),Y(i_tb,1),-Y(i_tb,3),'ro','MarkerSize',9);
         
-        
-        if not(settings.ballistic)
+        if not(settings.ballistic)           
             
-            h2 = plot3(bound_value.Xd2(1),bound_value.Xd2(2),bound_value.Xd2(3),'rs',...
-                'MarkerSize',7,'MarkerFaceColor','r');            
-            h6 = plot3(Y(i_tb,2),Y(i_tb,1),-Y(i_tb,3),'ro','MarkerSize',9);
-            
-            if settings.project ~= "R2A_hermes"
+            if settings.project == "R2A"
                 
-                if settings.ldf      
+                h2 = plot3(bound_value.Xd2(1),bound_value.Xd2(2),bound_value.Xd2(3),'rs',...
+                    'MarkerSize',7,'MarkerFaceColor','r');
+                if settings.ldf  
+                    
                     legend([h5,h1,h2,h4,h6],{'Launch point','Apogee/1st Drogue Deployment',...
                         '2nd Drogue Deployment','Landing point',...
                         'burning time position'},'Location','northeast');
@@ -107,16 +104,22 @@ if settings.stoch.N == 1
                         'burning time position'},'Location','northeast');
                 end
             
-            else
-                legend([h5,h1,h2,h4,h6],{'Launch point','Apogee/1st Drogue Deployment',...
-                    '2nd Drogue Deployment','Landing point',...
-                    'burning time position'},'Location','northeast');
+            elseif settings.project == "R2A_hermes"
+                if not(settings.ldf)
+                    h2 = plot3(bound_value.Xd2(1),bound_value.Xd2(2),bound_value.Xd2(3),'rs',...
+                        'MarkerSize',7,'MarkerFaceColor','r');
+                    legend([h5,h1,h2,h4,h6],{'Launch point','Apogee/1st Drogue Deployment',...
+                        'Rogallo Deployment','Landing point',...
+                        'burning time position'},'Location','northeast');
+                else
+                    legend([h5,h1,h4,h6],'Launch point','Apogee',...
+                        'Landing point','burning time position','Location','northeast');
+                end
             end
             
         else
-            legend([h5,h1,h4],'Launch point','Apogee',...
-                'Landing point','Location','northeast');
-            
+            legend([h5,h1,h4,h6],'Launch point','Apogee',...
+                'Landing point','burning time position','Location','northeast');
         end
         
         
@@ -134,7 +137,6 @@ if settings.stoch.N == 1
         %% HORIZONTAL-FRAME VELOCITIES(subplotted)
         
         figure('Name','Horizontal Frame Velocities - All Flight','NumberTitle','off');
-        suptitle('Horizontal Frame Velocities')
         
         subplot(3,1,1);
         plot(T,Y(:,4)), hold on, grid on, xlabel('Time[s]'), ylabel('Velocity-x [m/s]');
@@ -143,11 +145,11 @@ if settings.stoch.N == 1
             'MarkerFaceColor','r');
         
         if not(settings.ballistic)
-            
             h2 = plot(bound_value.td2,bound_value.Vd2(1),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
-            if settings.project ~= "R2A_hermes"
-                
+
+            if settings.project == "R2A"
+
                 if settings.ldf
                     legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
                         'Location','southeast');
@@ -159,9 +161,17 @@ if settings.stoch.N == 1
                         'Rogallo Deployment','Location','southeast');
                 end
                 
-            else
-                legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
-                    'Location','southeast');
+            elseif settings.project == "R2A_hermes"
+                
+                if settings.ldf
+                    legend([h1,h2],'Apogee/1st Drogue Deployment','Landing',...
+                        'Location','southeast');
+               
+                else
+                    
+                    legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
+                        'Location','southeast');
+                end
             end
                 
         else
@@ -180,7 +190,7 @@ if settings.stoch.N == 1
             h2 = plot(bound_value.td2,bound_value.Vd2(1),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
             
-            if settings.project ~= "R2A_hermes"
+            if settings.project == "R2A"
                 
                 if settings.ldf
                     legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
@@ -193,9 +203,16 @@ if settings.stoch.N == 1
                         'Rogallo Deployment','Location','southeast');
                 end
                 
-            else
-                legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
-                    'Location','southeast');
+            elseif settings.project == "R2A_hermes"
+                
+                if settings.ldf
+                    legend([h1,h2],'Apogee/1st Drogue Deployment','Landing',...
+                        'Location','southeast');
+                else
+                    legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
+                        'Location','southeast');
+                end
+                
             end
             
         else
@@ -215,7 +232,7 @@ if settings.stoch.N == 1
             h2 = plot(bound_value.td2,bound_value.Vd2(3),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
             
-            if settings.project ~= "R2A_hermes"
+            if settings.project == "R2A"
                 
                 if settings.ldf
                     legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
@@ -228,9 +245,15 @@ if settings.stoch.N == 1
                         'Rogallo Deployment','Location','southeast');
                 end
                 
-            else
-                legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
-                    'Location','southeast');
+            elseif settings.project == "R2A_hermes"
+                
+                if settings.ldf
+                    legend([h1,h2],'Apogee/1st Drogue Deployment','Landing',...
+                        'Location','southeast');
+                else
+                    legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
+                        'Location','southeast');
+                end
             end
             
         else
@@ -242,7 +265,6 @@ if settings.stoch.N == 1
         %% ALTITUDE,MACH,VELOCITY,ACCELERATION(subplotted)
         
         figure('Name','Altitude, Mach, Velocity-Abs, Acceleration-Abs - ascent Phase','NumberTitle','off');
-        suptitle('Altitude, Mach, Velocity-Abs, Acceleration-Abs')
         subplot(2,3,1:3)
         plot(Ta, z_a), grid on, xlabel('time [s]'), ylabel('altitude [m]');
         
@@ -265,7 +287,6 @@ if settings.stoch.N == 1
         
         
         figure('Name','Trajectory Projections - All Flight','NumberTitle','off');
-        suptitle('Trajectory Projections')
         
         subplot(1,3,1)
         plot(y, x), axis equal, hold on, grid on;
@@ -276,11 +297,9 @@ if settings.stoch.N == 1
         
         if not(settings.ballistic)
             
-            h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
-                'MarkerFaceColor','r');
-            
             if settings.project ~= "R2A_hermes"
-                
+                            h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
+                                'MarkerFaceColor','r');
                 if settings.ldf
                     
                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
@@ -293,10 +312,19 @@ if settings.stoch.N == 1
                         'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
                     
                 end
+               
+            elseif settings.project == "R2A_hermes"
                 
-            else
-                legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
-                    'Landing Point','2nd Drogue Deployment','Location','Best');
+                if settings.ldf
+                    legend([h1,h2,h3],'Apogee/1st Drogue Deployment','Launch Point',...
+                        'Landing Point','Location','Best');
+                else
+                    h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
+                        'MarkerFaceColor','r');
+                    legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
+                        'Landing Point','2nd Drogue Deployment','Location','Best');
+                end
+                
             end
             
         else
@@ -315,12 +343,10 @@ if settings.stoch.N == 1
         xlabel('x, North [m]'), ylabel('z, Altitude [m]');
         
         if not(settings.ballistic)
-            
-            h4 = plot(bound_value.Xd2(2),bound_value.Xd2(3),'sr','MarkerSize',7,...
-                'MarkerFaceColor','r');
                        
             if settings.project ~= "R2A_hermes"
-                
+                h4 = plot(bound_value.Xd2(2),bound_value.Xd2(3),'sr','MarkerSize',7,...
+                    'MarkerFaceColor','r');
                 if settings.ldf
                     
                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
@@ -334,9 +360,17 @@ if settings.stoch.N == 1
                     
                 end
                 
-            else
-                legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
-                    'Landing Point','2nd Drogue Deployment','Location','Best');
+            elseif settings.project == "R2A_hermes"
+                
+                if settings.ldf
+                    legend([h1,h2,h3],'Apogee/1st Drogue Deployment','Launch Point',...
+                        'Landing Point','Location','Best');
+                else
+                    h4 = plot(bound_value.Xd2(2),bound_value.Xd2(3),'sr','MarkerSize',7,...
+                        'MarkerFaceColor','r');
+                    legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
+                        'Landing Point','2nd Drogue Deployment','Location','Best');
+                end
             end
             
         end
@@ -350,12 +384,11 @@ if settings.stoch.N == 1
         xlabel('y, East [m]'), ylabel('z, Altitude [m]');
         
         if not(settings.ballistic)
-            
-            h4 = plot(bound_value.Xd2(1),bound_value.Xd2(3),'sr','MarkerSize',7,...
-                'MarkerFaceColor','r');
                        
-            if settings.project ~= "R2A_hermes"
+            if settings.project == "R2A"
                 
+                h4 = plot(bound_value.Xd2(1),bound_value.Xd2(3),'sr','MarkerSize',7,...
+                    'MarkerFaceColor','r');
                 if settings.ldf
                     
                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
@@ -369,29 +402,19 @@ if settings.stoch.N == 1
                     
                 end
                 
-            else
-                legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
-                    'Landing Point','2nd Drogue Deployment','Location','Best');
+            elseif settings.project == "R2A_hermes"
+                
+                if settings.ldf
+                    legend([h1,h2,h3],'Apogee/1st Drogue Deployment','Launch Point',...
+                        'Landing Point','Location','Best');
+                else
+                    h4 = plot(bound_value.Xd2(1),bound_value.Xd2(3),'sr','MarkerSize',7,...
+                        'MarkerFaceColor','r');
+                    legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
+                        'Landing Point','2nd Drogue Deployment','Location','Best');
+                end
             end
-        end
-        
-        
-        %% ANGULAR RATES (subplotted)
-        
-        figure('Name','Angular Rates - ascent Phase','NumberTitle','off');
-        suptitle('Angular Rates');
-        subplot(3,1,1)
-        plot(Ta, Ya(:, 8)*180/pi), grid on;
-        xlabel('time [s]'), ylabel('pitch rate q [grad/s]')
-        
-        subplot(3,1,2)
-        plot(Ta, Ya(:, 9)*180/pi), grid on;
-        xlabel('time [s]'), ylabel('yaw rate r [grad/s]')
-        
-        subplot(3,1,3)
-        plot(Ta, Ya(:, 7)*180/pi), grid on;
-        xlabel('time [s]'), ylabel('roll rate p [grad/s]')
-        
+        end        
         
         %% EULERIAN ANGLES (subplotted)
         

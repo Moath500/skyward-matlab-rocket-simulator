@@ -1,4 +1,4 @@
-function [dY,parout] = ascent(t,Y,settings,uw,vw,ww,uncert,Hour,Day)
+function [dY,parout] = ascent(t,Y,settings,uw,vw,ww,uncert,Hour,Day,OMEGA)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 | m | Ixx Iyy Izz )
 %
@@ -106,7 +106,10 @@ CoeffsF = settings.CoeffsF;  % Full Rocket Coefficients
 g = 9.80655;                 % [N/kg] module of gravitational field at zero
 tb = settings.tb;            % [s]     Burning Time
 mfr = settings.mfr;          % [kg/s]  Mass Flow Rate
-OMEGA = settings.OMEGA;      %[rad] Elevation Angle in the launch pad
+
+if settings.stoch.N == 1
+    OMEGA = settings.OMEGA;      % [rad] Elevation Angle in the launch pad
+end
 
 % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
 Ixxf = settings.Ixxf;        % [kg*m^2] Inertia to x-axis

@@ -16,9 +16,9 @@ function [uw,vw,ww] = wind_const_generator(AzMin,AzMax,ElMin,ElMax,MagMin,MagMax
 % License:  2-clause BSD
 
 % Generating random values for orientation and magnitude
-Az = AzMin+(AzMax-AzMin)*rand;
-El = ElMin+(ElMax-ElMin)*rand;
-Mag = MagMin+(MagMax-MagMin)*rand;
+Az = AzMin + (AzMax-AzMin)*rand;
+El = ElMin + (ElMax-ElMin)*rand;
+Mag = MagMin + (MagMax-MagMin)*rand;
 
 % Random Wind Vector
 R = Mag*angle2dcm(Az,El,0,'ZYX');

@@ -28,7 +28,8 @@ settings.lrampa = 5.3;             %[m] LaunchPad route (launchpad length-distan
 settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
 settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 90*pi/180;          %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 0*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+
 %% ENGINE DETAILS
 
 % sintax:
@@ -149,10 +150,10 @@ settings.para1.CD = 0.8;             % [/] Parachute Drag Coefficient
 settings.para1.CL = 0;               % [/] Parachute Lift Coefficient
 
 % rogallo wing
-settings.para2.S = 7;             % [m^2]   Surface
+settings.para2.S = 7;               % [m^2]   Surface
 settings.para2.mass = 0.45;         % [kg]   Parachute Mass
 settings.para2.CD = 0.4;            % [/] Parachute Drag Coefficient
-settings.para2.CL = 0.9;               % [/] Parachute Lift Coefficient
+settings.para2.CL = 0.9;            % [/] Parachute Lift Coefficient
 settings.zdrg2 = 700;               % [m] Altitude of drogue 2 opening
 
 
@@ -220,11 +221,11 @@ settings.wind.input_uncertainty = 10;              % [perc] uncertainty percenta
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 2;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 4;                   % [m/s] Maximum Magnitude
-settings.wind.ElMin = 0*pi/180;              % [rad] Minimum Elevation, user input in degrees (ex. 0)
-settings.wind.ElMax = 0*pi/180;              % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (0)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (360)*pi/180;           % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.MagMax = 6;                   % [m/s] Maximum Magnitude
+settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
+settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
+settings.wind.AzMin = (100)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (100)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -250,7 +251,7 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 10;             % Number of cases
+settings.stoch.N = 1;             % Number of cases
 
 %% PLOT DETAILS
 

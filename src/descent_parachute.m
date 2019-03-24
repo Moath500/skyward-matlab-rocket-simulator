@@ -92,6 +92,11 @@ end
 
 t_vers = t_vect/norm(t_vect);            % Tangenzial versor
 h_vers = -h_vect/norm(h_vect);           % horizontal versor
+
+% if h_vers(2) < 1e-2
+%     h_vers = 0;
+% end
+
 n_vect = cross(t_vers, h_vers);          % Normal vector
 n_vers = n_vect/norm(n_vect);            % Normal versor
 

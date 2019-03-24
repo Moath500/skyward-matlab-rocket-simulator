@@ -187,7 +187,7 @@ if settings.stoch.N == 1
             'MarkerFaceColor','r');
         
         if not(settings.ballistic)
-            h2 = plot(bound_value.td2,bound_value.Vd2(1),'sr','MarkerSize',7,...
+            h2 = plot(bound_value.td2,bound_value.Vd2(2),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
             
             if settings.project == "R2A"
@@ -429,9 +429,8 @@ if settings.stoch.N == 1
         end
         
         figure('Name','Eulerian Angles - ascent Phase','NumberTitle','off');
-        suptitle('Eulerian Angles')
         subplot(3,1,1)
-        plot(Ta, pitch_angle+settings.OMEGA*180/pi)
+        plot(Ta, pitch_angle+settings.OMEGAmin*180/pi)
         grid on, xlabel('time [s]'), ylabel('pitch angle [deg]');
         
         subplot(3,1,2)
@@ -453,28 +452,25 @@ else
     
     if not(settings.ao)
         if settings.landing_map
-            h = figure('Name','Landing Points','NumberTitle','off');
-            plot(LP(:,1),LP(:,2),'k+');
-            xlabel('North [m]'), ylabel('East [m]'),title('Landing Points');
-            savefig('landing_points.fig')
-            pause(1)
-            origin = 'landing_points.fig';
-            addpath('landing_map'); 
-            [x,y] = get_data(origin); % get x,y of landing points
+%             h = figure('Name','Landing Points','NumberTitle','off');
+%             plot(LP(:,1),LP(:,2),'k+');
+%             xlabel('North [m]'), ylabel('East [m]'),title('Landing Points');
+%             savefig('landing_points.fig')
+%             pause(1)
+%             origin = 'landing_points.fig';
+%             addpath('landing_map'); 
+%             [LP(:,1),LP(:,2)] = get_data(origin); % get x,y of landing points
            
             % Position Scaled map in background
-            figure()
-            imshow(settings.map_file, 'YData',-settings.map_yaxis, 'XData',settings.map_xaxis);
-%             imshow('map_roccaraso.jpg', 'YData',-[-10000 10000], 'XData',[-10000 10000]); 
+            figure('Name','Landing Points','NumberTitle','off')
+            imshow(settings.map_file, 'YData',-settings.map_yaxis, 'XData',settings.map_xaxis); 
             set(gca,'YDir','normal'); % set y axis with ascending increasing values
             axis on
             hold on
                       
             % Draws Front Circumference
-            col='b';
-            [h1,h2,h3,h4,h5] = front([0 128/255 1],[204/255 229/255 1],x,y,col);
-            pause(1)
-            legend([h1,h2,h3,h5,h4],{'Prolungamento zona atterraggio in mare',...
+            [h1,h2,h4,h5] = front(LP(:,2),LP(:,1));
+            legend([h1,h2,h5,h4],{'Prolungamento zona atterraggio in mare',...
                 'Media delle zone di atterraggio','Massima distanza','Base di lancio',...
                 'Punti di atterraggio'},'Box','off','Location','southeast',...
                 'TextColor','w');
@@ -482,7 +478,6 @@ else
             xlabel('m')
             ylabel('m')
             axis image
-            pause(1)
         end
     else
         h = figure('Name','Landing Points','NumberTitle','off');

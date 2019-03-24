@@ -93,7 +93,7 @@ parfor i = 1:settings.stoch.N
     %% ASCENT 
     
     OMEGA = settings.OMEGAmin + rand*(settings.OMEGAmax - settings.OMEGAmin);
-    PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin) ;
+    PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
 
     % Attitude
     Q0 = angle2quat(PHI,OMEGA,0*pi/180,'ZYX')';

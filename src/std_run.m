@@ -96,7 +96,7 @@ data_para1.state.T = Td1;
 para = 2; % Flag for Drogue 2
 X0d2 = Yd1(end,:);
 
-if settings.rocket_name == "R2A" || (settings.rocket_name == "R2A_hermes"  && not(settings.ldf))
+if settings.rocket_name == "R2A" || (settings.rocket_name == "R2A_hermes" && not(settings.ldf))
     [Td2,Yd2] = ode113(@descent_parachute,[Td1(end),tf],X0d2,...
         settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
     [data_para2] = RecallOdeFcn(@descent_parachute,Td2,Yd2,settings,uw,vw,ww,para,uncert);

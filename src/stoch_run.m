@@ -35,8 +35,6 @@ if settings.OMEGAmin == settings.OMEGAmax && settings.PHImin == settings.PHImax
     if settings.wind.input && settings.wind.input_uncertainty == 0
         error('In stochastic simulations the wind input model, the uncertainty must be different to 0 check config.m')
     end
-    
-    error('In a stochastich run at least one parameter has to vary, e.g. OMEGA, check config.m')
 end
 
 %% STARTING CONDITIONS
@@ -88,10 +86,8 @@ parfor i = 1:settings.stoch.N
     
     %% ASCENT
     % Attitude
-    if settings.OMEGAmin ~= settings.OMEGAmax || settings.PHImin ~= settings.PHImax
-        OMEGA = rand*(settings.OMEGAmax - settings.OMEGAmin);
-        PHI = rand*(settings.PHImin - settings.PHImin);
-    end
+    OMEGA = settings.OMEGAmin + rand*(settings.OMEGAmax - settings.OMEGAmin);
+    PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
     
     Q0 = angle2quat(PHI,OMEGA,0*pi/180,'ZYX')';
     X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
@@ -122,7 +118,9 @@ parfor i = 1:settings.stoch.N
         data_para1.state.T = Td1;
         
         %% DROGUE 2
-        % Initial Condition are the last from drogue 1 descent
+        
+        para = 2; % Flag for Drogue 2
+        X0d2 = Yd1(end,:); % Initial Condition are the last from drogue 1 descent
         
         if settings.rocket_name == "R2A" || (settings.rocket_name == "R2A_hermes"  && not(settings.ldf))
             [Td2,Yd2] = ode113(@descent_parachute,[Td1(end),tf],X0d2,...

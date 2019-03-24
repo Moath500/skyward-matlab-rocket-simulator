@@ -84,18 +84,14 @@ end
 % vector perpendicular to the relative velocity
 
 t_vect = [ur vr wr];                     % Tangenzial vector
-h_vect = [-vr ur 0];                     % horizontal vector
+h_vect = [-vr ur 0];                     % horizontal vector    
 
-if (h_vect(1) == 0) && (h_vect(2) == 0)
-    h_vect = [-v u 0];
+if all(abs(h_vect) < 1e-8)
+    h_vect = [-vw uw 0];
 end
 
 t_vers = t_vect/norm(t_vect);            % Tangenzial versor
 h_vers = -h_vect/norm(h_vect);           % horizontal versor
-
-% if h_vers(2) < 1e-2
-%     h_vers = 0;
-% end
 
 n_vect = cross(t_vers, h_vers);          % Normal vector
 n_vers = n_vect/norm(n_vect);            % Normal versor

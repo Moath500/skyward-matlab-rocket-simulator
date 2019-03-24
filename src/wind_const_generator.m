@@ -22,6 +22,7 @@ Mag = MagMin + (MagMax-MagMin)*rand;
 
 % Random Wind Vector
 R = Mag*angle2dcm(Az,El,0,'ZYX');
+R(abs(R) < 1e-4) = 0;
 
 uw = R(1,1);
 vw = R(1,2);

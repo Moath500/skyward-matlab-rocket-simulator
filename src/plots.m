@@ -431,6 +431,9 @@ if settings.stoch.N == 1
         figure('Name','Eulerian Angles - ascent Phase','NumberTitle','off');
         suptitle('Eulerian Angles')
         subplot(3,1,1)
+        if settings.stoch.N == 1;
+            settings.OMEGA=settings.OMEGAmin;
+        end
         plot(Ta, pitch_angle+settings.OMEGA*180/pi)
         grid on, xlabel('time [s]'), ylabel('pitch angle [deg]');
         

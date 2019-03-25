@@ -7,6 +7,9 @@ close all
 clear 
 clc
 
+path = genpath(pwd);
+addpath(path);
+
 %% LOAD DATA
 
 settings.project = "R2A_hermes";
@@ -21,6 +24,8 @@ switch settings.project
         settings.funZ = funZ;
         
 end
+
+
 
 %% START THE CHOSEN SIMULATION
 % T = vector of time used by ODE, [s] also for Tf Ta
@@ -45,6 +50,7 @@ if settings.ballistic
     end
 else
     if settings.stoch.N > 1
+        
         if settings.wind.model 
             fprintf('Stochastic Simulation With Wind Model Started...\n\n');
         elseif settings.wind.input
@@ -52,7 +58,12 @@ else
         else
             fprintf('Stochastic Simulation With Random Wind Started...\n\n');
         end
-        [LP,X,ApoTime,data_ascent,data_para] = stoch_run(settings);
+        
+        if settings.ao
+            [LP,X,ApoTime,data_ascent] = stoch_run(settings);
+        else
+            [LP,X,ApoTime,data_ascent,data_para] = stoch_run(settings);
+        end
     else
         fprintf('Standard Simulation Started...\n\n');
         [T,Y,Ta,Ya,bound_value] = std_run(settings);

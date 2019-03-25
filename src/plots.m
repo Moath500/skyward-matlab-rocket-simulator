@@ -447,9 +447,7 @@ if settings.stoch.N == 1
     
 else
     
-    
     % LANDING POINTS
-    
     if not(settings.ao)
         if settings.landing_map
            
@@ -470,14 +468,14 @@ else
             xlabel('m')
             ylabel('m')
             axis image
+        else
+            h = figure('Name','Landing Points','NumberTitle','off');
+            plot(xm,ym,'bs','MarkerSize',20,'MarkerFacecolor','b'), hold on;
+            plot(LP(:,1),LP(:,2),'k+');
+            plot(0,0,'ro','MarkerSize',20,'MarkerFacecolor','r');
+            legend('Mean Landing Point','Landing Points','Launch Site');
+            xlabel('North [m]'), ylabel('East [m]'),title('Landing Points');
         end
-    else
-        h = figure('Name','Landing Points','NumberTitle','off');
-        plot(xm,ym,'bs','MarkerSize',20,'MarkerFacecolor','b'), hold on;
-        plot(LP(:,1),LP(:,2),'k+');
-        plot(0,0,'ro','MarkerSize',20,'MarkerFacecolor','r');
-        legend('Mean Landing Point','Landing Points','Launch Site');
-        xlabel('North [m]'), ylabel('East [m]'),title('Landing Points');
     end
     
     

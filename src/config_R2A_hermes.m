@@ -220,7 +220,7 @@ settings.wind.input_uncertainty = 10;              % [perc] uncertainty percenta
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 6;                   % [m/s] Minimum Magnitude
+settings.wind.MagMin = 2;                   % [m/s] Minimum Magnitude
 settings.wind.MagMax = 6;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
@@ -246,12 +246,12 @@ settings.ldf = false;
 % simulation stopped when reaching the apogee, thus there is no
 % descend phase.   Only available for standard stochastic runs !!!
 
-settings.ao = false;
+settings.ao = true;
 
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;             % Number of cases
+settings.stoch.N = 10;             % Number of cases
 
 %% PLOT DETAILS
 

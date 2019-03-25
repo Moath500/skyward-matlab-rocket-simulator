@@ -169,8 +169,8 @@ parfor i = 1:settings.stoch.N
                     Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1];
                 end
                 LP(i,:) = Yf(end,1:3);
+                data_para{i} = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),'uni',0),fieldnames(data_para1),1);
             end
-            data_para{i} = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),'uni',0),fieldnames(data_para1),1);
             
             X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)]
             ApoTime(i) = Ta(end);
@@ -179,4 +179,6 @@ parfor i = 1:settings.stoch.N
             
     end
     
+end
+
 end

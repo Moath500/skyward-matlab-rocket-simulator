@@ -81,7 +81,7 @@ if settings.stoch.N == 1
         
         h1 = plot3(bound_value.Xd1(1),bound_value.Xd1(2),bound_value.Xd1(3),'ro',...
             'MarkerSize',7,'MarkerFaceColor','r');
-        h4 = plot3(Y(end,2),Y(end,1),Y(end,3),'rx','markersize',7);
+        h4 = plot3(Y(end,2),Y(end,1),-Y(end,3),'rx','markersize',7);
         h5 = plot3(0, 0, 0, '*');
         h6 = plot3(Y(i_tb,2),Y(i_tb,1),-Y(i_tb,3),'ro','MarkerSize',9);
         
@@ -452,14 +452,6 @@ else
     
     if not(settings.ao)
         if settings.landing_map
-%             h = figure('Name','Landing Points','NumberTitle','off');
-%             plot(LP(:,1),LP(:,2),'k+');
-%             xlabel('North [m]'), ylabel('East [m]'),title('Landing Points');
-%             savefig('landing_points.fig')
-%             pause(1)
-%             origin = 'landing_points.fig';
-%             addpath('landing_map'); 
-%             [LP(:,1),LP(:,2)] = get_data(origin); % get x,y of landing points
            
             % Position Scaled map in background
             figure('Name','Landing Points','NumberTitle','off')

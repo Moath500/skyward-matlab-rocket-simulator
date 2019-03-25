@@ -1,4 +1,4 @@
-function [value,isterminal,direction] = event_landing(t,Y,settings,varargin)
+function [value,isterminal,direction] = event_landing(~,Y,settings,varargin)
 % Event Function for ODE to stop simulation @ landing
 
 % Author: Ruben Di Battista
@@ -13,7 +13,19 @@ function [value,isterminal,direction] = event_landing(t,Y,settings,varargin)
 % email: francesco.colombi@skywarder.eu
 % Release date: 16/04/2016
 
-value = Y(3);
+x = Y(1);
+y = Y(2);
+z = -Y(3);
+
+if settings.rocket_name == "R2A_hermes" && settings.terrain
+    zloc = -settings.funZ(x,y);
+    value = z - zloc;
+else
+    value = z;
+end
+
+
+
 isterminal = 1;
 direction = 0;
 

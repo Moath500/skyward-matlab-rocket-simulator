@@ -165,11 +165,12 @@ parfor i = 1:settings.stoch.N
             if not(settings.ao)
                 if not(settings.ldf)
                     Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2];
+                    data_para{i} = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),'uni',0),fieldnames(data_para1),1);
                 else
                     Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1];
+                     data_para{i} = data_para1;
                 end
                 LP(i,:) = Yf(end,1:3);
-                data_para{i} = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),'uni',0),fieldnames(data_para1),1);
             end
             
             X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)]

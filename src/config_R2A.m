@@ -239,7 +239,7 @@ settings.wind.MagMin = 6;                         % [m/s] Minimum Magnitude
 settings.wind.MagMax = 10;                        % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;                   % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;                   % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (90)*pi/180;                % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (0)*pi/180;                % [rad] Minimum Azimuth, user input in degrees (ex. 90)
 settings.wind.AzMax = (90)*pi/180;                % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
@@ -267,14 +267,17 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;                             % Number of cases
+settings.stoch.N = 10;                             % Number of cases
 settings.stoch.prob = false;                      % Set to true to compute the launch probability
 settings.stoch.x_lim = 2e3;                       % Max ovest displacement [m]
 settings.stoch.P_lim = 2e3;                       % Max drogue stress [Pa]
 
 %% PLOT DETAILS
-
 settings.plots = true;
 settings.only_XCP = false;                        % plot only the stability margin
-settings.landing_map = true;
 
+%% LANDING POINTS
+settings.landing_map = true;
+settings.map_file = 'map.png'; % name of map for landing points
+settings.map_xaxis = [-20000 20250];  % limits for the data of the landing map
+settings.map_yaxis = [-20850 20000];

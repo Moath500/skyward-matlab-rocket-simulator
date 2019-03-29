@@ -28,7 +28,7 @@ settings.lrampa = 5.3;             %[m] LaunchPad route (launchpad length-distan
 settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 90*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
 settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 0*pi/180;          %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 360*pi/180;          %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 
 %% ENGINE DETAILS
 
@@ -221,7 +221,7 @@ settings.wind.input_uncertainty = 10;              % [perc] uncertainty percenta
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 2;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 6;                   % [m/s] Maximum Magnitude
+settings.wind.MagMax = 10;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (90)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)
@@ -242,6 +242,7 @@ settings.ballistic = false;                  % Set to True to run a standard bal
 % achieved thanks to the 2nd parachute
 
 settings.ldf = true;
+
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee, thus there is no
 % descend phase.   Only available for standard stochastic runs !!!
@@ -251,16 +252,16 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 10;             % Number of cases
+settings.stoch.N = 100;             % Number of cases
 
 %% PLOT DETAILS
 
 settings.plots = true;
 settings.only_XCP = false; % plot only the stability margin
-settings.landing_map = true;
 settings.terrain = false;
 
-% New
+%% LANDING POINTS
+settings.landing_map = true;
 settings.map_file = 'map_roccaraso.jpg'; % name of map for landing points
 settings.map_xaxis = [-10000 10000];  % limits for the data of the landing map
 settings.map_yaxis = [-10000 10000];

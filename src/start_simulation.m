@@ -11,7 +11,6 @@ path = genpath(pwd);
 addpath(path);
 
 %% LOAD DATA
-
 settings.project = "R2A_hermes";
 
 switch settings.project
@@ -220,7 +219,7 @@ else
     else
         xm = mean(LP(:,1));
         ym = mean(LP(:,2));
-        text =['Mean Landing Point:X:%3.3f m, Y:%3.3f m\n',...
+        text = ['Mean Landing Point:X:%3.3f m, Y:%3.3f m\n',...
             'Mean Altitude: %3.3f m || STD: %3.3f m\n',...
             'Mean Apogee Time: %3.3f s || STD: %3.3f s\n'];
         fprintf(text,xm,ym,zapom,zstd,ApoTimem,ApoTimestd);

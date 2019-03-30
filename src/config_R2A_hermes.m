@@ -252,7 +252,7 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 100;             % Number of cases
+settings.stoch.N = 1;             % Number of cases
 
 %% PLOT DETAILS
 

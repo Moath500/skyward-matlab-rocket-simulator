@@ -26,9 +26,9 @@ settings.lrampa = 5.3;             %[m] LaunchPad route (launchpad length-distan
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
 settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
-settings.OMEGAmax = 90*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
 settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 360*pi/180;          %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 0*pi/180;          %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 
 %% ENGINE DETAILS
 
@@ -224,7 +224,7 @@ settings.wind.MagMin = 2;                   % [m/s] Minimum Magnitude
 settings.wind.MagMax = 10;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (90)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (180)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)
 settings.wind.AzMax = (180)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
@@ -241,7 +241,7 @@ settings.ballistic = false;                  % Set to True to run a standard bal
 % simulation in which rogallo wing does not open and thus landing is
 % achieved thanks to the 2nd parachute
 
-settings.ldf = true;
+settings.ldf = false;
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee, thus there is no

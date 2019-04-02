@@ -1,5 +1,5 @@
-function [value,isterminal,direction] = event_drg2_opening(t,Y,settings,varargin)
-%Event that sets the main parachute opening altitude
+function [value,isterminal,direction] = event_drg2_opening(~,Y,settings,varargin)
+% Event that sets the main parachute opening altitude
 
 % Author: Francesco Colombi
 % Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu

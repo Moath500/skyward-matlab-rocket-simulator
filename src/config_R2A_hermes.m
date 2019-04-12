@@ -27,8 +27,8 @@ settings.lrampa = 5.3;             %[m] LaunchPad route (launchpad length-distan
 % angles must be the same.
 settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 0*pi/180;          %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImin = 337.5*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 337.5*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 
 %% ENGINE DETAILS
 
@@ -154,7 +154,7 @@ settings.para2.S = 7;               % [m^2]   Surface
 settings.para2.mass = 0.45;         % [kg]   Parachute Mass
 settings.para2.CD = 0.4;            % [/] Parachute Drag Coefficient
 settings.para2.CL = 0.9;            % [/] Parachute Lift Coefficient
-settings.zdrg2 = 700;               % [m] Altitude of drogue 2 opening
+settings.zdrg2 = 200;               % [m] Altitude of drogue 2 opening
 
 
 %% INTEGRATION OPTIONS
@@ -184,12 +184,12 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
 
 %% WIND DETAILS
 
+% select which model you want to use:
 
-% Settings for the Wind Model
-
+%%%%% Matlab Wind Model
 settings.wind.model = false;
-% set to true for hwsm wind model
-% set to false for random wind model
+% matlab hswm model, wind model on altitude based on historical data
+
 % input Day and Hour as arrays to run stochastic simulations
 
 settings.wind.Lat = 41.800833;                      % [deg] Latitude of launching site
@@ -201,27 +201,31 @@ settings.wind.HourMax = 13;                         % [h] Maximum Hour of the da
 settings.wind.ww = 0;                               % [m/s] Vertical wind speed
                 
 
-% Input wind 
-
+%%%%% Input wind 
+settings.wind.input = true;
 % Wind is generated for every altitude interpolating with the coefficient defined below
 
 % first row: wind magnitude [m/s]
-% secon row: wind azimut angle [deg]
+% secon row: wind azimut angle (toward wind incoming direction) [deg]
 % third row: altitude
 
-settings.wind.input = false;
-settings.wind.input_matr = [ 5    7    9   10    11    11   13   12   13  
-                             250  260  260 260   260   260  270  270  270   
-                             0    100  600 750   900   1500 2000 3000 6000 ];
+settings.wind.input_matr = [ 9*ones(1,7)
+                             337.5*ones(1,7)       
+                             0    100  600  750  900  1500 2500 ];
                          
-settings.wind.input_uncertainty = 10;              % [perc] uncertainty percentage
+settings.wind.input_uncertainty = [30,22.5];  
+% settings.wind.input_uncertainty = [a,b];      wind uncertanties:
+% - a, wind magnitude percentage uncertanty: magn = magn *(1 +- a)
+% - b, wind direction band uncertanty: dir = dir 1 +- b
 
-% Random wind model
+
+%%%%% Random wind model
+% if both the model above are false
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 2;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 10;                   % [m/s] Maximum Magnitude
+settings.wind.MagMax = 6;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (180)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)
@@ -234,14 +238,15 @@ settings.wind.AzMax = (180)*pi/180;         % [rad] Maximum Azimuth, user input 
 % 270 deg                       -> West
 
 %% BALLISTIC SIMULATION
+% Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = false;                  % Set to True to run a standard ballistic (without drogues) simulation
+settings.ballistic = false;    
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is
 % achieved thanks to the 2nd parachute
 
-settings.ldf = false;
+settings.ldf = true;
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee, thus there is no
@@ -252,15 +257,16 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;             % Number of cases
+settings.stoch.N = 100;             % Number of cases
 
 %% PLOT DETAILS
 
 settings.plots = true;
 settings.only_XCP = false; % plot only the stability margin
-settings.terrain = false;
+settings.terrain = true;
 
 %% LANDING POINTS
+
 settings.landing_map = true;
 settings.map_file = 'map_roccaraso.jpg'; % name of map for landing points
 settings.map_xaxis = [-10000 10000];  % limits for the data of the landing map

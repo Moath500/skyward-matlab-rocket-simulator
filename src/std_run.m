@@ -58,7 +58,13 @@ else
 end
 
 if settings.wind.input && settings.wind.input_uncertainty ~= 0
-    uncert = randi(settings.wind.input_uncertainty,[1,2]);
+    signn = randi([0,1]);
+    
+    if signn 
+        settings.wind.input_uncertainty = - settings.wind.input_uncertainty;
+    end
+    
+    uncert = rand(1,2).*settings.wind.input_uncertainty;
 else
     uncert = [0,0];
 end
@@ -66,7 +72,6 @@ end
 tf = settings.ode.final_time;
 
 %% ASCENT
-
 [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,settings,uw,vw,ww,uncert);
 [data_ascent] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert);
 data_ascent.state.Y = Ya;

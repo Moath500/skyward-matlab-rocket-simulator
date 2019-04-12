@@ -8,13 +8,14 @@ function [uw,vw,ww] = wind_input_generator(settings,z,uncert)
 % This function allows to use a custom set of wind, defined in config.m 
 
 magn = (1 + uncert(1)/100).*settings.wind.input_matr(1,:);
-dir = 360 - (1 + uncert(2)/100).*settings.wind.input_matr(2,:);
+dir = mod(180 + settings.wind.input_matr(2,:),360);
+dir = dir + uncert(2);
 
 uw_vect = magn.*cosd(dir);
 vw_vect = magn.*sind(dir);
 h_vect = settings.wind.input_matr(3,:);
 
-h = -z + settings.z0;
+h = -z;
 
 if h < 0
     h = 0;

@@ -458,12 +458,8 @@ else
             axis on
             hold on
                       
-            % Draws Front Circumference
+            % Draws Front Cone
             [h1,h2,h4,h5] = front(LP(:,2),LP(:,1));
-            legend([h1,h2,h5,h4],{'Prolungamento zona atterraggio in mare',...
-                'Media delle zone di atterraggio','Massima distanza','Base di lancio',...
-                'Punti di atterraggio'},'Box','off','Location','southeast',...
-                'TextColor','w');
             title('Atterraggio con secondo drogue');
             xlabel('m')
             ylabel('m')

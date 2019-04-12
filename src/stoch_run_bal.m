@@ -74,7 +74,16 @@ parfor i = 1:settings.stoch.N
             if settings.wind.input_uncertainty == 0
                 uncert = [0,0];
             else
-                uncert = randi(settings.wind.input_uncertainty,[1,2]);
+                
+                signn = randi([0,1]);
+                
+                if signn
+                    unc = - settings.wind.input_uncertainty;
+                else
+                    unc = settings.wind.input_uncertainty;
+                end
+                
+                uncert = rand(1,2).*unc;
             end
             uw = 0; vw = 0; ww = 0;
         else

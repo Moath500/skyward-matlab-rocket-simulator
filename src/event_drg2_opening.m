@@ -6,9 +6,27 @@ function [value,isterminal,direction] = event_drg2_opening(~,Y,settings,varargin
 % email: francesco.colombi@skywarder.eu
 % Release date: 16/04/2016
 
-value = Y(3) + settings.zdrg2;
+x = Y(1);
+y = Y(2);
+z = -Y(3);
+
+if settings.rocket_name == "R2A_hermes" && settings.terrain
+    zloc = -settings.funZ(x,y);
+    if zloc > 853
+        zloc = 853;
+    end
+    
+    if zloc < -656
+        zloc = -656;
+    end
+    
+    value = z - zloc - settings.zdrg2;
+else
+    value = z - settings.zdrg2;
+end
+
 isterminal = 1;
-direction = 1;
+direction = 0;
 
 end
 

@@ -1,4 +1,4 @@
-clear all
+clear
 close all
 clc
 
@@ -55,11 +55,13 @@ legend('N: Nord [0 Deg]','NNE: Nord-Nord-Est [0-45 deg]','NE: Nord-Est [45 deg]'
     'location','best','FontSize',12)
 
 %% Speed data
-
+%%%% global data
 figure()
 hold on
 grid minor
-mean_speed = mean(speed);
+mean_speed = mean(speed);               % global mean speed
+std_speed = std(speed);                 % global std
+ss = sort(speed);
 
 % Plot speed
 plot(time,speed,'k');
@@ -79,3 +81,17 @@ xlabel('Date','FontSize',15,'FontWeight','bold')
 ylabel('Speed [m/s]','FontSize',15,'FontWeight','bold')
 title('Hystory of wind speed in Roccaraso','FontSize',15,'FontWeight','bold')
 legend('Day-to-day speed','Mean speed','Polynomial fit','FontSize',12)
+
+%%%% piecewise data
+[c, ia, ic] = unique(dir);
+mi_speed = zeros(16,1);
+sigma_speed = zeros(16,1);
+piece_speed = cell(16,1);
+
+for i = 1:16
+    index = find(i == ic);
+    piece_speed{i,1} = speed(index);
+    mi_speed(i) = mean(piece_speed{i,1});
+    sigma_speed(i) = std(piece_speed{i,1});
+
+end

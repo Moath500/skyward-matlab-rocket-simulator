@@ -24,8 +24,6 @@ switch settings.project
         
 end
 
-
-
 %% START THE CHOSEN SIMULATION
 % T = vector of time used by ODE, [s] also for Tf Ta
 % Y = State = ( x y z | u v w | p q r | q0 q1 q2 q3 ) also for Ya,Yf corresponding to T
@@ -77,6 +75,7 @@ if settings.stoch.N == 1
     
     N = length(Y(:,1));
     n = length(Ya(:,1));
+    
     
     % POSITIONS
     
@@ -185,15 +184,7 @@ if settings.stoch.N == 1
     
 %% STOCHASTIC SIMULATIONS (N>1)
 
-else
-    
-    % CHECKING BAD SIMULATION
-    
-    if numel(LP(LP(:,3) < -10,:))
-        fprintf(['Some landing points might be incorrect ' ...
-            'please check parameters!\n']);
-    end
-    
+else    
     % PRINTING VALUES
    
     % Mean Apogee Time

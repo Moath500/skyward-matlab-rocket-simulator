@@ -1,4 +1,4 @@
-function [value,isterminal,direction] = event_rog_opening(t,Y,settings,varargin)
+function [value,isterminal,direction] = event_rog_opening(~,Y,settings,varargin)
 %Event that sets the main parachute opening altitude
 
 

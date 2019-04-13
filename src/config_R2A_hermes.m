@@ -27,8 +27,8 @@ settings.lrampa = 5.3;             %[m] LaunchPad route (launchpad length-distan
 % angles must be the same.
 settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 337.5*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 337.5*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 0*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 
 %% ENGINE DETAILS
 
@@ -69,15 +69,15 @@ switch engine
             178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
             4.589 0.000  ] * 9.81/2.2;                                      % [N]
         
-        settings.ms = 6.687;                                                % [kg]   Structural Mass
+        settings.ms = 6.537;                                                % [kg]   Structural Mass
         settings.mp = 0.889;                                                % [kg]   Propellant Mass
         settings.m0 = settings.ms + settings.mp;                            % [kg]   Overall Mas                                       
         settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
         settings.tb = 3.5;                                                  % [s]    Burning time
         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
         
-        settings.ms = 6.687-0.3;
-        settings.m0 = settings.ms + settings.mp;
+%         settings.ms = 6.687-0.3;
+%         settings.m0 = settings.ms + settings.mp;
 end
 
 %% GEOMETRY DETAILS
@@ -94,14 +94,14 @@ L = 1.96;                                   % [m]      Rocket length
 % z-axis: downward
 
 % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-settings.Ixxf = 0.00985;                    % [kg*m^2] Inertia to x-axis
-settings.Iyyf = 2.04882;                    % [kg*m^2] Inertia to y-axis
-settings.Izzf = 2.04909;                    % [kg*m^2] Inertia to z-axis
+settings.Ixxf = 0.01009;                    % [kg*m^2] Inertia to x-axis
+settings.Iyyf = 2.09265;                    % [kg*m^2] Inertia to y-axis
+settings.Izzf = 2.09286;                    % [kg*m^2] Inertia to z-axis
 
 % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-settings.Ixxe = 0.00953;                    % [kg*m^2] Inertia to x-axis
-settings.Iyye = 1.72243;                    % [kg*m^2] Inertia to y-axis
-settings.Izze = 1.7227;                     % [kg*m^2] Inertia to z-axis
+settings.Ixxe = 0.00977;                    % [kg*m^2] Inertia to x-axis
+settings.Iyye = 1.77413;                    % [kg*m^2] Inertia to y-axis
+settings.Izze = 1.77434;                    % [kg*m^2] Inertia to z-axis
 
 
 %% AERODYNAMICS DETAILS
@@ -202,7 +202,7 @@ settings.wind.ww = 0;                               % [m/s] Vertical wind speed
                 
 
 %%%%% Input wind 
-settings.wind.input = true;
+settings.wind.input = false;
 % Wind is generated for every altitude interpolating with the coefficient defined below
 
 % first row: wind magnitude [m/s]
@@ -224,8 +224,8 @@ settings.wind.input_uncertainty = [30,22.5];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 2;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 6;                   % [m/s] Maximum Magnitude
+settings.wind.MagMin = 10;                   % [m/s] Minimum Magnitude
+settings.wind.MagMax = 10;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (180)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)
@@ -246,7 +246,7 @@ settings.ballistic = false;
 % simulation in which rogallo wing does not open and thus landing is
 % achieved thanks to the 2nd parachute
 
-settings.ldf = true;
+settings.ldf = false;
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee, thus there is no
@@ -257,7 +257,7 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 100;             % Number of cases
+settings.stoch.N = 1;             % Number of cases
 
 %% PLOT DETAILS
 

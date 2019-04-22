@@ -62,7 +62,7 @@ if settings.stoch.N == 1
         %% 3D TRAJECTORY
         
         figure('Name','3D Trajectory - All Flight','NumberTitle','off');
-        plot3(y,x,z), axis equal, hold on, grid on;
+        plot3(y,x,z,'Linewidth',2.5), axis equal, hold on, grid on;
         title('Trajectory')
         xlabel('y, East [m]'), ylabel('x, North [m]'), zlabel('Altitude [m]')
         
@@ -115,11 +115,28 @@ if settings.stoch.N == 1
                     legend([h5,h1,h4,h6],'Launch point','Apogee',...
                         'Landing point','burning time position','Location','northeast');
                 end
+                
             end
             
         else
             legend([h5,h1,h4,h6],'Launch point','Apogee',...
                 'Landing point','burning time position','Location','northeast');
+        end
+        
+        if settings.project == "R2A_hermes"
+            % terrain test
+            X_t=-6000:30:6000;
+            Y_t=-6000:30:6000;
+            L_X=length(X_t);
+            L_Y=length(Y_t);
+            Z_t=zeros(L_X,L_Y);
+            for i=1:L_X
+                for j=1:L_Y
+                    Z_t(i,j)=funZ(X_t(i),Y_t(j));
+                end
+            end
+            surf(Y_t,X_t,-Z_t);
+            colorbar
         end
         
         
@@ -464,6 +481,26 @@ else
             xlabel('m')
             ylabel('m')
             axis image
+            if settings.altitude_map
+                
+                figure('Name','Landing Points altitude','NumberTitle','off')
+                hold on; grid on;
+                X_t=-6000:30:6000;
+                Y_t=-6000:30:6000;
+                L_X=length(X_t);
+                L_Y=length(Y_t);
+                Z_t=zeros(L_X,L_Y);
+                for i=1:L_X
+                    for j=1:L_Y
+                        Z_t(j,i)=funZ(X_t(i),Y_t(j));
+                    end
+                end
+                scatter3(LP(:,1),-LP(:,2),-LP(:,3),'filled','MarkerEdgeColor','k','MarkerfaceColor','r')
+                surf(X_t,-Y_t,-Z_t,'FaceColor','interp','FaceLighting','flat');
+                colorbar
+                xlabel('North [m]'), ylabel('East [m]'), zlabel('Altitude [m]');
+            end
+                
         else
             h = figure('Name','Landing Points','NumberTitle','off');
             plot(xm,ym,'bs','MarkerSize',20,'MarkerFacecolor','b'), hold on;

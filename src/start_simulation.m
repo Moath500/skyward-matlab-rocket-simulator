@@ -19,7 +19,6 @@ switch settings.project
         
     case "R2A_hermes"
         run('config_R2A_hermes.m');
-        load funZ.mat
         settings.funZ = funZ;
         
 end

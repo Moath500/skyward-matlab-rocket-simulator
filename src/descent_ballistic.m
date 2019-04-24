@@ -94,7 +94,7 @@ if -z < 0     % z is directed as the gravity vector
     z = 0;
 end
 
-[P, a, ~, rho] = atmoscoesa(-z+settings.z0);
+[~, a, P, rho] = atmosisa(-z+settings.z0);
 M = V_norm/a;
 M_value = M;
 

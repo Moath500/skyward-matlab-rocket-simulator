@@ -76,7 +76,7 @@ if -z < 0
     z = 0;
 end
 
-[~, ~, ~, rho] = atmoscoesa(-z);
+[~, ~, ~, rho] = atmosisa(-z);
 
 
 %% REFERENCE FRAME

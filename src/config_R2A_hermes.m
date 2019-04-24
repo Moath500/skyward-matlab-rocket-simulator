@@ -230,8 +230,8 @@ settings.wind.input_uncertainty = [30,22.5];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 11;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 11;                   % [m/s] Maximum Magnitude
+settings.wind.MagMin = 5;                   % [m/s] Minimum Magnitude
+settings.wind.MagMax = 5;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (180)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)

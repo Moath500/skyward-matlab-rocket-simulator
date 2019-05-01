@@ -66,17 +66,34 @@ if settings.stoch.N == 1
         title('Trajectory')
         xlabel('y, East [m]'), ylabel('x, North [m]'), zlabel('Altitude [m]')
         
-        % concentric circles distance
-        theta_plot = linspace(0,2*pi);
-        R_plot = [1, 2, 3, 4, 5]*1000;
-        
-        for j = 1:length(R_plot)
-            x_plot = R_plot(j)*cos(theta_plot');
-            y_plot = R_plot(j)*sin(theta_plot');
-            z_plot = zeros(length(theta_plot), 1);
-            plot3(y_plot, x_plot, z_plot, '--r')
+        if settings.project == "R2A"
+            
+            % concentric circles distance
+            theta_plot = linspace(0,2*pi);
+            R_plot = [1, 2, 3, 4, 5]*1000;
+            
+            for j = 1:length(R_plot)
+                x_plot = R_plot(j)*cos(theta_plot');
+                y_plot = R_plot(j)*sin(theta_plot');
+                z_plot = zeros(length(theta_plot), 1);
+                plot3(y_plot, x_plot, z_plot, '--r')
+            end
+                    
+        else
+            % terrain test
+            X_t = -6000:30:6000;
+            Y_t = -6000:30:6000;
+            L_X = length(X_t);
+            L_Y = length(Y_t);
+            Z_t = zeros(L_X,L_Y);
+            for i = 1:L_X
+                for j = 1:L_Y
+                    Z_t(i,j) = settings.funZ(X_t(i),Y_t(j));
+                end
+            end
+            surf(Y_t,X_t,-Z_t,'EdgeColor','none'); colorbar; view(0,25);
         end
-        
+
         [~,i_tb] = min(abs(settings.tb-Ta));
         
         h1 = plot3(bound_value.Xd1(1),bound_value.Xd1(2),bound_value.Xd1(3),'ro',...
@@ -121,25 +138,7 @@ if settings.stoch.N == 1
         else
             legend([h5,h1,h4,h6],'Launch point','Apogee',...
                 'Landing point','burning time position','Location','northeast');
-        end
-        
-        if settings.project == "R2A_hermes"
-            % terrain test
-            X_t=-6000:30:6000;
-            Y_t=-6000:30:6000;
-            L_X=length(X_t);
-            L_Y=length(Y_t);
-            Z_t=zeros(L_X,L_Y);
-            for i=1:L_X
-                for j=1:L_Y
-                    Z_t(i,j)=funZ(X_t(i),Y_t(j));
-                end
-            end
-            surf(Y_t,X_t,-Z_t);
-            colorbar
-        end
-        
-        
+        end    
         
         %% STAGNATION TEMPERATURE
         
@@ -467,40 +466,43 @@ else
     % LANDING POINTS
     if not(settings.ao)
         if settings.landing_map
-           
-            % Position Scaled map in background
-            figure('Name','Landing Points','NumberTitle','off')
-            imshow(settings.map_file, 'YData',-settings.map_yaxis, 'XData',settings.map_xaxis); 
-            set(gca,'YDir','normal'); % set y axis with ascending increasing values
-            axis on
-            hold on
-                      
-            % Draws Front Cone
-            [h1,h2,h4,h5] = front(LP(:,2),LP(:,1));
-            title('Atterraggio con secondo drogue');
-            xlabel('m')
-            ylabel('m')
-            axis image
-            if settings.altitude_map
+            if settings.project == "R2A"
                 
-                figure('Name','Landing Points altitude','NumberTitle','off')
+                % Position Scaled map in background
+                figure('Name','Landing Points','NumberTitle','off')
+                imshow(settings.map_file, 'YData',-settings.map_yaxis, 'XData',settings.map_xaxis);
+                set(gca,'YDir','normal'); % set y axis with ascending increasing values
+                axis on
+                hold on
+                
+                % Draws Front Cone
+                front(LP(:,2),LP(:,1));
+                title('Atterraggio con secondo drogue');
+                xlabel('m')
+                ylabel('m')
+                axis image
+                
+            else
+                
+                figure('Name','Landing Points Map','NumberTitle','off')
                 hold on; grid on;
-                X_t=-6000:30:6000;
-                Y_t=-6000:30:6000;
-                L_X=length(X_t);
-                L_Y=length(Y_t);
-                Z_t=zeros(L_X,L_Y);
-                for i=1:L_X
-                    for j=1:L_Y
-                        Z_t(j,i)=funZ(X_t(i),Y_t(j));
+                X_t = -6000:30:6000;
+                Y_t = -6000:30:6000;
+                L_X = length(X_t);
+                L_Y = length(Y_t);
+                Z_t = zeros(L_X,L_Y);
+                for i = 1:L_X
+                    for j = 1:L_Y
+                        Z_t(j,i) = settings.funZ(X_t(i),Y_t(j));
                     end
                 end
-                scatter3(LP(:,1),-LP(:,2),-LP(:,3),'filled','MarkerEdgeColor','k','MarkerfaceColor','r')
-                surf(X_t,-Y_t,-Z_t,'FaceColor','interp','FaceLighting','flat');
-                colorbar
+                h1 = plot3(LPin(:,1),-LPin(:,2),-LPin(:,3),'o','MarkerEdgeColor','r','MarkerfaceColor','r');
+                h2 = plot3(LPout(:,1),-LPout(:,2),-LPout(:,3),'o','MarkerEdgeColor','k','MarkerfaceColor','k');
+                surf(X_t,-Y_t,-Z_t,'EdgeColor','none'); colorbar; view(-90,80);
+                legend([h1,h2],'safe landing points','not-safe landing points')
                 xlabel('North [m]'), ylabel('East [m]'), zlabel('Altitude [m]');
             end
-                
+            
         else
             h = figure('Name','Landing Points','NumberTitle','off');
             plot(xm,ym,'bs','MarkerSize',20,'MarkerFacecolor','b'), hold on;

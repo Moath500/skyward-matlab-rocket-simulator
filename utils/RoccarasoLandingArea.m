@@ -36,14 +36,14 @@ axis on
 a = 1000;
 b = 3000;
 x0 = 0;
-y0= -500;
+y0 = -500;
 t = -pi:0.01:pi;
-x = x0+a*cos(t);
-y = y0+b*sin(t);
+x = x0 + a*cos(t);
+y = y0 + b*sin(t);
 alpha = 12;
 
-x_hat = cosd(alpha)*x-sind(alpha)*y;
-y_hat = sind(alpha)*x+cosd(alpha)*y;
+x_hat = cosd(alpha)*x - sind(alpha)*y;
+y_hat = sind(alpha)*x + cosd(alpha)*y;
 hold on
 plot(x_hat,y_hat,'Linewidth',2)
 

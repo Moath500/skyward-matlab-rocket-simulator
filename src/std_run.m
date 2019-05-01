@@ -57,7 +57,7 @@ else
     
 end
 
-if settings.wind.input && settings.wind.input_uncertainty ~= 0
+if settings.wind.input && all(settings.wind.input_uncertainty) ~= 0
     signn = randi([0,1]);
     
     if signn 

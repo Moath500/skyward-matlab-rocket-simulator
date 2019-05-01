@@ -17,9 +17,11 @@
 % rocket name
 settings.rocket_name = "R2A";
 
-% launchpad 6
+% launchpad
 settings.z0 = 5;                                 %[m] Launchpad Altitude
 settings.lrampa = 5.5;                           %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+settings.lat0 = 39.552709;                       % [deg] Latitude of launching site
+settings.lon0 = 9.652400;                        % [deg] Longitude of launching site
 
 
 % launchpad directions
@@ -197,8 +199,6 @@ settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-3,...
 
 
 %% WIND DETAILS
-
-
 % Settings for the Wind Model
 
 settings.wind.model = false;
@@ -206,8 +206,6 @@ settings.wind.model = false;
 % set to false for random wind model
 % input Day and Hour as arrays to run stochastic simulations
 
-settings.wind.Lat = 39.552709;                   % [deg] Latitude of launching site
-settings.wind.Long = 9.652400;                   % [deg] Longitude of launching site
 settings.wind.DayMin = 270;                      % [d] Minimum Day of the launch 
 settings.wind.DayMax = 270;                      % [d] Maximum Day of the launch
 settings.wind.HourMin = 20;                      % [h] Minimum Hour of the day
@@ -250,7 +248,7 @@ settings.wind.AzMax = (0)*pi/180;                % [rad] Maximum Azimuth, user i
 
 %% BALLISTIC SIMULATION
 
-settings.ballistic = true;                      % Set to True to run a standard ballistic (without drogues) simulation
+settings.ballistic = false;                      % Set to True to run a standard ballistic (without drogues) simulation
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is
@@ -267,7 +265,7 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;                             % Number of cases
+settings.stoch.N = 10;                           % Number of cases
 settings.stoch.prob = false;                      % Set to true to compute the launch probability
 settings.stoch.x_lim = 2e3;                       % Max ovest displacement [m]
 settings.stoch.P_lim = 2e3;                       % Max drogue stress [Pa]

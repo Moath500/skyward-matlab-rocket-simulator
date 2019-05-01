@@ -20,13 +20,9 @@ settings.rocket_name = "R2A_hermes";
 % launchpad 
 settings.z0 = 1416;                %[m] Launchpad Altitude
 settings.lrampa = 5.3;             %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
-
-% Launchpad terrain position
-settings.lat0=41.809918;                                                % Launchpad latitude
-settings.lon0=14.053903;                                                % Launchpad longitude
-funZ=funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');       % Creation altitude map
-settings.funZ=funZ;
-
+settings.lat0 = 41.809918;                                                          % Launchpad latitude
+settings.lon0 = 14.053903;                                                          % Launchpad longitude
+settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');        % Altitude map computation
 
 % launchpad directions
 % for a single run the maximum and the minimum value of the following
@@ -198,8 +194,6 @@ settings.wind.model = false;
 
 % input Day and Hour as arrays to run stochastic simulations
 
-settings.wind.Lat = 41.800833;                      % [deg] Latitude of launching site
-settings.wind.Long = 14.055833;                      % [deg] Longitude of launching site
 settings.wind.DayMin = 105;                         % [d] Minimum Day of the launch 
 settings.wind.DayMax = 105;                         % [d] Maximum Day of the launch
 settings.wind.HourMin = 13;                          % [h] Minimum Hour of the day
@@ -208,7 +202,7 @@ settings.wind.ww = 0;                               % [m/s] Vertical wind speed
                 
 
 %%%%% Input wind 
-settings.wind.input = false;
+settings.wind.input = true;
 % Wind is generated for every altitude interpolating with the coefficient defined below
 
 % first row: wind magnitude [m/s]
@@ -254,16 +248,21 @@ settings.ballistic = false;
 
 settings.ldf = false;
 
+%% STOCHASTIC DETAILS
+% If N > 1 the stochastic routine is started
+
+settings.stoch.N = 1;             % Number of cases
+
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee, thus there is no
 % descend phase.   Only available for standard stochastic runs !!!
 
 settings.ao = false;
 
-%% STOCHASTIC DETAILS
-% If N > 1 the stochastic routine is started
+%% ROGALLO SAFETY CIRCLE
+% Only available for standard stochastic runs !!!
 
-settings.stoch.N = 1;             % Number of cases
+settings.RSC = true;
 
 %% PLOT DETAILS
 
@@ -272,9 +271,4 @@ settings.only_XCP = false; % plot only the stability margin
 settings.terrain = true;
 
 %% LANDING POINTS
-settings.altitude_map = true;
 settings.landing_map = true;
-settings.map_file = 'map_roccaraso.jpg'; % name of map for landing points
-settings.map_xaxis = [-10000 10000];  % limits for the data of the landing map
-settings.map_yaxis = [-10000 10000];
-

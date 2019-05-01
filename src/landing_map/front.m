@@ -1,4 +1,4 @@
-function [h1,h2,h3,h4] = front(x,y)
+function [h1,h2,h3] = front(x,y)
 
 %mean
 [Rm, ad] = mid(x, y);
@@ -19,8 +19,7 @@ h2 = annulus(Rm-ad, Rm+ad, mid_col, theta_m, theta_M);
 alpha(h1,0.5);
 alpha(h2,0.5);
 
-h3 = plot(x, y, '.','Color','k','MarkerSize',10);
-h4 = plot(0,0,'r.','MarkerSize',21);
+h3 = plot(0,0,'r.','MarkerSize',21);
 
 
 grid on

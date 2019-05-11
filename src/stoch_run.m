@@ -80,7 +80,7 @@ parfor i = 1:settings.stoch.N
             end
             uw = 0; vw = 0; ww = 0;
         else
-            [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
+            [uw,vw,ww,Azw] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
                 settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
                 settings.wind.MagMax);
             uncert = [0; 0];
@@ -97,6 +97,9 @@ parfor i = 1:settings.stoch.N
     % Attitude
     OMEGA = settings.OMEGAmin + rand*(settings.OMEGAmax - settings.OMEGAmin);
     PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
+    if settings.upwind
+        PHI = Azw + 180;
+    end
     
     Q0 = angle2quat(PHI,OMEGA,0*pi/180,'ZYX')';
     X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];

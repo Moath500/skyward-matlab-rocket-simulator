@@ -1,4 +1,4 @@
-function [uw,vw,ww] = wind_const_generator(AzMin,AzMax,ElMin,ElMax,MagMin,MagMax)
+function [uw,vw,ww,Az] = wind_const_generator(AzMin,AzMax,ElMin,ElMax,MagMin,MagMax)
 % windgen(AzMin,AzMax,ElMin,ElMax,MagMin,MagMax)
 % function that generates wind components in NED axes based on altitude
 %

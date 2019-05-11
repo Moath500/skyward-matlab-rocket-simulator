@@ -47,7 +47,7 @@ X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 if settings.wind.model || settings.wind.input   % will be computed inside the integrations
     uw = 0; vw = 0; ww = 0; 
 else
-    [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
+    [uw,vw,ww,Azw] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
         settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
         settings.wind.MagMax);
     
@@ -72,6 +72,9 @@ end
 tf = settings.ode.final_time;
 
 %% ASCENT
+if settings.upwind
+    settings.PHI = Azw + 180;
+end
 [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,settings,uw,vw,ww,uncert);
 [data_ascent] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert);
 data_ascent.state.Y = Ya;

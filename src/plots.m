@@ -482,12 +482,11 @@ else
                 ylabel('m')
                 axis image
                 
-            else
-                
+            else                
                 figure('Name','Landing Points Map','NumberTitle','off')
                 hold on; grid on;
-                X_t = -6000:30:6000;
-                Y_t = -6000:30:6000;
+                X_t = -8000:30:8000;
+                Y_t = -8000:30:8000;
                 L_X = length(X_t);
                 L_Y = length(Y_t);
                 Z_t = zeros(L_X,L_Y);
@@ -496,11 +495,48 @@ else
                         Z_t(j,i) = settings.funZ(X_t(i),Y_t(j));
                     end
                 end
-                h1 = plot3(LPin(:,1),-LPin(:,2),-LPin(:,3),'o','MarkerEdgeColor','r','MarkerfaceColor','r');
-                h2 = plot3(LPout(:,1),-LPout(:,2),-LPout(:,3),'o','MarkerEdgeColor','k','MarkerfaceColor','k');
+                
                 surf(X_t,-Y_t,-Z_t,'EdgeColor','none'); colorbar; view(-90,80);
-                legend([h1,h2],'safe landing points','not-safe landing points')
+                if not(settings.ballistic)
+                    h1 = plot3(LPin(:,1),-LPin(:,2),-LPin(:,3),'o','MarkerEdgeColor','r','MarkerfaceColor','r');
+                    h2 = plot3(LPout(:,1),-LPout(:,2),-LPout(:,3),'o','MarkerEdgeColor','k','MarkerfaceColor','k');
+                    legend([h1,h2],'safe landing points','not-safe landing points')
+                else
+                    h1 = plot3(LP(:,1),-LP(:,2),-LP(:,3),'o','MarkerEdgeColor','k','MarkerfaceColor','k');
+                    legend([h1],'ballistic landing points')
+                end
                 xlabel('North [m]'), ylabel('East [m]'), zlabel('Altitude [m]');
+                
+                %                 landing_circles = [0 1000 800;
+                %                                     -600 -600 2000;
+                %                                     1000 800 800];
+                %                 for c = 1:size(landing_circles,1)
+                %                     [xc,yc] = circle(landing_circles(c,1),landing_circles(c,2),...
+                %                         landing_circles(c,3));
+                %                 plot3(xc,yc,0*ones(length(xc),1),'--r');
+                %                 end
+                
+                % 2d map
+                % Position Scaled map in background
+                figure('Name','Landing Points','NumberTitle','off')
+                imshow('map_roccaraso.jpg', 'YData',-[-10000 10000], 'XData',[-10000 10000]);
+                set(gca,'YDir','normal'); % set y axis with ascending increasing values
+                axis on
+                hold on
+                plot(LP(:,1),-LP(:,2),'.r','Markersize',11);
+                
+                %                 for c = 1:size(landing_circles,1)
+                %                     [xc,yc] = circle(landing_circles(c,1),landing_circles(c,2),...
+                %                         landing_circles(c,3));
+                %                 plot(xc,yc,'--c');
+                %                 end
+                
+                % Draws Front Cone
+                %         [h1,h2,h4,h5] = front(LP(:,2),LP(:,1));
+                title('Atterraggio con secondo drogue');
+                xlabel('m')
+                ylabel('m')
+                axis image
             end
             
         else

@@ -216,40 +216,41 @@ else
     if settings.project == "R2A_hermes" && settings.RSC && not(settings.ballistic) && not(settings.ldf)
         
         %%% Rogallo safe circle definition
-        a = 1000;                   % [m] safety ellipse x-axes length
-        b = 3000;                   % [m] safety ellipse y-axes length
-        x0 = 0;                     % [m] safety ellipse x-axes origin
-        y0 = -500;                  % [m] safety ellipse y-axes origin
-        alpha = 12;                 % [deg] safety ellipse rotating angle (counter-clock wise)
+        a = 1100;                   % [m] safety ellipse x-axes length
+        b = 3200;                   % [m] safety ellipse y-axes length
+        x0 = -150;                  % [m] safety ellipse x-axes origin
+        y0 = 100;                   % [m] safety ellipse y-axes origin
+        alpha = 18;                 % [deg] safety ellipse rotating angle (counter-clock wise)
         c = sqrt(b^2 - a^2);        % [m] safety ellipse focii distance
         F1 = [x0, y0+c];            % [m] first safety ellipse not-rotated foci coordinates
         F2 = [x0, y0-c];            % [m] second safety ellipse not-rotated foci coordinates
         
         R = [cosd(alpha), - sind(alpha)
-            sind(alpha),   cosd(alpha)];
+             sind(alpha),   cosd(alpha)];
         
         F1_hat = R*F1';
         F2_hat = R*F2';
-        P = LP(:,1:2);
+        P = LP(:,[2,1]);
         
         dist = zeros(settings.stoch.N,1);
+        RrogDeploy = dist;
+        RP = zeros(settings.stoch.N,2);
         for i = 1:settings.stoch.N
             dist(i) = norm(P(i,:) - F1_hat') + norm(P(i,:) - F2_hat');
             ind_Pin = find(dist < 2*b);
             ind_Pout = find(dist > 2*b);
+            RP(i,:) = data_para{1, i}.state(1).Y(end,1:2);
+            RrogDeploy(i) = norm(data_para{1, i}.state(1).Y(end,1:2));
+
         end
+        
         LPin = LP(ind_Pin,:);
         LPout = LP(ind_Pout,:);
+        RPin = RP(ind_Pin,:);
+        RPout = RP(ind_Pout,:);
         
-        NN = length(ind_Pin);
-        RrogDeploy = zeros(NN,1);
-        for i = 1:NN
-            pos = ind_Pin(i);
-            Ymain = data_para{1, pos}.state(1).Y(end,1:2);
-            RrogDeploy(i) = norm(Ymain);
-        end
-        RSC_radius = min(RrogDeploy);
-        fprintf('Rogallo Safe Circle radius: %g [m] \n\n', RSC_radius)
+%         RSC_radius = min(RrogDeploy);
+%         fprintf('Rogallo Safe Circle radius: %g [m] \n\n', RSC_radius)
     
     end
     

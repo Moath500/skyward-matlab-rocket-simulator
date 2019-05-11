@@ -62,13 +62,21 @@ else
 end
 
 if settings.wind.input && settings.wind.input_uncertainty ~= 0
-    signn = randi([0,1]);
+    signn = randi([1,4]); % 4 sign cases
+    unc = settings.wind.input_uncertainty;
     
-    if signn 
-        settings.wind.input_uncertainty = - settings.wind.input_uncertainty;
+    switch signn
+        case 1
+%                       unc = unc;
+        case 2
+            unc(1) = - unc(1);
+        case 3
+            unc(2) = - unc(2);
+        case 4
+            unc = - unc;
     end
     
-    uncert = rand(1,2).*settings.wind.input_uncertainty;
+    uncert = rand(1,2).*unc;
 else
     uncert = [0,0];
 end

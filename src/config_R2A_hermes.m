@@ -18,8 +18,8 @@
 settings.rocket_name = "R2A_hermes";
 
 % launchpad 
-settings.z0 = 1416;                %[m] Launchpad Altitude
-settings.lrampa = 5.3;             %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+settings.z0 = 1416;                   %[m] Launchpad Altitude
+settings.lrampa = 5.3;                %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
 settings.lat0 = 41.809918;                                                          % Launchpad latitude
 settings.lon0 = 14.053903;                                                          % Launchpad longitude
 settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');        % Altitude map computation
@@ -27,11 +27,11 @@ settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');    
 % launchpad directions
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
-settings.OMEGAmin = 45*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
-settings.OMEGAmax = 45*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 359*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.upwind = false;               % If true, phi is selected according to wind direction
+settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.PHImin = 337.5*pi/180;       %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 337.5*pi/180;       %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.upwind = false;              % If true, phi is selected according to wind direction (const wind only)
 
 %% ENGINE DETAILS
 
@@ -201,8 +201,9 @@ settings.wind.HourMin = 13;                          % [h] Minimum Hour of the d
 settings.wind.HourMax = 13;                         % [h] Maximum Hour of the day
 settings.wind.ww = 0;                               % [m/s] Vertical wind speed
                 
+
 %%%%% Input wind 
-settings.wind.input = false;
+settings.wind.input = true;
 % Wind is generated for every altitude interpolating with the coefficient defined below
 
 % first row: wind magnitude [m/s]
@@ -218,18 +219,17 @@ settings.wind.input_uncertainty = [30,22.5];
 % - a, wind magnitude percentage uncertanty: magn = magn *(1 +- a)
 % - b, wind direction band uncertanty: dir = dir 1 +- b
 
-
 %%%%% Random wind model
 % if both the model above are false
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 5;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 12;                   % [m/s] Maximum Magnitude
+settings.wind.MagMax = 5;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (0)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (360)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (180)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (180)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -240,7 +240,7 @@ settings.wind.AzMax = (360)*pi/180;         % [rad] Maximum Azimuth, user input 
 %% BALLISTIC SIMULATION
 % Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = true;    
+settings.ballistic = false;    
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is
@@ -251,7 +251,7 @@ settings.ldf = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 500;             % Number of cases
+settings.stoch.N = 100;             % Number of cases
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee, thus there is no
@@ -272,3 +272,6 @@ settings.terrain = true;
 
 %% LANDING POINTS
 settings.landing_map = true;
+settings.map_file = 'map_roccaraso.jpg'; % name of map for landing points
+settings.map_xaxis = [-5000 5000];  % limits for the data of the landing map
+settings.map_yaxis = [-5000 5000];

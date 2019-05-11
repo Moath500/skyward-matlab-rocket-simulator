@@ -12,10 +12,9 @@ if settings.stoch.N == 1
     else
         load('descent_para_plot.mat')
         delete('descent_para_plot.mat')
-    end    
+    end
     
     %% ascent PLOTS
-    
     if settings.only_XCP
         
         figure('Name','Stability Margin - ascent Phase','NumberTitle','off');
@@ -60,7 +59,6 @@ if settings.stoch.N == 1
         
         
         %% 3D TRAJECTORY
-        
         figure('Name','3D Trajectory - All Flight','NumberTitle','off');
         plot3(y,x,z,'Linewidth',2.5), axis equal, hold on, grid on;
         title('Trajectory')
@@ -78,7 +76,7 @@ if settings.stoch.N == 1
                 z_plot = zeros(length(theta_plot), 1);
                 plot3(y_plot, x_plot, z_plot, '--r')
             end
-                    
+            
         else
             % terrain test
             X_t = -6000:30:6000;
@@ -93,7 +91,7 @@ if settings.stoch.N == 1
             end
             surf(Y_t,X_t,-Z_t,'EdgeColor','none'); colorbar; view(0,25);
         end
-
+        
         [~,i_tb] = min(abs(settings.tb-Ta));
         
         h1 = plot3(bound_value.Xd1(1),bound_value.Xd1(2),bound_value.Xd1(3),'ro',...
@@ -102,13 +100,13 @@ if settings.stoch.N == 1
         h5 = plot3(0, 0, 0, '*');
         h6 = plot3(Y(i_tb,2),Y(i_tb,1),-Y(i_tb,3),'ro','MarkerSize',9);
         
-        if not(settings.ballistic)           
+        if not(settings.ballistic)
             
             if settings.project == "R2A"
                 
                 h2 = plot3(bound_value.Xd2(1),bound_value.Xd2(2),bound_value.Xd2(3),'rs',...
                     'MarkerSize',7,'MarkerFaceColor','r');
-                if settings.ldf  
+                if settings.ldf
                     
                     legend([h5,h1,h2,h4,h6],{'Launch point','Apogee/1st Drogue Deployment',...
                         '2nd Drogue Deployment','Landing point',...
@@ -120,7 +118,7 @@ if settings.stoch.N == 1
                         '2nd Drogue Deployment','Rogallo Deployment','Landing point',...
                         'burning time position'},'Location','northeast');
                 end
-            
+                
             elseif settings.project == "R2A_hermes"
                 if not(settings.ldf)
                     h2 = plot3(bound_value.Xd2(1),bound_value.Xd2(2),bound_value.Xd2(3),'rs',...
@@ -138,10 +136,9 @@ if settings.stoch.N == 1
         else
             legend([h5,h1,h4,h6],'Launch point','Apogee',...
                 'Landing point','burning time position','Location','northeast');
-        end    
+        end
         
         %% STAGNATION TEMPERATURE
-        
         figure('Name','Temperature Profile - All Flight','NumberTitle','off');
         plot(T, Tamb-273.15);
         hold on, grid on;
@@ -163,9 +160,9 @@ if settings.stoch.N == 1
         if not(settings.ballistic)
             h2 = plot(bound_value.td2,bound_value.Vd2(1),'sr','MarkerSize',7,...
                 'MarkerFaceColor','r');
-
+            
             if settings.project == "R2A"
-
+                
                 if settings.ldf
                     legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
                         'Location','southeast');
@@ -182,14 +179,14 @@ if settings.stoch.N == 1
                 if settings.ldf
                     legend([h1,h2],'Apogee/1st Drogue Deployment','Landing',...
                         'Location','southeast');
-               
+                    
                 else
                     
                     legend([h1,h2],'Apogee/1st Drogue Deployment','2nd Drogue Deployment',...
                         'Location','southeast');
                 end
             end
-                
+            
         else
             
             legend(h1,'Apogee','Location','southeast');
@@ -234,7 +231,7 @@ if settings.stoch.N == 1
         else
             
             legend(h1,'Apogee','Location','southeast');
-
+            
         end
         
         subplot(3,1,3)
@@ -275,11 +272,10 @@ if settings.stoch.N == 1
         else
             
             legend(h1,'Apogee','Location','southeast');
-
+            
         end
         
         %% ALTITUDE,MACH,VELOCITY,ACCELERATION(subplotted)
-        
         figure('Name','Altitude, Mach, Velocity-Abs, Acceleration-Abs - ascent Phase','NumberTitle','off');
         subplot(2,3,1:3)
         plot(Ta, z_a), grid on, xlabel('time [s]'), ylabel('altitude [m]');
@@ -300,8 +296,6 @@ if settings.stoch.N == 1
         
         
         %% TRAJECTORY PROJECTIONS(subplotted)
-        
-        
         figure('Name','Trajectory Projections - All Flight','NumberTitle','off');
         
         subplot(1,3,1)
@@ -314,8 +308,8 @@ if settings.stoch.N == 1
         if not(settings.ballistic)
             
             if settings.project ~= "R2A_hermes"
-                            h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
-                                'MarkerFaceColor','r');
+                h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
+                    'MarkerFaceColor','r');
                 if settings.ldf
                     
                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
@@ -328,7 +322,7 @@ if settings.stoch.N == 1
                         'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
                     
                 end
-               
+                
             elseif settings.project == "R2A_hermes"
                 
                 if settings.ldf
@@ -347,7 +341,7 @@ if settings.stoch.N == 1
             
             legend([h2,h1,h3],'Launch point','Apogee','Landing point',...
                 'Location','northeast');
-
+            
         end
         
         
@@ -359,7 +353,7 @@ if settings.stoch.N == 1
         xlabel('x, North [m]'), ylabel('z, Altitude [m]');
         
         if not(settings.ballistic)
-                       
+            
             if settings.project ~= "R2A_hermes"
                 h4 = plot(bound_value.Xd2(2),bound_value.Xd2(3),'sr','MarkerSize',7,...
                     'MarkerFaceColor','r');
@@ -400,7 +394,7 @@ if settings.stoch.N == 1
         xlabel('y, East [m]'), ylabel('z, Altitude [m]');
         
         if not(settings.ballistic)
-                       
+            
             if settings.project == "R2A"
                 
                 h4 = plot(bound_value.Xd2(1),bound_value.Xd2(3),'sr','MarkerSize',7,...
@@ -430,10 +424,9 @@ if settings.stoch.N == 1
                         'Landing Point','2nd Drogue Deployment','Location','Best');
                 end
             end
-        end        
+        end
         
         %% EULERIAN ANGLES (subplotted)
-        
         pitch_angle = zeros(length(Ta),1);
         yaw_angle = zeros(length(Ta),1);
         roll_angle = zeros(length(Ta),1);
@@ -458,33 +451,43 @@ if settings.stoch.N == 1
         grid on, xlabel('time [s]'), ylabel('roll angle [deg]')
     end
     
-    
     %% STOCHASTIC PLOTS (only if N>1)
     
 else
+    % ROGALLO OPENING POINTS
+    if settings.project == "R2A_hermes" && settings.RSC && not(settings.ballistic) && not(settings.ldf)
+        figure('Name','Rogallo opening Points','NumberTitle','off')
+        plot(0,0,'ro','MarkerSize',20,'MarkerFacecolor','b');
+        hold on
+        plot(RPin(:,2),RPin(:,1),'o','MarkerEdgeColor','r','MarkerfaceColor','r');
+        plot(RPout(:,2),RPout(:,1),'o','MarkerEdgeColor','k','MarkerfaceColor','k');
+        legend({'Launch Site','safe points','not-safe points'})
+        hold off
+        
+    end
     
     % LANDING POINTS
     if not(settings.ao)
         if settings.landing_map
-            if settings.project == "R2A"
+            
+            % Position Scaled map in background
+            figure('Name','Landing Points','NumberTitle','off')
+            imshow(settings.map_file, 'YData',-settings.map_yaxis, 'XData',settings.map_xaxis);
+            set(gca,'YDir','normal'); % set y axis with ascending increasing values
+            axis on; hold on
+            plot(LP(:,2),LP(:,1),'.r','MarkerSize',11);
+%             % Draws Front Cone
+%             front(LP(:,2),LP(:,1));
+            title('Atterraggio con secondo drogue');
+            xlabel('m')
+            ylabel('m')
+            axis image
+            
+            if settings.project == "R2A_hermes"
                 
-                % Position Scaled map in background
-                figure('Name','Landing Points','NumberTitle','off')
-                imshow(settings.map_file, 'YData',-settings.map_yaxis, 'XData',settings.map_xaxis);
-                set(gca,'YDir','normal'); % set y axis with ascending increasing values
-                axis on
-                hold on
-                
-                % Draws Front Cone
-                front(LP(:,2),LP(:,1));
-                title('Atterraggio con secondo drogue');
-                xlabel('m')
-                ylabel('m')
-                axis image
-                
-            else                
                 figure('Name','Landing Points Map','NumberTitle','off')
                 hold on; grid on;
+                
                 X_t = -8000:30:8000;
                 Y_t = -8000:30:8000;
                 L_X = length(X_t);
@@ -503,40 +506,9 @@ else
                     legend([h1,h2],'safe landing points','not-safe landing points')
                 else
                     h1 = plot3(LP(:,1),-LP(:,2),-LP(:,3),'o','MarkerEdgeColor','k','MarkerfaceColor','k');
-                    legend([h1],'ballistic landing points')
+                    legend(h1,'ballistic landing points')
                 end
                 xlabel('North [m]'), ylabel('East [m]'), zlabel('Altitude [m]');
-                
-                %                 landing_circles = [0 1000 800;
-                %                                     -600 -600 2000;
-                %                                     1000 800 800];
-                %                 for c = 1:size(landing_circles,1)
-                %                     [xc,yc] = circle(landing_circles(c,1),landing_circles(c,2),...
-                %                         landing_circles(c,3));
-                %                 plot3(xc,yc,0*ones(length(xc),1),'--r');
-                %                 end
-                
-                % 2d map
-                % Position Scaled map in background
-                figure('Name','Landing Points','NumberTitle','off')
-                imshow('map_roccaraso.jpg', 'YData',-[-10000 10000], 'XData',[-10000 10000]);
-                set(gca,'YDir','normal'); % set y axis with ascending increasing values
-                axis on
-                hold on
-                plot(LP(:,1),-LP(:,2),'.r','Markersize',11);
-                
-                %                 for c = 1:size(landing_circles,1)
-                %                     [xc,yc] = circle(landing_circles(c,1),landing_circles(c,2),...
-                %                         landing_circles(c,3));
-                %                 plot(xc,yc,'--c');
-                %                 end
-                
-                % Draws Front Cone
-                %         [h1,h2,h4,h5] = front(LP(:,2),LP(:,1));
-                title('Atterraggio con secondo drogue');
-                xlabel('m')
-                ylabel('m')
-                axis image
             end
             
         else
@@ -549,9 +521,7 @@ else
         end
     end
     
-    
     % APOGEE POINTS
-    
     figure('Name','Apogee Points','NumberTitle','off');
     plot(xapom,yapom,'bs','MarkerSize',20,'MarkerFacecolor','b'), hold on;
     plot(X(:,1),X(:,2),'k+');
@@ -562,7 +532,6 @@ else
     
     
     % HISTOGRAM
-    
     [f,x] = hist(X(:,3),10);
     figure('Name','Apogee Histogram','NumberTitle','off');
     bar(x,f/settings.stoch.N);

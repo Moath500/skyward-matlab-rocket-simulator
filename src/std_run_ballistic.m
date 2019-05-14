@@ -107,7 +107,7 @@ save('descent_plot.mat', 'data_bal');
 Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6)) Ya(:,7:13)
       Yd(:,1:3) quatrotate(quatconj(Yd(:,10:13)),Yd(:,4:6)) Yd(:,7:13)];
 % Total Time
-Tf = [Ta; Ta(end)+Td];
+Tf = [Ta;Td];
 
 %% TIME, POSITION AND VELOCITY AT APOGEE
 

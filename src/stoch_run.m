@@ -192,7 +192,7 @@ parfor i = 1:settings.stoch.N
                 LP(i,:) = Yf(end,1:3);
             end
             
-            X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)]
+            X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)];
             ApoTime(i) = Ta(end);
             
             parfor_progress;

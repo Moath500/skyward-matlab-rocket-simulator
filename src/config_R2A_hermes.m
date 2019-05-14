@@ -29,8 +29,8 @@ settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');    
 % angles must be the same.
 settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 337.5*pi/180;       %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 337.5*pi/180;       %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImin = 0*pi/180;       %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 0*pi/180;       %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;              % If true, phi is selected according to wind direction (const wind only)
 
 %% ENGINE DETAILS
@@ -251,7 +251,7 @@ settings.ldf = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 100;             % Number of cases
+settings.stoch.N = 1;             % Number of cases
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee, thus there is no

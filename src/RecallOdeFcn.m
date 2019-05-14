@@ -21,6 +21,8 @@ for i = 1:NT
     all_steps.interp.alt(i) = single_step.interp.alt;
     all_steps.wind.body_wind(1:3,i) = single_step.wind.body_wind;
     
+    all_steps.air.rho(i) = single_step.air.rho;
+    all_steps.air.P(i) = single_step.air.P;
     
     if not(isequal(fun_info.function,'descent_parachute'))
         
@@ -31,8 +33,7 @@ for i = 1:NT
         all_steps.forces.AeroDyn_Forces(1:3,i) = single_step.forces.AeroDyn_Forces;
         all_steps.forces.T(i) = single_step.forces.T;
         
-        all_steps.air.rho(i) = single_step.air.rho;
-        all_steps.air.P(i) = single_step.air.P;
+        
         
         if isfield(single_step,'coeff')
             all_steps.coeff.CA(i) = single_step.coeff.CA;

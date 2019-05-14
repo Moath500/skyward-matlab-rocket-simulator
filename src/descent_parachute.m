@@ -76,7 +76,7 @@ if -z < 0
     z = 0;
 end
 
-[~, ~, ~, rho] = atmosisa(-z);
+[~, ~, P, rho] = atmosisa(-z+settings.z0);
 
 
 %% REFERENCE FRAME
@@ -131,5 +131,8 @@ if settings.plots
     parout.integration.t = t;
     parout.interp.alt = -z;
     parout.wind.body_wind = [uw vw ww];
+    
+    parout.air.rho = rho;
+    parout.air.P = P;
     
 end

@@ -72,7 +72,7 @@ switch engine
             178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
             4.589 0.000  ] * 9.81/2.2;                                      % [N]
         
-        settings.ms = 6.537;                                                % [kg]   Structural Mass
+        settings.ms = 6.600;                                                % [kg]   Structural Mass
         settings.mp = 0.889;                                                % [kg]   Propellant Mass
         settings.m0 = settings.ms + settings.mp;                            % [kg]   Overall Mas                                       
         settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
@@ -89,7 +89,7 @@ end
 
 settings.C = 0.09;                          % [m]      Caliber (Fuselage Diameter)
 settings.S = 0.0064;                        % [m^2]    Cross-sectional Surface
-L = 1.96;                                   % [m]      Rocket length
+L = 1.97;                                   % [m]      Rocket length
 
 %% MASS GEOMERTY DETAILS
 % x-axis: along the fuselage
@@ -97,14 +97,15 @@ L = 1.96;                                   % [m]      Rocket length
 % z-axis: downward
 
 % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-settings.Ixxf = 0.01009;                    % [kg*m^2] Inertia to x-axis
-settings.Iyyf = 2.09265;                    % [kg*m^2] Inertia to y-axis
-settings.Izzf = 2.09286;                    % [kg*m^2] Inertia to z-axis
+settings.Ixxf = 0.01001;                    % [kg*m^2] Inertia to x-axis
+settings.Iyyf = 2.12361;                    % [kg*m^2] Inertia to y-axis
+settings.Izzf = 2.12380;                    % [kg*m^2] Inertia to z-axis
 
 % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-settings.Ixxe = 0.00977;                    % [kg*m^2] Inertia to x-axis
-settings.Iyye = 1.77413;                    % [kg*m^2] Inertia to y-axis
-settings.Izze = 1.77434;                    % [kg*m^2] Inertia to z-axis
+settings.Ixxe = 0.00969;                    % [kg*m^2] Inertia to x-axis
+settings.Iyye = 1.81314;                    % [kg*m^2] Inertia to y-axis
+settings.Izze = 1.81333;                    % [kg*m^2] Inertia to z-axis
+
 
 
 %% AERODYNAMICS DETAILS
@@ -203,7 +204,7 @@ settings.wind.ww = 0;                               % [m/s] Vertical wind speed
                 
 
 %%%%% Input wind 
-settings.wind.input = true;
+settings.wind.input = false;
 % Wind is generated for every altitude interpolating with the coefficient defined below
 
 % first row: wind magnitude [m/s]
@@ -224,8 +225,8 @@ settings.wind.input_uncertainty = [30,22.5];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 5;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 5;                   % [m/s] Maximum Magnitude
+settings.wind.MagMin = 10;                   % [m/s] Minimum Magnitude
+settings.wind.MagMax = 10;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (180)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)

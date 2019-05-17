@@ -148,9 +148,9 @@ settings.Izze = 1.81333;                    % [kg*m^2] Inertia to z-axis
 %% PARACHUTES DETAILS
 
 % drogue 1
-settings.para1.S = 1.55;             % [m^2]   Surface
-settings.para1.mass = 0.25;          % [kg]   Parachute Mass
-settings.para1.CD = 0.8;             % [/] Parachute Drag Coefficient
+settings.para1.S = 0.7;             % [m^2]   Surface
+settings.para1.mass = 0.075;          % [kg]   Parachute Mass
+settings.para1.CD = 0.75;             % [/] Parachute Drag Coefficient
 settings.para1.CL = 0;               % [/] Parachute Lift Coefficient
 
 % rogallo wing
@@ -225,8 +225,8 @@ settings.wind.input_uncertainty = [30,22.5];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 10;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 10;                   % [m/s] Maximum Magnitude
+settings.wind.MagMin = 12;                   % [m/s] Minimum Magnitude
+settings.wind.MagMax = 12;                   % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (180)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)

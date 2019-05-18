@@ -152,6 +152,9 @@ if settings.stoch.N == 1
     % determine the maximum Mach number
     [max_M, imax_M] = max(M);
     
+    % determine latitude and longitude of the landing point
+    [lat_LP, lon_LP, ~] = ned2geodetic(x(end), y(end), 0, settings.lat0,settings.lon0, 0, wgs84Ellipsoid);
+    
     % DATA RECORD (display)
     
     disp(' ')
@@ -178,7 +181,8 @@ if settings.stoch.N == 1
     fprintf('speed at launch pad exit: %g [m/s] \n', abs_V(iexit))
     fprintf('time: %g [sec] \n\n', T(iexit))
     
-    
+    fprintf(['latitude of landing point: ',num2str(lat_LP),'°\n']);
+    fprintf(['longitude of landing point: ',num2str(lon_LP),'°\n\n\n']);
 %% STOCHASTIC SIMULATIONS (N>1)
 
 else    

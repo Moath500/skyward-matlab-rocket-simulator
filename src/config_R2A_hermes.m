@@ -33,6 +33,9 @@ settings.PHImin = 0*pi/180;       %[rad] Minimum Azimuth Angle from North Direct
 settings.PHImax = 0*pi/180;       %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;              % If true, phi is selected according to wind direction (const wind only)
 
+% version of fin
+settings.fins = 1; % Version 1 [10-5-5]; Version 2 [17-8-8]
+
 %% ENGINE DETAILS
 
 % sintax:
@@ -63,7 +66,9 @@ switch engine
         settings.tb = 2.5;                                                  % [s]    Burning time
         settings.mp = settings.m0-settings.ms;                              % [kg]   Propellant Mass
         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
-   case 2
+        
+        
+    case 2
         settings.motor.Name = 'K550';
         settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
             1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
@@ -72,32 +77,25 @@ switch engine
             178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
             4.589 0.000  ] * 9.81/2.2;                                      % [N]
         
- % % 10-5-5
-        settings.ms = 6.473;                                                % [kg]   Structural Mass
-        settings.mp = 0.889;                                                % [kg]   Propellant Mass
-        settings.m0 = settings.ms + settings.mp;                            % [kg]   Overall Mas
-        settings.mnc = 0.154;   % [kg]   Nosecone Mass
-        settings.m0 = settings.ms + settings.mp;
-        settings.tb = 3.5;                                                  % [s]    Burning time
-        settings.mfr = settings.mp/settings.tb;
-        
-% % 17-8-8
-%         settings.ms = 6.600;                                                % [kg]   Structural Mass
-%         settings.mp = 0.889;                                                % [kg]   Propellant Mass
-%         settings.m0 = settings.ms + settings.mp;                            % [kg]   Overall Mas                                       
-%         settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
-%         settings.tb = 3.5;                                                  % [s]    Burning time
-%         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
-%         
-        settings.mp = 0.889;                                                % [kg]   Propellant Mass
-        settings.ms = 7.2;                                 
-        settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
-        settings.tb = 3.5;                                                  % [s]    Burning time
-        settings.m0 = settings.ms +  settings.mnc;                         % [kg]   Structural Mass  
-        settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
-        
-%         settings.ms = 6.687-0.3;
-%         settings.m0 = settings.ms + settings.mp;
+        if settings.fins ==1
+            
+            settings.ms = 6.473;                                                % [kg]   Structural Mass
+            settings.mp = 0.889;                                                % [kg]   Propellant Mass
+            settings.mnc = 0.154;   % [kg]   Nosecone Mass
+            settings.m0 = settings.ms + settings.mnc + settings.mp;
+            settings.tb = 3.5;                                                  % [s]    Burning time
+            settings.mfr = settings.mp/settings.tb;
+            
+        else
+            
+            settings.mp = 0.889;                                                % [kg]   Propellant Mass
+            settings.ms = 7.2;
+            settings.mnc = 0.154;                                               % [kg]   Nosecone Mass
+            settings.tb = 3.5;                                                  % [s]    Burning time
+            settings.m0 = settings.ms +  settings.mnc + settings.mp;                         % [kg]   Structural Mass
+            settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
+        end
+
 end
 
 %% GEOMETRY DETAILS
@@ -113,34 +111,31 @@ L = 1.97;                                   % [m]      Rocket length
 % y-axis: right wing
 % z-axis: downward
 
-% 10-5-5
-
-% inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-settings.Ixxf = 0.008935;                    % [kg*m^2] Inertia to x-axis
-settings.Iyyf = 2.06968;                    % [kg*m^2] Inertia to y-axis
-settings.Izzf = 2.0698;                    % [kg*m^2] Inertia to z-axis
-
-% inertias for empty configuration (all the propellant consumed) obtained with CAD's
-settings.Ixxe = 0.008655;                    % [kg*m^2] Inertia to x-axis
-settings.Iyye = 1.7459;                    % [kg*m^2] Inertia to y-axis
-settings.Izze = 1.74615;                    % [kg*m^2] Inertia to z-axis
-
-
-
-
-% % 17-8-8
-% 
-% % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-% settings.Ixxf = 0.01001;                    % [kg*m^2] Inertia to x-axis
-% settings.Iyyf = 2.12361;                    % [kg*m^2] Inertia to y-axis
-% settings.Izzf = 2.12380;                    % [kg*m^2] Inertia to z-axis
-% 
-% % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-% settings.Ixxe = 0.00969;                    % [kg*m^2] Inertia to x-axis
-% settings.Iyye = 1.81314;                    % [kg*m^2] Inertia to y-axis
-% settings.Izze = 1.81333;                    % [kg*m^2] Inertia to z-axis
-
-
+if settings.fins ==1  % 10-5-5
+    
+    % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
+    settings.Ixxf = 0.008935;                    % [kg*m^2] Inertia to x-axis
+    settings.Iyyf = 2.06968;                    % [kg*m^2] Inertia to y-axis
+    settings.Izzf = 2.0698;                    % [kg*m^2] Inertia to z-axis
+    
+    % inertias for empty configuration (all the propellant consumed) obtained with CAD's
+    settings.Ixxe = 0.008655;                    % [kg*m^2] Inertia to x-axis
+    settings.Iyye = 1.7459;                    % [kg*m^2] Inertia to y-axis
+    settings.Izze = 1.74615;                    % [kg*m^2] Inertia to z-axis
+    
+else % 17-8-8
+    
+    % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
+    settings.Ixxf = 0.01001;                    % [kg*m^2] Inertia to x-axis
+    settings.Iyyf = 2.12361;                    % [kg*m^2] Inertia to y-axis
+    settings.Izzf = 2.12380;                    % [kg*m^2] Inertia to z-axis
+    
+    % inertias for empty configuration (all the propellant consumed) obtained with CAD's
+    settings.Ixxe = 0.00969;                    % [kg*m^2] Inertia to x-axis
+    settings.Iyye = 1.81314;                    % [kg*m^2] Inertia to y-axis
+    settings.Izze = 1.81333;                    % [kg*m^2] Inertia to z-axis
+    
+end
 
 %% AERODYNAMICS DETAILS
 % These coefficients are obtained using MISSILE DATCOM
@@ -155,21 +150,38 @@ settings.Izze = 1.74615;                    % [kg*m^2] Inertia to z-axis
 % Note: All the parameters (AoA,Betas,Altitudes,Machs) must be the same for
 % empty and full configuration
 
- DATA_PATH = '../data/';
- filename = strcat(DATA_PATH, settings.rocket_name);
+DATA_PATH = '../data/';
+filename = strcat(DATA_PATH, settings.rocket_name);
 
- % Coefficients in full configuration
- filename_full = strcat(filename,'_full.mat');
- CoeffsF = load(filename_full,'Coeffs');
- settings.CoeffsF = CoeffsF.Coeffs;
- clear('CoeffsF');
- 
- % Coefficients in empty configuration
- filename_empty = strcat(filename,'_empty.mat');
- CoeffsE = load(filename_empty,'Coeffs');
- settings.CoeffsE = CoeffsE.Coeffs;
- clear('CoeffsE');
- 
+if settings.fins == 1
+    
+    % Coefficients in full configuration
+    filename_full = strcat(filename,'_full_V1.mat');
+    CoeffsF = load(filename_full,'Coeffs');
+    settings.CoeffsF = CoeffsF.Coeffs;
+    clear('CoeffsF');
+    
+    % Coefficients in empty configuration
+    filename_empty = strcat(filename,'_empty_V1.mat');
+    CoeffsE = load(filename_empty,'Coeffs');
+    settings.CoeffsE = CoeffsE.Coeffs;
+    clear('CoeffsE');
+    
+else
+    
+    % Coefficients in full configuration
+    filename_full = strcat(filename,'_full_V2.mat');
+    CoeffsF = load(filename_full,'Coeffs');
+    settings.CoeffsF = CoeffsF.Coeffs;
+    clear('CoeffsF');
+    
+    % Coefficients in empty configuration
+    filename_empty = strcat(filename,'_empty_V2.mat');
+    CoeffsE = load(filename_empty,'Coeffs');
+    settings.CoeffsE = CoeffsE.Coeffs;
+    clear('CoeffsE');
+    
+end
  
  s = load(filename_full,'State');
  settings.Alphas = s.State.Alphas';

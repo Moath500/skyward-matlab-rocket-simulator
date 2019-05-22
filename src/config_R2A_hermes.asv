@@ -89,13 +89,15 @@ switch engine
 %         settings.tb = 3.5;                                                  % [s]    Burning time
 %         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
 %         
-        settings.mp = 0.889;                                                % [kg]   Propellant Mass
-        settings.ms = 7.2;                                 
-        settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
-        settings.tb = 3.5;                                                  % [s]    Burning time
-        settings.m0 = settings.ms +  settings.mnc;                         % [kg]   Structural Mass  
-        settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
-        
+%         settings.ms = 6.687-0.3;
+%         settings.m0 = settings.ms + settings.mp;
+%         settings.ms = 6.600;                                                % [kg]   Structural Mass
+%         settings.mp = 0.889;                                                % [kg]   Propellant Mass
+%         settings.m0 = settings.ms + settings.mp;                            % [kg]   Overall Mas                                       
+%         settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
+%         settings.tb = 3.5;                                                  % [s]    Burning time
+%         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
+%         
 %         settings.ms = 6.687-0.3;
 %         settings.m0 = settings.ms + settings.mp;
 end

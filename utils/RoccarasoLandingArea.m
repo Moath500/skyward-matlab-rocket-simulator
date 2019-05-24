@@ -1,3 +1,23 @@
+%{ 
+Author: Adriano Filippo Inno
+% Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
+% email: adriano.filippo.inno@skywarder.eu
+ Release date: 17/10/2018
+
+This script computes allows to obtain the correlation between the wind
+(magnitude and direction) and the rogallo deployment height in order to
+keep the landing safe.
+
+The Safe zone is here defined as an ellipse.
+Remember to set random wind in config with 0-8 m/s , to fix the wind 
+direction and to set upwind "true"
+
+PARFOOR NEED DO BE STARTED BY HAND AND COMMENT IN STOCH_RUN.M THE COMMAND
+"PARFOOR" near line 56.
+%}
+
+
+
 %%
 clc
 clear
@@ -8,6 +28,9 @@ hrog = 200:50:500;
 p = zeros(length(hrog),2);
 
 run('config_R2A_hermes.m');
+
+settings.stoch.N = 100;
+
 
 for k = 1:length(hrog)
     settings.zdrg2 = hrog(k);
@@ -33,14 +56,14 @@ set(gca,'YDir','normal'); % set y axis with ascending increasing values
 hold on
 axis on
 
-a = 1000;
-b = 3000;
+a = 1100;
+b = 2800;
 x0 = 0;
-y0 = -500;
+y0 = -300;
 t = -pi:0.01:pi;
 x = x0 + a*cos(t);
 y = y0 + b*sin(t);
-alpha = 12;
+alpha = 10;
 
 x_hat = cosd(alpha)*x - sind(alpha)*y;
 y_hat = sind(alpha)*x + cosd(alpha)*y;

@@ -265,10 +265,11 @@ settings.ao = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 10;                           % Number of cases
-settings.stoch.prob = false;                      % Set to true to compute the launch probability
-settings.stoch.x_lim = 2e3;                       % Max ovest displacement [m]
-settings.stoch.P_lim = 2e3;                       % Max drogue stress [Pa]
+settings.stoch.N = 10;                            % Number of cases
+settings.stoch.prob.switcher = false;             % Set to true to compute the launch probability
+settings.stoch.prob.x_lim = 2e3;                  % Max ovest displacement [m]
+settings.stoch.prob.V_lim = 30;                   % Max drogue stress [Pa]
+settings.stoch.prob.t_delay = 5;                  % drogue opening delay [s]
 
 %% PLOT DETAILS
 settings.plots = true;

@@ -28,26 +28,11 @@ if settings.OMEGAmin ~= settings.OMEGAmax || settings.PHImin ~= settings.PHImax
     error('In a single simulation the launchpad configuration has to be unique, check config.m')
 end
 
-%% STARTING CONDITIONS
-
-settings.OMEGA = settings.OMEGAmin;
-settings.PHI = settings.PHImin;
-
-% Attitude
-Q0 = angle2quat(settings.PHI,settings.OMEGA,0*pi/180,'ZYX')';
-
-% State
-X0 = [0 0 0]';
-V0 = [0 0 0]';
-W0 = [0 0 0]';
-X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
-
 %% WIND GENERATION
-
 if settings.wind.model || settings.wind.input   % will be computed inside the integrations
     uw = 0; vw = 0; ww = 0; 
 else
-    [uw,vw,ww] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
+    [uw,vw,ww,Azw] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
         settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
         settings.wind.MagMax);
     
@@ -79,12 +64,36 @@ end
 
 tf = settings.ode.final_time;
 
-%% ASCENT
+
+%% STARTING CONDITIONS
+% State
+X0 = [0 0 0]';
+V0 = [0 0 0]';
+W0 = [0 0 0]';
+
+% Attitude
+settings.OMEGA = settings.OMEGAmin;
+settings.PHI = settings.PHImin;
+
 if settings.upwind
-    settings.PHI = Azw + 180;
+    settings.PHI = mod(Azw + pi, 2*pi);
 end
 
-[Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,settings,uw,vw,ww,uncert);
+Q0 = angle2quat(settings.PHI,settings.OMEGA,0*pi/180,'ZYX')';
+X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
+
+%% ASCENT
+% checking if the actuation delay is different from zero
+if settings.delay ~= 0
+    [Ta1,Ya1] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc1,settings,uw,vw,ww,uncert);
+    
+    [Ta2,Ya2] = ode113(@ascent,[Ta1(end),Ta1(end) + settings.para1.delay],Ya1(end,:),settings.ode.optionsasc2,settings,uw,vw,ww,uncert);
+    Ta = [Ta1; Ta2(2:end)];
+    Ya = [Ya1; Ya2(2:end,:)];
+else
+    [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,settings,uw,vw,ww,uncert);
+end
+
 [data_ascent] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert);
 data_ascent.state.Y = Ya;
 data_ascent.state.T = Ta;

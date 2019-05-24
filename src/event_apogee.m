@@ -10,10 +10,10 @@ function [value,isterminal,direction] = event_apogee(t,Y,settings,varargin)
 
 Q = Y(10:13)';
 
-%Inertial Frame velocities
+% Inertial Frame velocities
 vels = quatrotate(quatconj(Q),Y(4:6)');
 
-%Stop checking if I'm in Propulsion Phase
+% Stop checking if I'm in Propulsion Phase
 if t > settings.tb
     value = vels(3);
 else

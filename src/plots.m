@@ -1,7 +1,10 @@
-% Author: Adriano Filippo Inno
-% Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
-% email: adriano.filippo.inno@skywarder.eu
-% Release date: 13/01/2018
+%{
+ Author: Adriano Filippo Inno
+Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
+email: adriano.filippo.inno@skywarder.eu
+Release date: 13/01/2018
+
+%}
 
 if settings.stoch.N == 1
     
@@ -237,7 +240,7 @@ if settings.stoch.N == 1
         subplot(3,1,3)
         plot(T,-Y(:,6)), hold on, grid on, xlabel('Time[s]'), ylabel('Velocity-z [m/s]');
         
-        h1 = plot(bound_value.td1,bound_value.Vd1(3),'ro','MarkerSize',7,...
+        h1 = plot(bound_value.td1,-bound_value.Vd1(3),'ro','MarkerSize',7,...
             'MarkerFaceColor','r');
         
         if not(settings.ballistic)
@@ -453,20 +456,9 @@ if settings.stoch.N == 1
     
     %% STOCHASTIC PLOTS (only if N>1)
     
-else
-    % ROGALLO OPENING POINTS
-    if settings.project == "R2A_hermes" && settings.RSC && not(settings.ballistic) && not(settings.ldf)
-        figure('Name','Rogallo opening Points','NumberTitle','off')
-        plot(0,0,'ro','MarkerSize',20,'MarkerFacecolor','b');
-        hold on
-        plot(RPin(:,2),RPin(:,1),'o','MarkerEdgeColor','r','MarkerfaceColor','r');
-        plot(RPout(:,2),RPout(:,1),'o','MarkerEdgeColor','k','MarkerfaceColor','k');
-        legend({'Launch Site','safe points','not-safe points'})
-        hold off
-        
-    end
+else 
     
-    % LANDING POINTS
+    % LANDING POINTS 2D
     if not(settings.ao)
         if settings.landing_map
             
@@ -483,6 +475,8 @@ else
             ylabel('m')
             axis image
             
+            
+    % LANDING POINTS 3D
             if settings.project == "R2A_hermes"
                 
                 figure('Name','Landing Points Map','NumberTitle','off')
@@ -520,6 +514,19 @@ else
             xlabel('North [m]'), ylabel('East [m]'),title('Landing Points');
         end
     end
+    
+    
+    % ROGALLO OPENING POINTS
+    if settings.project == "R2A_hermes" && not(settings.ballistic) && not(settings.ldf)
+        figure('Name','Rogallo opening Points','NumberTitle','off')
+        plot(0,0,'ro','MarkerSize',20,'MarkerFacecolor','b');
+        hold on
+        plot(RPin(:,2),RPin(:,1),'o','MarkerEdgeColor','r','MarkerfaceColor','r');
+        plot(RPout(:,2),RPout(:,1),'o','MarkerEdgeColor','k','MarkerfaceColor','k');
+        legend({'Launch Site','safe points','not-safe points'})
+        
+    end
+    
     
     % APOGEE POINTS
     figure('Name','Apogee Points','NumberTitle','off');

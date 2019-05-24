@@ -225,7 +225,8 @@ parout.interp.alpha = alpha_value;
 parout.interp.beta = beta_value;
 parout.interp.alt = -z;
 
-parout.wind.body_wind = [uw vw ww];
+parout.wind.NED_wind = [uw vw ww];
+parout.wind.body_wind = wind;
 
 parout.air.rho = rho;
 parout.air.P = P;

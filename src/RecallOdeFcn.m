@@ -1,14 +1,16 @@
 function [all_steps] = RecallOdeFcn(fun,T,Y,varargin)
-% RECALLODEFCN - This function allows to compute some parameters used
-% inside the ODE integrations
-%
-% OUTPUTS:
-%             - all_steps: structure which contains all the parameters needed 
-%
-% Author: Adriano Filippo Inno
-% Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
-% email: adriano.filippo.inno@skywarder.eu
-% Release date: 16/11/2018
+%{
+ RECALLODEFCN - This function allows to compute some parameters used
+inside the ODE integrations
+
+OUTPUTS:
+            - all_steps: structure which contains all the parameters needed 
+
+Author: Adriano Filippo Inno
+Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
+email: adriano.filippo.inno@skywarder.eu
+Release date: 16/11/2018
+%}
 
 NT = length(T);
 fun_info = functions(fun);
@@ -20,6 +22,7 @@ for i = 1:NT
     all_steps.integration.t(i) = single_step.integration.t;
     all_steps.interp.alt(i) = single_step.interp.alt;
     all_steps.wind.body_wind(1:3,i) = single_step.wind.body_wind;
+    all_steps.wind.NED_wind(1:3,i) = single_step.wind.NED_wind;
     
     all_steps.air.rho(i) = single_step.air.rho;
     all_steps.air.P(i) = single_step.air.P;

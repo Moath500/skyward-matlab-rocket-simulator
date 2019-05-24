@@ -20,7 +20,7 @@ end
 if settings.OMEGAmin == settings.OMEGAmax && settings.PHImin == settings.PHImax
     if not(settings.wind.model) && not(settings.wind.input)
         
-        if settings.wind.MagMin == settings.wind.MagMax && settings.wind.ElMin == settings.wind.ElMax
+        if settings.wind.MagMin == settings.wind.MagMax && settings.wind.AzMin == settings.wind.AzMax
             error('In stochastic simulations the wind must setted with the random model, check config.m')
         end
         
@@ -105,14 +105,23 @@ parfor i = 1:settings.stoch.N
     PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
     
     if settings.upwind
-        PHI = Azw + 180;
+        PHI = mod(Azw + pi, 2*pi);
     end
     
     Q0 = angle2quat(PHI,OMEGA,0*pi/180,'ZYX')';
     X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
     
-    [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,...
-        settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
+    if settings.delay ~= 0
+        [Ta1,Ya1] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc1,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
+        
+        [Ta2,Ya2] = ode113(@ascent,[Ta1(end),Ta1(end) + settings.para1.delay],Ya1(end,:),...
+            settings.ode.optionsasc2,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
+        Ta = [Ta1; Ta2(2:end)];
+        Ya = [Ya1; Ya2(2:end,:)];
+    else
+        [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
+    end
+    
     [data_ascent{i}] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
     data_ascent{i}.state.Y = Ya;
     data_ascent{i}.state.T = Ta;

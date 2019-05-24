@@ -8,7 +8,7 @@
 % License: 2-clause BSD
 
 % Author: Francesco Colombi
-% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu              
 % email: francesco.colombi@skywarder.eu
 % Release date: 16/04/2016
 
@@ -29,9 +29,9 @@ settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');    
 % angles must be the same.
 settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 0*pi/180;       %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 0*pi/180;       %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.upwind = false;              % If true, phi is selected according to wind direction (const wind only)
+settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 0*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.upwind = true;               % If true, phi is selected according to wind direction (constant wind model only)
 
 % version of fin
 settings.fins = 1; % Version 1 [10-5-5]; Version 2 [17-8-8]
@@ -77,7 +77,7 @@ switch engine
             178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
             4.589 0.000  ] * 9.81/2.2;                                      % [N]
         
-        if settings.fins ==1
+        if settings.fins == 1
             
             settings.ms = 6.473;                                                % [kg]   Structural Mass
             settings.mp = 0.889;                                                % [kg]   Propellant Mass
@@ -111,18 +111,18 @@ L = 1.97;                                   % [m]      Rocket length
 % y-axis: right wing
 % z-axis: downward
 
-if settings.fins ==1  % 10-5-5
+if settings.fins == 1  % 10-5-5
     
     % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-    settings.Ixxf = 0.008935;                    % [kg*m^2] Inertia to x-axis
+    settings.Ixxf = 0.008935;                   % [kg*m^2] Inertia to x-axis
     settings.Iyyf = 2.06968;                    % [kg*m^2] Inertia to y-axis
-    settings.Izzf = 2.0698;                    % [kg*m^2] Inertia to z-axis
+    settings.Izzf = 2.0698;                     % [kg*m^2] Inertia to z-axis
     
     % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-    settings.Ixxe = 0.008655;                    % [kg*m^2] Inertia to x-axis
-    settings.Iyye = 1.7459;                    % [kg*m^2] Inertia to y-axis
+    settings.Ixxe = 0.008655;                   % [kg*m^2] Inertia to x-axis
+    settings.Iyye = 1.7459;                     % [kg*m^2] Inertia to y-axis
     settings.Izze = 1.74615;                    % [kg*m^2] Inertia to z-axis
-    
+     
 else % 17-8-8
     
     % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
@@ -194,17 +194,18 @@ end
 %% PARACHUTES DETAILS
 
 % drogue 1
-settings.para1.S = 0.7;             % [m^2]   Surface
-settings.para1.mass = 0.075;          % [kg]   Parachute Mass
-settings.para1.CD = 0.75;             % [/] Parachute Drag Coefficient
+settings.para1.S = 0.7;              % [m^2]   Surface
+settings.para1.mass = 0.075;         % [kg]   Parachute Mass
+settings.para1.CD = 0.75;            % [/] Parachute Drag Coefficient
 settings.para1.CL = 0;               % [/] Parachute Lift Coefficient
+settings.para1.delay = 1;            % drogue opening delay [s]
 
 % rogallo wing
-settings.para2.S = 7;               % [m^2]   Surface
-settings.para2.mass = 0.45;         % [kg]   Parachute Mass
-settings.para2.CD = 0.4;            % [/] Parachute Drag Coefficient
-settings.para2.CL = 0.9;            % [/] Parachute Lift Coefficient
-settings.zdrg2 = 200;               % [m] Altitude of drogue 2 opening
+settings.para2.S = 7;                % [m^2]   Surface
+settings.para2.mass = 0.45;          % [kg]   Parachute Mass
+settings.para2.CD = 0.4;             % [/] Parachute Drag Coefficient
+settings.para2.CL = 0.9;             % [/] Parachute Lift Coefficient
+settings.zdrg2 = 200;                % [m] Altitude of drogue 2 opening
 
 
 %% INTEGRATION OPTIONS
@@ -219,8 +220,11 @@ settings.ode.final_time =  2000;                 % [s] Final integration time
 % - stopped (it has to be created)
 % - InitialStep is the highest value tried by the solver
 
-settings.ode.optionsasc = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+settings.ode.optionsasc1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_apogee,'InitialStep',1);    %ODE options for ascend
+
+settings.ode.optionsasc2 = odeset('AbsTol',1E-3,'RelTol',1E-3,'InitialStep',1);    
+%ODE options for balistic descent between the apogee and the first drogue opening 
 
 settings.ode.optionsdrg1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_drg2_opening);              %ODE options for drogue
@@ -271,12 +275,12 @@ settings.wind.input_uncertainty = [30,22.5];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 4;                   % [m/s] Minimum Magnitude
-settings.wind.MagMax = 4;                   % [m/s] Maximum Magnitude
+settings.wind.MagMin = 0.1;                 % [m/s] Minimum Magnitude
+settings.wind.MagMax = 10;                  % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (180)*pi/180;         % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (180)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (0)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (360)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -298,18 +302,26 @@ settings.ldf = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;             % Number of cases
+settings.stoch.N = 100;                             % Number of cases
+
+%%% launch probability details
+settings.stoch.prob.x_lim = 2e3;                  % Max ovest displacement [m]
+settings.stoch.prob.V_lim = 50;                   % Max drogue velocity [Pa]
+settings.delay = 1;                               % drogue opening delay [s]
+
+%%% Safe Ellipse
+settings.prob.SafeEllipse.a = 1100;
+settings.prob.SafeEllipse.b = 2800;
+settings.prob.SafeEllipse.x0  = 0;
+settings.prob.SafeEllipse.y0 = -300;
+settings.prob.SafeEllipse.alpha = 10;
+
 
 %% APOGEE ONLY
 % simulation stopped when reaching the apogee, thus there is no
 % descend phase.   Only available for standard stochastic runs !!!
 
 settings.ao = false;
-
-%% ROGALLO SAFETY CIRCLE
-% Only available for standard stochastic runs !!!
-
-settings.RSC = true;
 
 %% PLOT DETAILS
 

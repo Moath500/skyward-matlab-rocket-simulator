@@ -131,6 +131,7 @@ if settings.plots
     parout.integration.t = t;
     parout.interp.alt = -z;
     parout.wind.body_wind = [uw vw ww];
+    parout.wind.NED_wind = [uw vw ww];
     
     parout.air.rho = rho;
     parout.air.P = P;

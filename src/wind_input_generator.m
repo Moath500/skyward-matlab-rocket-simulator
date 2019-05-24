@@ -1,11 +1,13 @@
 function [uw,vw,ww] = wind_input_generator(settings,z,uncert)
+%{
+Author: Adriano Filippo Inno
+Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
+email: adriano.filippo.inno@skywarder.eu
+Release date: 13/03/2018
 
-% Author: Adriano Filippo Inno
-% Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
-% email: adriano.filippo.inno@skywarder.eu
-% Release date: 13/01/2018
+This function allows to use a custom set of wind, defined in config.m 
 
-% This function allows to use a custom set of wind, defined in config.m 
+%}
 
 magn = (1 + uncert(1)/100).*settings.wind.input_matr(1,:);
 dir = mod(180 + settings.wind.input_matr(2,:),360);

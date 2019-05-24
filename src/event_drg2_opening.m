@@ -12,12 +12,12 @@ z = -Y(3);
 
 if settings.rocket_name == "R2A_hermes" && settings.terrain
     zloc = -settings.funZ(x,y);
-    if zloc > 853
-        zloc = 853;
+    if zloc > 859
+        zloc = 859;
     end
     
-    if zloc < -656
-        zloc = -656;
+    if zloc < -845
+        zloc = -845;
     end
     
     value = z - zloc - settings.zdrg2;

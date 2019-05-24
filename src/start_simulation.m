@@ -181,8 +181,9 @@ if settings.stoch.N == 1
     fprintf('speed at launch pad exit: %g [m/s] \n', abs_V(iexit))
     fprintf('time: %g [sec] \n\n', T(iexit))
     
-    fprintf(['latitude of landing point: ',num2str(lat_LP),'°\n']);
-    fprintf(['longitude of landing point: ',num2str(lon_LP),'°\n\n\n']);
+    fprintf('latitude of landing point: %10.8f [deg] \n',lat_LP);
+    fprintf('longitude of landing point: %10.8f [deg] \n\n',lon_LP);
+    
 %% STOCHASTIC SIMULATIONS (N>1)
 
 else    
@@ -217,45 +218,18 @@ else
         fprintf(text,xm,ym,zapom,zstd,ApoTimem,ApoTimestd);
     end
     
-    if settings.project == "R2A_hermes" && settings.RSC && not(settings.ballistic) && not(settings.ldf)
-        
-        %%% Rogallo safe circle definition
-        a = 1100;                   % [m] safety ellipse x-axes length
-        b = 3200;                   % [m] safety ellipse y-axes length
-        x0 = -150;                  % [m] safety ellipse x-axes origin
-        y0 = 100;                   % [m] safety ellipse y-axes origin
-        alpha = 18;                 % [deg] safety ellipse rotating angle (counter-clock wise)
-        c = sqrt(b^2 - a^2);        % [m] safety ellipse focii distance
-        F1 = [x0, y0+c];            % [m] first safety ellipse not-rotated foci coordinates
-        F2 = [x0, y0-c];            % [m] second safety ellipse not-rotated foci coordinates
-        
-        R = [cosd(alpha), - sind(alpha)
-             sind(alpha),   cosd(alpha)];
-        
-        F1_hat = R*F1';
-        F2_hat = R*F2';
-        P = LP(:,[2,1]);
-        
-        dist = zeros(settings.stoch.N,1);
-        RrogDeploy = dist;
-        RP = zeros(settings.stoch.N,2);
-        for i = 1:settings.stoch.N
-            dist(i) = norm(P(i,:) - F1_hat') + norm(P(i,:) - F2_hat');
-            ind_Pin = find(dist < 2*b);
-            ind_Pout = find(dist > 2*b);
-            RP(i,:) = data_para{1, i}.state(1).Y(end,1:2);
-            RrogDeploy(i) = norm(data_para{1, i}.state(1).Y(end,1:2));
-
-        end
-        
+    if settings.rocket_name == "R2A"
+        [p,flag] = LaunchProb(settings,data_ascent,data_para);
+    else
+        [p,flag,ind_Pin,ind_Pout,RP] = LaunchProb(settings,data_ascent,data_para,LP);
+        fprintf('The launch probability is: %.1f %% \n\n',p);
         LPin = LP(ind_Pin,:);
         LPout = LP(ind_Pout,:);
-        RPin = RP(ind_Pin,:);
-        RPout = RP(ind_Pout,:);
         
-%         RSC_radius = min(RrogDeploy);
-%         fprintf('Rogallo Safe Circle radius: %g [m] \n\n', RSC_radius)
-    
+        if not(settings.ballistic) && not(settings.ldf)
+            RPin = RP(ind_Pin,:);
+            RPout = RP(ind_Pout,:);
+        end
     end
     
     delete(gcp('nocreate'))
@@ -271,13 +245,6 @@ end
 
 if settings.stoch.N == 1
     delete('ascent_plot.mat')
-else
-    if settings.rocket_name == "R2A"
-        if settings.stoch.prob
-            [p,flag] = LaunchProb(settings,data_ascent,data_para);
-            fprintf('The launch probability is: %f/n/n',p);
-        end
-    end
 end
 
 clearvars -except T data_ascent data_para data_bal flag  

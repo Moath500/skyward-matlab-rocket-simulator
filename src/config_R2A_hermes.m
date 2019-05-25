@@ -88,13 +88,13 @@ switch engine
         if settings.fins == 1 % 10-5-5
             
             settings.m0 = 8.062;                                                % [kg]   Total Mass
-            settings.ms = setting.m0 - settings.mp;                         % [kg]   Structural Mass
+            settings.ms = settings.m0 - settings.mp;                         % [kg]   Structural Mass
             
             
         else % 17-8-8
             
             settings.m0 = 8.288;                                                % [kg]   Total Mass
-            settings.ms = setting.m0 - settings.mp;                         % [kg]   Structural Mass
+            settings.ms = settings.m0 - settings.mp;                         % [kg]   Structural Mass
             
         end
         

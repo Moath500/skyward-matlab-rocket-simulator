@@ -34,7 +34,7 @@ settings.PHImax = 0*pi/180;           %[rad] Maximum Azimuth Angle from North Di
 settings.upwind = true;               % If true, phi is selected according to wind direction (constant wind model only)
 
 % version of fin
-settings.fins = 1; % Version 1 [10-5-5]; Version 2 [17-8-8]
+settings.fins = 2; % Version 1 [10-5-5]; Version 2 [17-8-8]
 
 %% ENGINE DETAILS
 
@@ -93,7 +93,7 @@ switch engine
             
         else % 17-8-8
             
-            settings.m0 = 8.258;                                                % [kg]   Total Mass
+            settings.m0 = 8.288;                                                % [kg]   Total Mass
             settings.ms = setting.m0 - settings.mp;                         % [kg]   Structural Mass
             
         end
@@ -121,7 +121,7 @@ if settings.fins == 1  % 10-5-5
     settings.Izzf = 2.0698;                     % [kg*m^2] Inertia to z-axis
     
     % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-    settings.Ixxe = 0.008655;                   % [kg*m^2] Inertia to x-axis
+    settings.Ixxe = 0.00940;                   % [kg*m^2] Inertia to x-axis
     settings.Iyye = 1.7459;                     % [kg*m^2] Inertia to y-axis
     settings.Izze = 1.74615;                    % [kg*m^2] Inertia to z-axis
      
@@ -133,9 +133,9 @@ else % 17-8-8
     settings.Izzf = 2.33782;                    % [kg*m^2] Inertia to z-axis
     
     % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-    settings.Ixxe = 0.01043;                    % [kg*m^2] Inertia to x-axis
-    settings.Iyye = 1.93202;                    % [kg*m^2] Inertia to y-axis
-    settings.Izze = 1.9323;                    % [kg*m^2] Inertia to z-axis
+    settings.Ixxe = 0.10519;                    % [kg*m^2] Inertia to x-axis
+    settings.Iyye = 2.01784;                    % [kg*m^2] Inertia to y-axis
+    settings.Izze = 2.01811;                    % [kg*m^2] Inertia to z-axis
     
 end
 
@@ -277,8 +277,8 @@ settings.wind.input_uncertainty = [30,22.5];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 0.1;                 % [m/s] Minimum Magnitude
-settings.wind.MagMax = 10;                  % [m/s] Maximum Magnitude
+settings.wind.MagMin = 12;                 % [m/s] Minimum Magnitude
+settings.wind.MagMax = 12;                  % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (0)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
@@ -304,7 +304,7 @@ settings.ldf = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 10;                             % Number of cases
+settings.stoch.N = 1;                             % Number of cases
 
 %%% launch probability details
 settings.stoch.prob.x_lim = 2e3;                  % Max ovest displacement [m]
@@ -328,7 +328,7 @@ settings.ao = false;
 
 settings.plots = true;
 settings.only_XCP = false; % plot only the stability margin
-settings.terrain = true;
+settings.terrain = false;
 
 %% LANDING POINTS
 settings.landing_map = true;

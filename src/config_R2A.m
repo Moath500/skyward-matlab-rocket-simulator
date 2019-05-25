@@ -13,27 +13,25 @@
 % Release date: 16/04/2016
 
 %% LAUNCH SETUP
-
 % rocket name
 settings.rocket_name = "R2A";
 
 % launchpad
-settings.z0 = 5;                                 %[m] Launchpad Altitude
-settings.lrampa = 5.5;                           %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+settings.z0 = 5;                                 % [m] Launchpad Altitude
+settings.lrampa = 5.5;                           % [m] LaunchPad route (launchpad length-distance from ground of the first hook)
 settings.lat0 = 39.552709;                       % [deg] Latitude of launching site
 settings.lon0 = 9.652400;                        % [deg] Longitude of launching site
-
 
 % launchpad directions
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
 settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 90*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImin = 90*pi/180;          %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.PHImax = 90*pi/180;          %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.upwind = true;               % If true, phi is selected according to wind direction (constant wind model only)
 
 %% ENGINE DETAILS
-
 % sintax:
 % engine = 1 -> Cesaroni PRO 150 White Thunder
 % engine = 2 -> Cesaroni PRO 150 SkidMark
@@ -154,6 +152,7 @@ settings.para1.S = 1.55;                         % [m^2]   Surface
 settings.para1.mass = 0.25;                      % [kg]   Parachute Mass
 settings.para1.CD = 0.8;                         % [/] Parachute Drag Coefficient
 settings.para1.CL = 0;                           % [/] Parachute Lift Coefficient
+settings.para1.delay = 1;                        % drogue opening delay [s]
 
 % drogue 2
 settings.para2.S = 17.5;                         % [m^2]   Surface
@@ -182,8 +181,11 @@ settings.ode.final_time =  2000;                 % [s] Final integration time
 % - stopped (it has to be created)
 % - InitialStep is the highest value tried by the solver
 
-settings.ode.optionsasc = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+settings.ode.optionsasc1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_apogee,'InitialStep',1);    %ODE options for ascend
+
+settings.ode.optionsasc2 = odeset('AbsTol',1E-3,'RelTol',1E-3,'InitialStep',1);    
+%ODE options for balistic descent between the apogee and the first drogue opening 
 
 settings.ode.optionsdrg1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_drg2_opening);              %ODE options for drogue
@@ -233,12 +235,12 @@ settings.wind.input_uncertainty = 20;             % [perc] uncertainty percentag
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 10;                         % [m/s] Minimum Magnitude
-settings.wind.MagMax = 11;                        % [m/s] Maximum Magnitude
+settings.wind.MagMin = 2;                         % [m/s] Minimum Magnitude
+settings.wind.MagMax = 6;                        % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;                   % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;                   % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (0)*pi/180;                % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (0)*pi/180;                % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (360)*pi/180;                % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -266,7 +268,6 @@ settings.ao = false;
 % If N > 1 the stochastic routine is started
 
 settings.stoch.N = 10;                            % Number of cases
-settings.stoch.prob.switcher = false;             % Set to true to compute the launch probability
 settings.stoch.prob.x_lim = 2e3;                  % Max ovest displacement [m]
 settings.stoch.prob.V_lim = 30;                   % Max drogue stress [Pa]
 settings.stoch.prob.t_delay = 5;                  % drogue opening delay [s]

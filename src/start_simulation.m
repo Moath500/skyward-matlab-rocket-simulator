@@ -218,20 +218,25 @@ else
         fprintf(text,xm,ym,zapom,zstd,ApoTimem,ApoTimestd);
     end
     
-    if settings.rocket_name == "R2A"
-        [p,flag] = LaunchProb(settings,data_ascent,data_para);
-    else
-        [p,flag,ind_Pin,ind_Pout,RP] = LaunchProb(settings,data_ascent,data_para,LP);
-        fprintf('The launch probability is: %.1f %% \n\n',p);
-        LPin = LP(ind_Pin,:);
-        LPout = LP(ind_Pout,:);
+    if not(settings.ballistic) && not(settings.ao)
         
-        if not(settings.ballistic) && not(settings.ldf)
-            RPin = RP(ind_Pin,:);
-            RPout = RP(ind_Pout,:);
+        if settings.rocket_name == "R2A"
+            [p,flag] = LaunchProb(settings,data_ascent,data_para);
+        else
+            [p,flag,ind_Pin,ind_Pout,RP] = LaunchProb(settings,data_ascent,data_para,LP);
+            LPin = LP(ind_Pin,:);
+            LPout = LP(ind_Pout,:);
+            
+            if not(settings.ballistic) && not(settings.ldf)
+                RPin = RP(ind_Pin,:);
+                RPout = RP(ind_Pout,:);
+            end
         end
+        
+        fprintf('The launch probability is: %.1f %% \n\n',p);
     end
     
+
     delete(gcp('nocreate'))
     delete('parfor_progress.txt')
     

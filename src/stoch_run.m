@@ -111,7 +111,7 @@ parfor i = 1:settings.stoch.N
     Q0 = angle2quat(PHI,OMEGA,0*pi/180,'ZYX')';
     X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
     
-    if settings.delay ~= 0
+    if settings.para1.delay ~= 0
         [Ta1,Ya1] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc1,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
         
         [Ta2,Ya2] = ode113(@ascent,[Ta1(end),Ta1(end) + settings.para1.delay],Ya1(end,:),...
@@ -201,12 +201,13 @@ parfor i = 1:settings.stoch.N
                 LP(i,:) = Yf(end,1:3);
             end
             
-            X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)];
+    end
+            X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)]
             ApoTime(i) = Ta(end);
             
             parfor_progress;
             
-    end
+    
     
 end
 

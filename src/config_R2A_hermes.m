@@ -302,12 +302,11 @@ settings.ldf = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 100;                             % Number of cases
+settings.stoch.N = 10;                             % Number of cases
 
 %%% launch probability details
 settings.stoch.prob.x_lim = 2e3;                  % Max ovest displacement [m]
 settings.stoch.prob.V_lim = 50;                   % Max drogue velocity [Pa]
-settings.delay = 1;                               % drogue opening delay [s]
 
 %%% Safe Ellipse
 settings.prob.SafeEllipse.a = 1100;

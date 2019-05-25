@@ -84,7 +84,7 @@ X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
 
 %% ASCENT
 % checking if the actuation delay is different from zero
-if settings.delay ~= 0
+if settings.para1.delay ~= 0
     [Ta1,Ya1] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc1,settings,uw,vw,ww,uncert);
     
     [Ta2,Ya2] = ode113(@ascent,[Ta1(end),Ta1(end) + settings.para1.delay],Ya1(end,:),settings.ode.optionsasc2,settings,uw,vw,ww,uncert);

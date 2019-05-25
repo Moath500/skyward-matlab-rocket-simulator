@@ -44,7 +44,9 @@ settings.fins = 1; % Version 1 [10-5-5]; Version 2 [17-8-8]
 engine = 2;
 
 switch engine
+    
        case 1 
+           
         settings.motor.Name = 'K1000T-P';
         settings.motor.exp_time =   [0   0.0150    0.0250    0.0950  ...
             0.2000    0.3000    0.4000    0.5000    0.6000    0.7000 ...
@@ -69,6 +71,7 @@ switch engine
         
         
     case 2
+        
         settings.motor.Name = 'K550';
         settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
             1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
@@ -77,25 +80,24 @@ switch engine
             178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
             4.589 0.000  ] * 9.81/2.2;                                      % [N]
         
-        if settings.fins == 1
+        settings.mp = 0.889;                                                % [kg]   Propellant Mass
+        settings.mnc = 0.158;                                               % [kg]   Nosecone Mass
+        settings.tb = 3.5;                                                  % [s]    Burning time
+        settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
+        
+        if settings.fins == 1 % 10-5-5
             
-            settings.ms = 6.473;                                                % [kg]   Structural Mass
-            settings.mp = 0.889;                                                % [kg]   Propellant Mass
-            settings.mnc = 0.154;   % [kg]   Nosecone Mass
-            settings.m0 = settings.ms + settings.mnc + settings.mp;
-            settings.tb = 3.5;                                                  % [s]    Burning time
-            settings.mfr = settings.mp/settings.tb;
+            settings.m0 = 8.062;                                                % [kg]   Total Mass
+            settings.ms = setting.m0 - settings.mp;                         % [kg]   Structural Mass
             
-        else
             
-            settings.mp = 0.889;                                                % [kg]   Propellant Mass
-            settings.ms = 7.2;
-            settings.mnc = 0.154;                                               % [kg]   Nosecone Mass
-            settings.tb = 3.5;                                                  % [s]    Burning time
-            settings.m0 = settings.ms +  settings.mnc + settings.mp;                         % [kg]   Structural Mass
-            settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
+        else % 17-8-8
+            
+            settings.m0 = 8.258;                                                % [kg]   Total Mass
+            settings.ms = setting.m0 - settings.mp;                         % [kg]   Structural Mass
+            
         end
-
+        
 end
 
 %% GEOMETRY DETAILS
@@ -126,14 +128,14 @@ if settings.fins == 1  % 10-5-5
 else % 17-8-8
     
     % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-    settings.Ixxf = 0.01001;                    % [kg*m^2] Inertia to x-axis
-    settings.Iyyf = 2.12361;                    % [kg*m^2] Inertia to y-axis
-    settings.Izzf = 2.12380;                    % [kg*m^2] Inertia to z-axis
+    settings.Ixxf = 0.01083;                    % [kg*m^2] Inertia to x-axis
+    settings.Iyyf = 2.33755;                    % [kg*m^2] Inertia to y-axis
+    settings.Izzf = 2.33782;                    % [kg*m^2] Inertia to z-axis
     
     % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-    settings.Ixxe = 0.00969;                    % [kg*m^2] Inertia to x-axis
-    settings.Iyye = 1.81314;                    % [kg*m^2] Inertia to y-axis
-    settings.Izze = 1.81333;                    % [kg*m^2] Inertia to z-axis
+    settings.Ixxe = 0.01043;                    % [kg*m^2] Inertia to x-axis
+    settings.Iyye = 1.93202;                    % [kg*m^2] Inertia to y-axis
+    settings.Izze = 1.9323;                    % [kg*m^2] Inertia to z-axis
     
 end
 

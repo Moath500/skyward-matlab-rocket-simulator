@@ -6,6 +6,11 @@ Release date: 13/01/2018
 
 %}
 
+    figure('Name','Altitude vs Time','NumberTitle','off');
+    plot(Ta, z_a), grid on, xlabel('time [s]'), ylabel('altitude [m]');
+    
+    
+    
 if settings.stoch.N == 1
     
     load('ascent_plot.mat')
@@ -82,6 +87,7 @@ if settings.stoch.N == 1
             
         else
             % terrain test
+            
             X_t = -6000:30:6000;
             Y_t = -6000:30:6000;
             L_X = length(X_t);
@@ -90,6 +96,12 @@ if settings.stoch.N == 1
             for i = 1:L_X
                 for j = 1:L_Y
                     Z_t(i,j) = settings.funZ(X_t(i),Y_t(j));
+                    if Z_t(i,j) < -150
+                        color(i,j) = 0;
+                    else
+                        color(i,j) = 1;
+                    end
+                    
                 end
             end
             surf(Y_t,X_t,-Z_t,'EdgeColor','none'); colorbar; view(0,25);
@@ -140,6 +152,9 @@ if settings.stoch.N == 1
             legend([h5,h1,h4,h6],'Launch point','Apogee',...
                 'Landing point','burning time position','Location','northeast');
         end
+        
+        figure()
+        surf(Y_t,X_t,-Z_t,color,'EdgeColor','none')
         
         %% STAGNATION TEMPERATURE
         figure('Name','Temperature Profile - All Flight','NumberTitle','off');
@@ -546,4 +561,8 @@ else
     xlabel('Apogee [m]')
     ylabel('n_i/n_{tot}')
     
+    
+
+    
+        
 end

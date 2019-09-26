@@ -20,21 +20,22 @@ settings.rocket_name = "R2A_hermes";
 % launchpad 
 settings.z0 = 1416;                   %[m] Launchpad Altitude
 settings.lrampa = 5.3;                %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
-settings.lat0 = 41.809918;                                                          % Launchpad latitude
-settings.lon0 = 14.053903;                                                          % Launchpad longitude
+settings.lat0 = 41.809017;                                                          % Launchpad latitude
+settings.lon0 = 14.054264;                                                          % Launchpad longitude
 settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');        % Altitude map computation
 
 % launchpad directions
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
-settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
-settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 0*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.OMEGAmin = 85*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmax = 85*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.PHImin = 180*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 180*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = true;               % If true, phi is selected according to wind direction (constant wind model only)
+settings.PHIsigma = 0*pi/180;        % Stocasthic simulation only
 
 % version of fin
-settings.fins = 2; % Version 1 [10-5-5]; Version 2 [17-8-8]
+settings.fins = 1; % Version 1 [10-5-5]; Version 2 [17-8-8]
 
 %% ENGINE DETAILS
 
@@ -69,7 +70,6 @@ switch engine
         settings.mp = settings.m0-settings.ms;                              % [kg]   Propellant Mass
         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
         
-        
     case 2
         
         settings.motor.Name = 'K550';
@@ -87,13 +87,13 @@ switch engine
         
         if settings.fins == 1 % 10-5-5
             
-            settings.m0 = 8.062;                                                % [kg]   Total Mass
+            settings.m0 = 8.142;                                                % [kg]   Total Mass
             settings.ms = settings.m0 - settings.mp;                         % [kg]   Structural Mass
             
             
         else % 17-8-8
             
-            settings.m0 = 8.288;                                                % [kg]   Total Mass
+            settings.m0 = 8.368;                                                % [kg]   Total Mass
             settings.ms = settings.m0 - settings.mp;                         % [kg]   Structural Mass
             
         end
@@ -263,11 +263,20 @@ settings.wind.input = false;
 % secon row: wind azimut angle (toward wind incoming direction) [deg]
 % third row: altitude
 
-settings.wind.input_matr = [ 9*ones(1,7)
-                             337.5*ones(1,7)       
-                             0    100  600  750  900  1500 2500 ];
-                         
-settings.wind.input_uncertainty = [30,22.5];  
+% POST INTEGRATION
+% settings.wind.input_matr = [ 9*ones(1,7)
+%     337.5*ones(1,7)
+%     0    100  600  750  900  1500 2500 ];
+
+% IN RAMPA
+V0 = 3;
+C = [0 0 10 15 20 30 40];
+    
+settings.wind.input_matr = [ (V0+V0*C/100)
+    120*ones(1,7)
+    0    100  600  750  900  1500 2500 ];
+
+settings.wind.input_uncertainty = [30,20];
 % settings.wind.input_uncertainty = [a,b];      wind uncertanties:
 % - a, wind magnitude percentage uncertanty: magn = magn *(1 +- a)
 % - b, wind direction band uncertanty: dir = dir 1 +- b
@@ -277,12 +286,12 @@ settings.wind.input_uncertainty = [30,22.5];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 12;                 % [m/s] Minimum Magnitude
-settings.wind.MagMax = 12;                  % [m/s] Maximum Magnitude
+settings.wind.MagMin = 9.8;                 % [m/s] Minimum Magnitude
+settings.wind.MagMax = 9.8;                  % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (0)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (360)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (180)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (180)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -328,7 +337,7 @@ settings.ao = false;
 
 settings.plots = true;
 settings.only_XCP = false; % plot only the stability margin
-settings.terrain = false;
+settings.terrain = true;
 
 %% LANDING POINTS
 settings.landing_map = true;

@@ -60,7 +60,7 @@ end
 
 for i = 1:N_simul
     
-    flag_XCP = all(-data_ascent{i}.coeff.XCP(not(isnan(data_ascent{i}.coeff.XCP))) > 0);
+    flag_XCP = all(-data_ascent{i}.coeff.XCP(not(isnan(data_ascent{i}.coeff.XCP))) > 0.6);
     
     if settings.rocket_name == "R2A"
         flag_land = data_descent{i}.state(3).Y(end,2) > x_lim;

@@ -18,7 +18,7 @@
 settings.rocket_name = "R2A_hermes";
 
 % launchpad 
-settings.z0 = 1416;                   %[m] Launchpad Altitude
+settings.z0 = 1400;                   %[m] Launchpad Altitude
 settings.lrampa = 5.3;                %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
 settings.lat0 = 41.809918;                                                          % Launchpad latitude
 settings.lon0 = 14.053903;                                                          % Launchpad longitude
@@ -27,14 +27,14 @@ settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');    
 % launchpad directions
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
-settings.OMEGAmin = 80*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
-settings.OMEGAmax = 80*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 0*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.upwind = true;               % If true, phi is selected according to wind direction (constant wind model only)
+settings.OMEGAmin = 85*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmax = 85*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.PHImin = 170*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 170*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.upwind = false;               % If true, phi is selected according to wind direction (constant wind model only)
 
 % version of fin
-settings.fins = 2; % Version 1 [10-5-5]; Version 2 [17-8-8]
+settings.fins = 1; % Version 1 [10-5-5]; Version 2 [17-8-8]
 
 %% ENGINE DETAILS
 
@@ -87,7 +87,7 @@ switch engine
         
         if settings.fins == 1 % 10-5-5
             
-            settings.m0 = 8.062;                                                % [kg]   Total Mass
+            settings.m0 = 5.5;                                                % [kg]   Total Mass
             settings.ms = settings.m0 - settings.mp;                         % [kg]   Structural Mass
             
             
@@ -207,7 +207,7 @@ settings.para2.S = 7;                % [m^2]   Surface
 settings.para2.mass = 0.45;          % [kg]   Parachute Mass
 settings.para2.CD = 0.4;             % [/] Parachute Drag Coefficient
 settings.para2.CL = 0.9;             % [/] Parachute Lift Coefficient
-settings.zdrg2 = 200;                % [m] Altitude of drogue 2 opening
+settings.zdrg2 = 500;                % [m] Altitude of drogue 2 opening
 
 
 %% INTEGRATION OPTIONS
@@ -277,12 +277,12 @@ settings.wind.input_uncertainty = [30,22.5];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 12;                 % [m/s] Minimum Magnitude
-settings.wind.MagMax = 12;                  % [m/s] Maximum Magnitude
+settings.wind.MagMin = 3;                 % [m/s] Minimum Magnitude
+settings.wind.MagMax = 3;                  % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (0)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (360)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (40)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (40)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -293,7 +293,7 @@ settings.wind.AzMax = (360)*pi/180;         % [rad] Maximum Azimuth, user input 
 %% BALLISTIC SIMULATION
 % Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = false;    
+settings.ballistic = true;    
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is

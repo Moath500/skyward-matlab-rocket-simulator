@@ -53,7 +53,7 @@ tf = settings.ode.final_time;
 
 %% PARFOR LOOP
 parfor_progress(settings.stoch.N);
-parpool;
+%parpool;
 
 parfor i = 1:settings.stoch.N
     

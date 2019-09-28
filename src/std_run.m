@@ -73,6 +73,7 @@ W0 = [0 0 0]';
 
 settings.OMEGA = settings.OMEGAmin;
 
+Azw
 % Attitude
 if settings.wind.input || settings.wind.model
     settings.PHI = settings.PHImin;

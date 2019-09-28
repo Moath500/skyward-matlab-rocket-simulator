@@ -34,8 +34,13 @@ end
 
 %% STARTING CONDITIONS
 
+% Attitude
 settings.OMEGA = settings.OMEGAmin;
 settings.PHI = settings.PHImin;
+
+if settings.upwind
+    settings.PHI = mod(Azw + pi, 2*pi);
+end
 
 % Attitude
 Q0 = angle2quat(settings.PHI,settings.OMEGA,0*pi/180,'ZYX')';
@@ -75,7 +80,7 @@ if settings.wind.input && settings.wind.input_uncertainty ~= 0
         case 4
             unc = - unc;
     end
-    
+
     uncert = rand(1,2).*unc;
 else
     uncert = [0,0];

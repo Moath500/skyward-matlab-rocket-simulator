@@ -3,14 +3,14 @@ close all
 clc
 
 D = 0.09; %Diameter [m]
-L = 1.97; %Length [m]
+L = 1.895; %Length [m]
 
-Chord_1 = 0.17; %[m]
-Chord_2 = 0.08; %[m]
-Alt = 0.08; %[m]
+Chord_1 = 0.10; %[m]
+Chord_2 = 0.05; %[m]
+Alt = 0.05; %[m]
 
-Spess = 0.005; %[m]
-Dist = 0.04; %[m]
+Spess = 0.003; %[m]
+Dist = 0.00; %[m]
 Boh = 0.006;
 
 

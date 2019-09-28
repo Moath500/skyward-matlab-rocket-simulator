@@ -71,12 +71,19 @@ X0 = [0 0 0]';
 V0 = [0 0 0]';
 W0 = [0 0 0]';
 
-% Attitude
 settings.OMEGA = settings.OMEGAmin;
-settings.PHI = settings.PHImin;
 
-if settings.upwind
-    settings.PHI = mod(Azw + pi, 2*pi);
+% Attitude
+if settings.wind.input || settings.wind.model
+    settings.PHI = settings.PHImin;
+else
+    
+    if settings.upwind
+        settings.PHI = mod(Azw + pi, 2*pi);
+    else
+        settings.PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
+    end
+    
 end
 
 Q0 = angle2quat(settings.PHI,settings.OMEGA,0*pi/180,'ZYX')';

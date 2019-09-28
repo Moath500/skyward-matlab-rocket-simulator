@@ -100,13 +100,37 @@ parfor i = 1:settings.stoch.N
     
     
     %% ASCENT
-    % Attitude
-    OMEGA = settings.OMEGAmin + rand*(settings.OMEGAmax - settings.OMEGAmin);
-    PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
     
-    if settings.upwind
-        PHI = mod(Azw + pi, 2*pi);
+    OMEGA = settings.OMEGAmin + rand*(settings.OMEGAmax - settings.OMEGAmin);
+    
+    
+    % Attitude
+    if settings.wind.input || settings.wind.model
+        PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
+    else
+        
+        if settings.upwind
+            PHI = mod(Azw + pi, 2*pi);
+            signn = randi([1,2]); % 4 sign cases
+            
+            if signn == 1
+                
+                PHIsigma = settings.PHIsigma;
+                
+            else
+                
+                PHIsigma = -settings.PHIsigma;
+            
+            end
+            
+            PHI = PHI + PHIsigma*rand;
+        else
+            PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
+        
+        end
     end
+    
+
     
     Q0 = angle2quat(PHI,OMEGA,0*pi/180,'ZYX')';
     X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];

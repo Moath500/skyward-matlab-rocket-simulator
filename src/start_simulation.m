@@ -156,11 +156,11 @@ if settings.stoch.N == 1
     [lat_LP, lon_LP, ~] = ned2geodetic(x(end), y(end), 0, settings.lat0,settings.lon0, 0, wgs84Ellipsoid);
     
     % DATA RECORD (display)
-    
+        
     disp(' ')
     disp('DATA RECORD:')
     fprintf('apogee reached: %g [m] \n', apogee);
-    fprintf('apogee velocity: %g [m/s] \n', abs_V(i_apogee));
+        
     fprintf('time: %g [sec] \n\n', Ta(end))
     
     fprintf('max speed reached: %g [m/s] \n', max_v)
@@ -248,7 +248,12 @@ if settings.plots
     run('plots.m')
 end
 
+
+
 if settings.stoch.N == 1
+    V_apo = norm(data_ascent.state.Y(end,4:6) - ...
+        data_ascent.wind.body_wind(1:3,end)');
+    fprintf('apogee velocity relative to wind: %g [m/s] \n', V_apo);
     delete('ascent_plot.mat')
 end
 

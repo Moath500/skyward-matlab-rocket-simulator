@@ -61,7 +61,7 @@ else
     
 end
 
-if settings.wind.input && settings.wind.input_uncertainty ~= 0
+if settings.wind.input && all(settings.wind.input_uncertainty) ~= 0
     signn = randi([1,4]); % 4 sign cases
     unc = settings.wind.input_uncertainty;
     
@@ -91,6 +91,7 @@ tf = settings.ode.final_time;
 data_ascent.state.Y = Ya;
 data_ascent.state.T = Ta;
 save('ascent_plot.mat', 'data_ascent');
+Ta(end)
 
 %% DESCEND 
 

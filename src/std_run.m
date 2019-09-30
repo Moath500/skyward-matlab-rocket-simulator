@@ -177,6 +177,8 @@ switch settings.rocket_name
             Tf = [Ta; Td1];
             data_para = data_para1;
         end
+        
+        case 'R2A_hermes_V1'
 end
 
 save('descent_para_plot.mat', 'data_para')

@@ -1,21 +1,10 @@
 % CONFIG - This script sets up all the parameters for the simulation 
 % All the parameters are stored in the "settings" structure.
 
-% Author: Ruben Di Battista
-% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
-% email: ruben.dibattista@skywarder.eu
-% Website: http://www.skywarder.eu
-% License: 2-clause BSD
-
-% Author: Francesco Colombi
-% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu              
-% email: francesco.colombi@skywarder.eu
-% Release date: 16/04/2016
-
 %% LAUNCH SETUP
 
 % rocket name
-settings.rocket_name = "R2A_hermes";
+settings.rocket_name = "R2A_hermes_V1";
 
 % launchpad 
 settings.z0 = 1416;                   %[m] Launchpad Altitude
@@ -29,8 +18,8 @@ settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');    
 % angles must be the same.
 settings.OMEGAmin = 85*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 85*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 180*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 180*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 0*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;               % If true, phi is selected according to wind direction (constant wind model only)
 settings.PHIsigma = 0*pi/180;        % Stocasthic simulation only
 
@@ -133,35 +122,47 @@ settings.Izze = 0.931376985;                    % [kg*m^2] Inertia to z-axis
 DATA_PATH = '../data/';
 filename = strcat(DATA_PATH, settings.rocket_name);
 
-if settings.fins == 1
-    
-    % Coefficients in full configuration
-    filename_full = strcat(filename,'_full_V1.mat');
-    CoeffsF = load(filename_full,'Coeffs');
-    settings.CoeffsF = CoeffsF.Coeffs;
-    clear('CoeffsF');
-    
-    % Coefficients in empty configuration
-    filename_empty = strcat(filename,'_empty_V1.mat');
-    CoeffsE = load(filename_empty,'Coeffs');
-    settings.CoeffsE = CoeffsE.Coeffs;
-    clear('CoeffsE');
-    
-else
-    
-    % Coefficients in full configuration
-    filename_full = strcat(filename,'_full_V2.mat');
-    CoeffsF = load(filename_full,'Coeffs');
-    settings.CoeffsF = CoeffsF.Coeffs;
-    clear('CoeffsF');
-    
-    % Coefficients in empty configuration
-    filename_empty = strcat(filename,'_empty_V2.mat');
-    CoeffsE = load(filename_empty,'Coeffs');
-    settings.CoeffsE = CoeffsE.Coeffs;
-    clear('CoeffsE');
-    
-end
+% Coefficients in full configuration
+filename_full = strcat(filename,'_full.mat');
+CoeffsF = load(filename_full,'Coeffs');
+settings.CoeffsF = CoeffsF.Coeffs;
+clear('CoeffsF');
+
+% Coefficients in empty configuration
+filename_empty = strcat(filename,'_empty.mat');
+CoeffsE = load(filename_empty,'Coeffs');
+settings.CoeffsE = CoeffsE.Coeffs;
+clear('CoeffsE');
+
+% if settings.fins == 1
+%     
+%     % Coefficients in full configuration
+%     filename_full = strcat(filename,'_full_V1.mat');
+%     CoeffsF = load(filename_full,'Coeffs');
+%     settings.CoeffsF = CoeffsF.Coeffs;
+%     clear('CoeffsF');
+%     
+%     % Coefficients in empty configuration
+%     filename_empty = strcat(filename,'_empty_V1.mat');
+%     CoeffsE = load(filename_empty,'Coeffs');
+%     settings.CoeffsE = CoeffsE.Coeffs;
+%     clear('CoeffsE');
+%     
+% else
+%     
+%     % Coefficients in full configuration
+%     filename_full = strcat(filename,'_full_V2.mat');
+%     CoeffsF = load(filename_full,'Coeffs');
+%     settings.CoeffsF = CoeffsF.Coeffs;
+%     clear('CoeffsF');
+%     
+%     % Coefficients in empty configuration
+%     filename_empty = strcat(filename,'_empty_V2.mat');
+%     CoeffsE = load(filename_empty,'Coeffs');
+%     settings.CoeffsE = CoeffsE.Coeffs;
+%     clear('CoeffsE');
+%     
+% end
  
  s = load(filename_full,'State');
  settings.Alphas = s.State.Alphas';
@@ -173,12 +174,14 @@ end
 
 %% PARACHUTES DETAILS
 
+settings.Ndrogues = 2; % Number of parachutes
+
 % drogue 1
 settings.para1.S = 0.7;              % [m^2]   Surface
 settings.para1.mass = 0.075;         % [kg]   Parachute Mass
 settings.para1.CD = 0.75;            % [/] Parachute Drag Coefficient
 settings.para1.CL = 0;               % [/] Parachute Lift Coefficient
-settings.para1.delay = 1;            % drogue opening delay [s]
+settings.para1.delay = 0;            % drogue opening delay [s]
 
 % drogue 2
 settings.para2.S = 10.3;              % [m^2]   Surface
@@ -210,7 +213,10 @@ settings.ode.optionsdrg1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_drg2_opening);              %ODE options for drogue
 
 settings.ode.optionsdrg2 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
-    'Events',@event_landing);              %ODE options for drogue
+    'Events',@event_rog_opening);              %ODE options for drogue
+
+settings.ode.optionsrog = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+    'Events',@event_landing);              %ODE options for descent
 
 settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
     'Events',@event_landing);                   %ODE options for ballistic descent
@@ -234,7 +240,7 @@ settings.wind.ww = 0;                               % [m/s] Vertical wind speed
                 
 
 %%%%% Input wind 
-settings.wind.input = true;
+settings.wind.input = false;
 % Wind is generated for every altitude interpolating with the coefficient defined below
 
 % first row: wind magnitude [m/s]
@@ -264,12 +270,12 @@ settings.wind.input_uncertainty = [30,20];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 9.8;                 % [m/s] Minimum Magnitude
-settings.wind.MagMax = 9.8;                  % [m/s] Maximum Magnitude
+settings.wind.MagMin = 4;                 % [m/s] Minimum Magnitude
+settings.wind.MagMax = 4;                  % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (180)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (180)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (270)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (270)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North

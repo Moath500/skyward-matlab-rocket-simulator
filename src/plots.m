@@ -323,26 +323,59 @@ if settings.stoch.N == 1
         h3 = plot(Y(end,2), Y(end,1), 'rx','markersize',7);
         xlabel('y, East [m]'), ylabel('x, North [m]');
         
-        if not(settings.ballistic)
-            
-            if settings.project ~= "R2A_hermes"
+%         if not(settings.ballistic)
+%             
+%             if settings.project ~= "R2A"
+%                 h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
+%                     'MarkerFaceColor','r');
+%                 if settings.ldf
+%                     
+%                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
+%                         'Landing Point','2nd Drogue Deployment','Location','Best');
+%                 else
+%                     
+%                     h5 = plot(bound_value.Xrog(1),bound_value.Xrog(2),'sr','MarkerSize',7,...
+%                         'MarkerFaceColor','r');
+%                     legend([h1,h2,h3,h4,h5],'Apogee/1st Drogue Deployment','Launch Point',...
+%                         'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
+%                     
+%                 end
+%                 
+%             elseif settings.project == "R2A_hermes"
+%                 
+%                 if settings.ldf
+%                     legend([h1,h2,h3],'Apogee/1st Drogue Deployment','Launch Point',...
+%                         'Landing Point','Location','Best');
+%                 else
+%                     h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
+%                         'MarkerFaceColor','r');
+%                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
+%                         'Landing Point','2nd Drogue Deployment','Location','Best');
+%                 end
+%                 
+%             end
+%             
+%         else
+%             
+%             legend([h2,h1,h3],'Launch point','Apogee','Landing point',...
+%                 'Location','northeast');
+%             
+%         end
+
+        if not(settings.ballistic)       
+            if settings.Ndrogues == 3
                 h4 = plot(bound_value.Xd2(1),bound_value.Xd2(2),'sr','MarkerSize',7,...
                     'MarkerFaceColor','r');
                 if settings.ldf
-                    
                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
                         'Landing Point','2nd Drogue Deployment','Location','Best');
                 else
-                    
                     h5 = plot(bound_value.Xrog(1),bound_value.Xrog(2),'sr','MarkerSize',7,...
                         'MarkerFaceColor','r');
                     legend([h1,h2,h3,h4,h5],'Apogee/1st Drogue Deployment','Launch Point',...
                         'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
-                    
-                end
-                
-            elseif settings.project == "R2A_hermes"
-                
+                end   
+            else % 2 parachutes   
                 if settings.ldf
                     legend([h1,h2,h3],'Apogee/1st Drogue Deployment','Launch Point',...
                         'Landing Point','Location','Best');
@@ -352,16 +385,11 @@ if settings.stoch.N == 1
                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
                         'Landing Point','2nd Drogue Deployment','Location','Best');
                 end
-                
-            end
-            
+            end   
         else
-            
             legend([h2,h1,h3],'Launch point','Apogee','Landing point',...
                 'Location','northeast');
-            
         end
-        
         
         subplot(1,3,2)
         plot(x, z), hold on, grid on;
@@ -372,24 +400,20 @@ if settings.stoch.N == 1
         
         if not(settings.ballistic)
             
-            if settings.project ~= "R2A_hermes"
+            if settings.Ndrogues == 3
                 h4 = plot(bound_value.Xd2(2),bound_value.Xd2(3),'sr','MarkerSize',7,...
                     'MarkerFaceColor','r');
                 if settings.ldf
-                    
                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
                         'Landing Point','2nd Drogue Deployment','Location','Best');
                 else
-                    
                     h5 = plot(bound_value.Xrog(2),bound_value.Xrog(3),'sr','MarkerSize',7,...
                         'MarkerFaceColor','r');
                     legend([h1,h2,h3,h4,h5],'Apogee/1st Drogue Deployment','Launch Point',...
                         'Landing Point','2nd Drogue Deployment','Rogallo Deployment','Location','Best');
                     
                 end
-                
-            elseif settings.project == "R2A_hermes"
-                
+            else
                 if settings.ldf
                     legend([h1,h2,h3],'Apogee/1st Drogue Deployment','Launch Point',...
                         'Landing Point','Location','Best');
@@ -399,11 +423,10 @@ if settings.stoch.N == 1
                     legend([h1,h2,h3,h4],'Apogee/1st Drogue Deployment','Launch Point',...
                         'Landing Point','2nd Drogue Deployment','Location','Best');
                 end
-            end
-            
+            end   
         end
         
-        
+
         subplot(1,3,3)
         plot(y, z), hold on, grid on;
         plot(Ya(end,2), -Ya(end,3), 'r*','markersize',7);
@@ -413,7 +436,7 @@ if settings.stoch.N == 1
         
         if not(settings.ballistic)
             
-            if settings.project == "R2A"
+            if settings.Ndrogues == 3
                 
                 h4 = plot(bound_value.Xd2(1),bound_value.Xd2(3),'sr','MarkerSize',7,...
                     'MarkerFaceColor','r');
@@ -430,7 +453,7 @@ if settings.stoch.N == 1
                     
                 end
                 
-            elseif settings.project == "R2A_hermes"
+            else
                 
                 if settings.ldf
                     legend([h1,h2,h3],'Apogee/1st Drogue Deployment','Launch Point',...

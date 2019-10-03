@@ -98,14 +98,13 @@ if settings.para1.delay ~= 0
     Ta = [Ta1; Ta2(2:end)];
     Ya = [Ya1; Ya2(2:end,:)];
 else
-    [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc1,settings,uw,vw,ww,uncert);
+    [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,settings,uw,vw,ww,uncert);
 end
 
 [data_ascent] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert);
 data_ascent.state.Y = Ya;
 data_ascent.state.T = Ta;
 save('ascent_plot.mat', 'data_ascent');
-
 
 %% DROGUE 1
 % Initial Condition are the last from ascent (need to rotate because
@@ -114,17 +113,10 @@ save('ascent_plot.mat', 'data_ascent');
 para = 1; % Flag for Drogue 1
 X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
 
-if settings.Ndrogues == 2 
-    if not(settings.ldf) % Descent until opening of 2nd parachute
-        [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdrg1,...
-            settings,uw,vw,ww,para,uncert);
-    else % Descent until landing with 1st parachute
-        [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdesc,...
-            settings,uw,vw,ww,para,uncert);
-    end
-else % Descent until opening of 2nd parachute
-    [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdrg1,...
-            settings,uw,vw,ww,para,uncert);
+if (settings.Ndrogues == 2) && not(settings.ldf)) % Descent until opening of 2nd parachute
+    [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
+else % Descent until landing with 1st parachute
+    [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdrg1,settings,uw,vw,ww,para,uncert);
 end
 [data_para1] = RecallOdeFcn(@descent_parachute,Td1,Yd1,settings,uw,vw,ww,para,uncert);
 data_para1.state.Y = Yd1;
@@ -135,27 +127,26 @@ data_para1.state.T = Td1;
 
 para = 2; % Flag for Drogue 2
 X0d2 = Yd1(end,:);
-Td1(end)
 
-if settings.Ndrogues > 2
-    % Descent with 2nd parachute until 3rd drogue opening
+if (settings.Ndrogues > 2)
+    % Descent with 2nd parachute until 3rd drougue opening
     if not(settings.ldf)
         [Td2,Yd2] = ode113(@descent_parachute,[Td1(end),tf],X0d2,...
-            settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
+            settings.ode.optionsdrg1,settings,uw,vw,ww,para,uncert);
         [data_para2] = RecallOdeFcn(@descent_parachute,Td2,Yd2,settings,uw,vw,ww,para,uncert);
         data_para2.state.Y = Yd2;
         data_para2.state.T = Td2;
     end
 else 
-    if not(settings.ldf) 
+    if not(settings.ldf) % 2nd parachute is the last, integration until landing
         [Td2,Yd2] = ode113(@descent_parachute,[Td1(end),tf],X0d2,...
-            settings.ode.optionsdesc,settings,uw,vw,ww,para,uncert);
+            settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
         [data_para2] = RecallOdeFcn(@descent_parachute,Td2,Yd2,settings,uw,vw,ww,para,uncert);
         data_para2.state.Y = Yd2;
         data_para2.state.T = Td2;
-    end 
-    % The case in which the 2nd (and last) drogue fails to open is
-    % implemented above
+    else
+        error('Failure of the 2nd parachute yet to be implemented...set ldf = false');
+    end
 end
 
 %% ROGALLO WING AND FINAL STATE ASSEMBLING
@@ -163,12 +154,11 @@ end
 
 if settings.Ndrogues > 2
     if not(settings.ldf)
-        para = 3;         % Flag for Main (Rogallo)
+            para = 3;         % Flag for Main (Rogallo)
     end
     
     X0m = Yd2(end,:);
-    [Trog,Yrog] = ode113(@descent_parachute,[Td2(end),tf],X0m,settings.ode.optionsrog,...
-        settings,uw,vw,ww,para,uncert);
+    [Trog,Yrog] = ode113(@descent_parachute,[Td2(end),tf],X0m,settings.ode.optionsrog,settings,uw,vw,ww,para,uncert);
     [data_para3] = RecallOdeFcn(@descent_parachute,Trog,Yrog,settings,uw,vw,ww,para,uncert);
     data_para3.state.Y = Yrog;
     data_para3.state.T = Trog;
@@ -196,6 +186,45 @@ else
     end
 end
 
+% switch settings.rocket_name
+%     
+%     case 'R2A'
+%         
+%         if not(settings.ldf)
+%             para = 3;             % Flag for Main (Rogall)
+%         end
+%         
+%         X0m = Yd2(end,:);
+%         [Trog,Yrog] = ode113(@descent_parachute,[Td2(end),tf],X0m,settings.ode.optionsrog,settings,uw,vw,ww,para,uncert);
+%         [data_para3] = RecallOdeFcn(@descent_parachute,Trog,Yrog,settings,uw,vw,ww,para,uncert);
+%         data_para3.state.Y = Yrog;
+%         data_para3.state.T = Trog;
+% 
+%         % Total State
+%         Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2;Yrog];
+%         
+%         % Total Time
+%         Tf = [Ta; Td1; Td2; Trog];
+%         
+%         data_para = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),struct2cell(data_para3),'uni',0),fieldnames(data_para1),1);
+%         
+%     case 'R2A_hermes'
+%         
+%         if not(settings.ldf)
+%             % Total State
+%             Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2];
+%             % Total Time
+%             Tf = [Ta; Td1; Td2];
+%             data_para = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),'uni',0),fieldnames(data_para1),1);
+%         else 
+%             % Total State
+%             Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1];
+%             % Total Time
+%             Tf = [Ta; Td1];
+%             data_para = data_para1;
+%         end
+% end
+
 save('descent_para_plot.mat', 'data_para')
 
 %% TIME, POSITION AND VELOCITY AT DROGUES DEPLOYMENT
@@ -207,8 +236,7 @@ bound_value.Xd2 = [Yd1(end,2), Yd1(end,1), -Yd1(end,3)];
 bound_value.Vd1 = quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6));
 bound_value.Vd2 = [Yd1(end,4) Yd1(end,5) -Yd1(end,6)];
 
-% if settings.rocket_name == "R2A_hermes" && not(settings.ldf) || settings.rocket_name == "R2A" && not(settings.ldf)
-if settings.Ndrogues == 2 && not(settings.ldf) || settings.Ndrogues == 3 && not(settings.ldf)    
+if settings.rocket_name == "R2A_hermes" && not(settings.ldf) || settings.rocket_name == "R2A" && not(settings.ldf)
     bound_value.Xrog = [Yd2(end,2), Yd2(end,1), -Yd2(end,3)];
     bound_value.trog = Td2(end);
     bound_value.Vrog = [Yd2(end,4) Yd2(end,5) -Yd2(end,6)];

@@ -147,6 +147,8 @@ clear('s');
 
 %% PARACHUTES DETAILS
 
+settings.Ndrogues = 3; % Number of parachutes
+
 % drogue 1
 settings.para1.S = 1.55;                         % [m^2]   Surface
 settings.para1.mass = 0.25;                      % [kg]   Parachute Mass
@@ -194,9 +196,9 @@ settings.ode.optionsdrg2 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_rog_opening);              %ODE options for drogue
 
 settings.ode.optionsrog = odeset('AbsTol',1E-3,'RelTol',1E-3,...
-    'Events',@event_landing);                   %ODE options for descent
+    'Events',@event_landing);              %ODE options for descent
 
-settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
     'Events',@event_landing);                   %ODE options for ballistic descent
 
 

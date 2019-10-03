@@ -10,7 +10,8 @@ x = Y(1);
 y = Y(2);
 z = -Y(3);
 
-if settings.rocket_name == "R2A_hermes" && settings.terrain
+% if settings.rocket_name == "R2A_hermes" && settings.terrain
+if settings.terrain
     zloc = -settings.funZ(x,y);
     if zloc > 859
         zloc = 859;

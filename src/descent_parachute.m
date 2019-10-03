@@ -47,7 +47,6 @@ wr = w - wind(3);
 V_norm = norm([ur vr wr]);
 
 %% CONSTANTS
-
 switch para
     case 1
         S = settings.para1.S;                                               % [m^2]   Surface
@@ -66,6 +65,7 @@ switch para
         pmass = settings.para1.mass + settings.para2.mass + settings.mnc;   % [kg] detached mass(drogue1/2 + nosecone)
     otherwise
 end
+
 
 g = 9.80655;                                                                % [N/kg] magnitude of the gravitational field at zero
 m = settings.ms - pmass;                                                    % [kg] descend mass

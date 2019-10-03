@@ -7,7 +7,7 @@ function [value,isterminal,direction] = event_rog_opening(~,Y,settings,varargin)
 % email: francesco.colombi@skywarder.eu
 % Release date: 16/04/2016
 
-value = Y(3)+settings.zrog;
+value = -Y(3)-settings.zrog;
 isterminal = 1;
 direction = 1;
 

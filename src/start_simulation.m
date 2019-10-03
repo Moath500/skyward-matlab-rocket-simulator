@@ -11,15 +11,8 @@ path = genpath(pwd);
 addpath(path);
 
 %% LOAD DATA
-settings.project = "R2A_hermes";
-
-switch settings.project
-    case "R2A"
-        run('config_R2A.m');
-        
-    case "R2A_hermes"
-        run('config_R2A_hermes.m');        
-end
+settings.project = "R2A_hermes_V1";
+run(strcat('config_',settings.project,'.m'));
 
 %% START THE CHOSEN SIMULATION
 % T = vector of time used by ODE, [s] also for Tf Ta

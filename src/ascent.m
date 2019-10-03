@@ -72,8 +72,7 @@ if settings.wind.model
     
 elseif settings.wind.input
 
-    [uw,vw,ww] = wind_input_generator(settings,z,uncert);
-    
+    [uw,vw,ww] = wind_input_generator(settings,z,uncert);    
 end
 
 wind = quatrotate(Q, [uw vw ww]);

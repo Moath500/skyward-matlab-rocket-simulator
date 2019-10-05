@@ -20,8 +20,8 @@ settings.OMEGAmin = 85*pi/180;        %[rad] Minimum Elevation Angle, user input
 settings.OMEGAmax = 85*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
 settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.PHImax = 0*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.upwind = false;               % If true, phi is selected according to wind direction (constant wind model only)
-settings.PHIsigma = 0*pi/180;        % Stocasthic simulation only
+settings.upwind = false;              % If true, phi is selected according to wind direction (constant wind model only)
+settings.PHIsigma = 0*pi/180;         % Stocasthic simulation only
 
 % version of fin
 settings.fins = 1; % Version 1 [10-5-5]; Version 2 [17-8-8]
@@ -184,7 +184,7 @@ settings.para1.CL = 0;               % [/] Parachute Lift Coefficient
 settings.para1.delay = 0;            % drogue opening delay [s]
 
 % drogue 2
-settings.para2.S = 10.3;              % [m^2]   Surface
+settings.para2.S = 10.3;             % [m^2]   Surface
 settings.para2.mass = 0.45;          % [kg]   Parachute Mass
 settings.para2.CD = 0.7;             % [/] Parachute Drag Coefficient
 settings.para2.CL = 0.0;             % [/] Parachute Lift Coefficient

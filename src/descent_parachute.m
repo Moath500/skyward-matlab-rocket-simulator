@@ -1,4 +1,4 @@
-function [dY,parout] = descent_parachute(t,Y,settings,uw,vw,ww,para,uncert,Hour,Day)
+function [dY,parout] = descent_parachute(t, Y, settings, uw, vw, ww, para, uncert, Hour, Day)
 % ODE-Function for Parachute descent 
 % State = ( x y z | u v w  )
 
@@ -47,28 +47,17 @@ wr = w - wind(3);
 V_norm = norm([ur vr wr]);
 
 %% CONSTANTS
-switch para
-    case 1
-        S = settings.para1.S;                                               % [m^2]   Surface
-        CD = settings.para1.CD;                                             % [/] Parachute Drag Coefficient
-        CL = settings.para1.CL;                                             % [/] Parachute Lift Coefficient
-        pmass = 0;                                                          % [kg] detached mass
-    case 2
-        S = settings.para2.S;                                               % [m^2]   Surface
-        CD = settings.para2.CD;                                             % [/] Parachute Drag Coefficient
-        CL = settings.para2.CL;                                             % [/] Parachute Lift Coefficient
-        pmass = settings.para1.mass + settings.mnc;                         % [kg] detached mass(drogue1 + nosecone)
-    case 3
-        S = settings.para3.S;                                               % [m^2]   Surface
-        CD = settings.para3.CD;                                             % [/] Parachute Drag Coefficient
-        CL = settings.para3.CL;                                             % [/] Parachute Lift Coefficient
-        pmass = settings.para1.mass + settings.para2.mass + settings.mnc;   % [kg] detached mass(drogue1/2 + nosecone)
-    otherwise
+S = settings.para(para).S;                                               % [m^2]   Surface
+CD = settings.para(para).CD;                                             % [/] Parachute Drag Coefficient
+CL = settings.para(para).CL;                                             % [/] Parachute Lift Coefficient
+if para == 1
+    pmass = 0 ;                                                                % [kg] detached mass
+else
+    pmass = sum(settings.para(1:para-1).mass) + settings.mnc;
 end
 
-
-g = 9.80655;                                                                % [N/kg] magnitude of the gravitational field at zero
-m = settings.ms - pmass;                                                    % [kg] descend mass
+g = 9.80655;                                                             % [N/kg] magnitude of the gravitational field at zero
+m = settings.ms - pmass;                                                 % [kg] descend mass
 
 %% ATMOSPHERE DATA
 
@@ -130,10 +119,12 @@ if settings.plots
     
     parout.integration.t = t;
     parout.interp.alt = -z;
-    parout.wind.body_wind = [uw vw ww];
-    parout.wind.NED_wind = [uw vw ww];
+    parout.wind.body_wind = [uw, vw, ww];
+    parout.wind.NED_wind = [uw, vw, ww];
     
     parout.air.rho = rho;
     parout.air.P = P;
+    
+    parout.accelerations.body_acc = [du, dv, dw];
     
 end

@@ -225,13 +225,19 @@ parout.interp.alpha = alpha_value;
 parout.interp.beta = beta_value;
 parout.interp.alt = -z;
 
-parout.wind.NED_wind = [uw vw ww];
+parout.wind.NED_wind = [uw, vw, ww];
 parout.wind.body_wind = wind;
+
+parout.forces.AeroDyn_Forces = [X, Y, Z];
+parout.forces.T = T;
 
 parout.air.rho = rho;
 parout.air.P = P;
 
-parout.forces.AeroDyn_Forces = [X Y Z];
+parout.accelerations.body_acc = [du, dv, dw];
+parout.accelerations.ang_acc = [dp, dq, dr];
+
+parout.forces.AeroDyn_Forces = [X, Y, Z];
 parout.forces.T = T;
 parout.coeff.CA = CA;
 parout.coeff.CYB = CYB;

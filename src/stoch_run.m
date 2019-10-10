@@ -1,4 +1,4 @@
-function [LP,X,ApoTime,data_ascent,data_para] = stoch_run(settings)
+function [LP, X, ApoTime, data_ascent, ParoutDesc] = stoch_run(settings)
 %STD RUN - This function runs a stochastic simulation (parallel)
 % OUTPUTS
 % LP: Landing Points
@@ -32,9 +32,13 @@ if settings.OMEGAmin == settings.OMEGAmax && settings.PHImin == settings.PHImax
         
     end
     
-    if settings.wind.input && all(settings.wind.input_uncertainty) == 0
+    if settings.wind.input && all(settings.wind.input_uncertainty == 0)
         error('In stochastic simulations the wind input model, the uncertainty must be different to 0 check config.m')
     end
+end
+
+if settings.para(settings.Npara).z_cut ~= 0
+    error('The landing will be not achived, check the final altitude of the last parachute in config.m')
 end
 
 %% STARTING CONDITIONS
@@ -45,9 +49,9 @@ V0 = [0 0 0]';
 W0 = [0 0 0]';
 
 %PreAllocation
-LP = zeros(settings.stoch.N,3);
-X = zeros(settings.stoch.N,3);
-ApoTime = zeros(settings.stoch.N,1);
+LP = zeros(settings.stoch.N, 3);
+X = zeros(settings.stoch.N, 3);
+ApoTime = zeros(settings.stoch.N, 1);
 
 tf = settings.ode.final_time;
 
@@ -65,44 +69,42 @@ parfor i = 1:settings.stoch.N
         
         if settings.wind.input
             if settings.wind.input_uncertainty == 0
-                uncert = [0,0];
+                uncert = [0, 0];
             else
                 
-                signn = randi([1,4]); % 4 sign cases
+                signn = randi([1, 4]); % 4 sign cases
                 unc = settings.wind.input_uncertainty;
                 
                 switch signn
                     case 1
-%                       unc = unc;
+                        %                       unc = unc;
                     case 2
                         unc(1) = - unc(1);
                     case 3
-                           unc(2) = - unc(2);
+                        unc(2) = - unc(2);
                     case 4
                         unc = - unc;
                 end
                 
-                 uncert = rand(1,2).*unc;
+                uncert = rand(1, 2).*unc;
             end
             uw = 0; vw = 0; ww = 0;
         else
-            [uw,vw,ww,Azw] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
-                settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
-                settings.wind.MagMax);
+            [uw, vw, ww, Azw] = wind_const_generator(settings.wind.AzMin, settings.wind.AzMax,...
+                settings.wind.ElMin, settings.wind.ElMax, settings.wind.MagMin, settings.wind.MagMax);
             uncert = [0; 0];
         end
         
     else
-        Day = randi([settings.wind.DayMin,settings.wind.DayMax]);
-        Hour = randi([settings.wind.HourMin,settings.wind.HourMax]);
+        Day = randi([settings.wind.DayMin, settings.wind.DayMax]);
+        Hour = randi([settings.wind.HourMin, settings.wind.HourMax]);
         uw = 0; vw = 0; ww = 0; uncert = [0,0];
     end
     
     
     %% ASCENT
-    
+    % ascent phase computation
     OMEGA = settings.OMEGAmin + rand*(settings.OMEGAmax - settings.OMEGAmin);
-    
     
     % Attitude
     if settings.wind.input || settings.wind.model
@@ -111,7 +113,7 @@ parfor i = 1:settings.stoch.N
         
         if settings.upwind
             PHI = mod(Azw + pi, 2*pi);
-            signn = randi([1,2]); % 4 sign cases
+            signn = randi([1, 2]); % 4 sign cases
             
             if signn == 1
                 
@@ -120,119 +122,71 @@ parfor i = 1:settings.stoch.N
             else
                 
                 PHIsigma = -settings.PHIsigma;
-            
+                
             end
             
             PHI = PHI + PHIsigma*rand;
         else
             PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
-        
+            
         end
     end
     
-
     
-    Q0 = angle2quat(PHI,OMEGA,0*pi/180,'ZYX')';
-    X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
     
-    if settings.para1.delay ~= 0
-        [Ta1,Ya1] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc1,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
-        
-        [Ta2,Ya2] = ode113(@ascent,[Ta1(end),Ta1(end) + settings.para1.delay],Ya1(end,:),...
-            settings.ode.optionsasc2,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
-        Ta = [Ta1; Ta2(2:end)];
-        Ya = [Ya1; Ya2(2:end,:)];
-    else
-        [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
+    Q0 = angle2quat(PHI, OMEGA, 0*pi/180, 'ZYX')';
+    Y0a = [X0; V0; W0; Q0; settings.m0; settings.Ixxf; settings.Iyyf; settings.Izzf];
+    
+    [Ta,Ya] = ode113(@ascent,[0,tf],Y0a,settings.ode.optionsasc,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
+    
+    if settings.para(1).delay ~= 0 % checking if the actuation delay is different from zero
+        [Ta2,Ya2] = ode113(@ascent, [Ta(end), Ta(end) + settings.para1.delay], Ya(end, :),...
+            settings.ode.optionsasc2, settings, uw, vw, ww, uncert, Hour, Day, OMEGA);
+        Ta = [Ta; Ta2(2:end   )];
+        Ya = [Ya; Ya2(2:end, :)];
     end
     
-    [data_ascent{i}] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
+    [data_ascent{i}] = RecallOdeFcn(@ascent, Ta, Ya, settings, uw, vw, ww, uncert, Hour, Day, OMEGA);
     data_ascent{i}.state.Y = Ya;
     data_ascent{i}.state.T = Ta;
     
-    if not(settings.ao)
-        
-        %% DROGUE 1
-        % Initial Condition are the last from ascent (need to rotate because
-        % velocities are outputted in body axes)
-        
-        para = 1; % Flag for Drogue 1
-        X0d1 = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
-        
-        if settings.rocket_name == "R2A_hermes" && settings.ldf
-            [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
-        else
-            [Td1,Yd1] = ode113(@descent_parachute,[Ta(end),tf],X0d1,settings.ode.optionsdrg1,settings,uw,vw,ww,para,uncert);
-        end
-        
-        [data_para1] = RecallOdeFcn(@descent_parachute,Td1,Yd1,settings,uw,vw,ww,para,uncert);
-        data_para1.state.Y = Yd1;
-        data_para1.state.T = Td1;
-        
-        %% DROGUE 2
-        
-        para = 2; % Flag for Drogue 2
-        X0d2 = Yd1(end,:); % Initial Condition are the last from drogue 1 descent
-        
-        if settings.rocket_name == "R2A" || (settings.rocket_name == "R2A_hermes"  && not(settings.ldf))
-            [Td2,Yd2] = ode113(@descent_parachute,[Td1(end),tf],X0d2,...
-                settings.ode.optionsdrg2,settings,uw,vw,ww,para,uncert);
-            [data_para2] = RecallOdeFcn(@descent_parachute,Td2,Yd2,settings,uw,vw,ww,para,uncert);
-            data_para2.state.Y = Yd2;
-            data_para2.state.T = Td2;
-        end
-        
-        %% ROGALLO WING
-        % Initial Condition are the last from drogue 2 descent
-        
-        if settings.rocket_name == "R2A"
-            
-            if not(settings.ldf)
-                para = 3;             % Flag for Main (Rogall)
-            end
-            
-            X0m = Yd2(end,:);
-            [T_rog,Y_rog] = ode113(@descent_parachute,[Td2(end),tf],X0m,...
-                settings.ode.optionsrog,settings,uw,vw,ww,para,uncert,Hour,Day);
-            [data_para3] = RecallOdeFcn(@descent_parachute,T_rog,Y_rog,settings,uw,vw,ww,para,uncert,Hour,Day);
-            data_para3.state.Y = Y_rog;
-            data_para3.state.T = T_rog;
-            data_para{i} = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),struct2cell(data_para3),'uni',0),fieldnames(data_para1),1);
-        end
-    end
+    %% PARATCHUTES
+    % Initial Condition are the last from ascent (need to rotate because
+    % velocities are in body axes)
     
-    %% FINAL STATE ASSEMBLING
+    Y0p = [Ya(end,1:3) quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6))];
+%     data_para = cell(settings.stoch.N, settings.Npara);
+    Yf = Ya(:, 1:6);
+    Tf  = Ta;
+    t0p = Ta(end);
     
-    switch settings.rocket_name
+    
+    for k = 1:settings.Npara
+        para = k;
+        [Tp, Yp] = ode113(@descent_parachute, [t0p, tf], Y0p, settings.ode.optionspara,...
+            settings, uw, vw, ww, para, uncert);
         
-        case 'R2A'
-            if not(settings.ao)
-                Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2;Y_rog];
-                LP(i,:) = Yf(end,1:3);
-            end
-            
-        case 'R2A_hermes'
-            
-            % Total State
-            if not(settings.ao)
-                if not(settings.ldf)
-                    Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1;Yd2];
-                    data_para{i} = cell2struct(cellfun(@vertcat,struct2cell(data_para1),struct2cell(data_para2),'uni',0),fieldnames(data_para1),1);
-                else
-                    Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6));Yd1];
-                     data_para{i} = data_para1;
-                end
-                LP(i,:) = Yf(end,1:3);
-            end
-            
+        ParoutDesc{k} = RecallOdeFcn(@descent_parachute, Tp, Yp, settings, uw, vw, ww, para, uncert);
+        ParoutDesc{k}.state.Y = Yp;
+        ParoutDesc{k}.state.T = Tp;
+        
+        % total state
+        Yf = [Yf; Yp];
+        Tf = [Tf; Tp];
+        
+        % updating ODE starting conditions
+        Y0p = Yp(end, :);
+        t0p = Tp(end);
+        
     end
-            X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)]
-            ApoTime(i) = Ta(end);
-            
-            parfor_progress;
-            
+%     data_para{i, :} = ParoutDesc;
+    
+    LP(i,:) = Yf(end,1:3);
+    X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)]
+    ApoTime(i) = Ta(end);
+    parfor_progress;
+    
     
     
 end
 
-end

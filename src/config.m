@@ -3,15 +3,12 @@
 
 %% LAUNCH SETUP
 
-% rocket name
-settings.rocket_name = "R2A_hermes_V1";
-
 % launchpad 
 settings.z0 = 1416;                   %[m] Launchpad Altitude
-settings.lrampa = 5.3;                %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
+settings.lrampa = 5.3;                %[m] LaunchPad route (distance from ground of the first hook)
 settings.lat0 = 41.809017;                                                          % Launchpad latitude
 settings.lon0 = 14.054264;                                                          % Launchpad longitude
-settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');        % Altitude map computation
+% settings.funZ = funZ_gen('zdata.mat',settings.lat0,settings.lon0,true,'xy');        % Altitude map computation
 
 % launchpad directions
 % for a single run the maximum and the minimum value of the following
@@ -26,18 +23,26 @@ settings.PHIsigma = 0*pi/180;         % Stocasthic simulation only
 %% ENGINE DETAILS
 
 % Aerotech K550W-L
+% settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
+%     1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
+% 
+% settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
+%     178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
+%     4.589 0.000  ] * 9.81/2.2;                                      % [N]
+% 
+% settings.mp = 0.889; 
 
-settings.motor.Name = 'K550';
-settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
-    1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
+% Aerotech K695
+settings.motor.exp_time = [0, 0.02:0.05:0.82, 0.88:0.05:2.23];
 
-settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
-    178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
-    4.589 0.000  ] * 9.81/2.2;                                      % [N]
-
-settings.mp = 0.889;                                                % [kg]   Propellant Mass
+settings.motor.exp_thrust = [ 0 540.57 716.61 724.39 740.18 751.53 762.31 821.36 908.55 894.53 885.86 881.97 875.41 869.85 863.18 857.51 847.39,...
+  844.38 834.96 825.7 817.69 810.69 793.9 781.77 766.09 750.53 739.41 721.05 703.71 689.03 674.91 662.67 646.1,...
+  633.76 616.52 603.96 590.2 574.71 567.59 569.37 463.39 268.23 121.55 40.92 7.23 3.91]; 
+    
+settings.mp = 0.918;
+                                                                    % [kg]   Propellant Mass
 settings.mnc = 0.300;                                               % [kg]   Nosecone Mass
-settings.tb = 3.5;                                                  % [s]    Burning time
+settings.tb = settings.motor.exp_time(end);                         % [s]    Burning time
 settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
 settings.ms = 4.8;                                                  % [kg]   Total Mass
 settings.m0 = settings.ms + settings.mp;                            % [kg]   Structural Mass
@@ -79,16 +84,15 @@ settings.Izze = 0.931376985;                    % [kg*m^2] Inertia to z-axis
 % empty and full configuration
 
 DATA_PATH = '../data/';
-filename = strcat(DATA_PATH, settings.rocket_name);
 
 % Coefficients in full configuration
-filename_full = strcat(filename,'_full.mat');
+filename_full = strcat(DATA_PATH,'full.mat');
 CoeffsF = load(filename_full,'Coeffs');
 settings.CoeffsF = CoeffsF.Coeffs;
 clear('CoeffsF');
 
 % Coefficients in empty configuration
-filename_empty = strcat(filename,'_empty.mat');
+filename_empty = strcat(DATA_PATH,'empty.mat');
 CoeffsE = load(filename_empty,'Coeffs');
 settings.CoeffsE = CoeffsE.Coeffs;
 clear('CoeffsE');
@@ -102,21 +106,20 @@ clear('s');
 
 
 %% PARACHUTES DETAILS
-
-% drogue 1
+% parachute 1
 settings.para(1).S = 0.7;              % [m^2]   Surface
 settings.para(1).mass = 0.075;         % [kg]   Parachute Mass
 settings.para(1).CD = 0.75;            % [/] Parachute Drag Coefficient
 settings.para(1).CL = 0;               % [/] Parachute Lift Coefficient
 settings.para(1).delay = 0;            % [s] drogue opening delay 
+settings.para(1).z_cut = 300;          % [m] Final altitude of the parachute
 
-% drogue 2
+% parachute 2
 settings.para(2).S = 10.3;             % [m^2]   Surface
 settings.para(2).mass = 0.45;          % [kg]   Parachute Mass
 settings.para(2).CD = 0.7;             % [/] Parachute Drag Coefficient
 settings.para(2).CL = 0.0;             % [/] Parachute Lift Coefficient
-settings.para(2).z_opening = 300;      % [m] Altitude of drogue opening
-
+settings.para(2).z_cut = 0;            % [m] Final altitude of the parachute
 
 %% INTEGRATION OPTIONS
 
@@ -130,20 +133,13 @@ settings.ode.final_time =  2000;                 % [s] Final integration time
 % - stopped (it has to be created)
 % - InitialStep is the highest value tried by the solver
 
-settings.ode.optionsasc1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
-    'Events',@event_apogee,'InitialStep',1);    %ODE options for ascend
+settings.ode.optionsasc1 = odeset('Events',@event_apogee,'InitialStep',1);    %ODE options for ascend
 
-settings.ode.optionsasc2 = odeset('AbsTol',1E-3,'RelTol',1E-3,'InitialStep',1);    
-%ODE options for balistic descent between the apogee and the first drogue opening 
+settings.ode.optionsasc2 = odeset('InitialStep',1);                           %ODE options for due to the opening delay of the parachute  
 
-settings.ode.optionspara = odeset('AbsTol',1E-3,'RelTol',1E-3,...
-    'Events',@event_para_opening);              %ODE options for drogue
+settings.ode.optionspara = odeset('Events',@event_para_cut);              %ODE options for the parachutes
 
-settings.ode.optionsrog = odeset('AbsTol',1E-3,'RelTol',1E-3,...
-    'Events',@event_landing);              %ODE options for descent
-
-settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
-    'Events',@event_landing);                   %ODE options for ballistic descent
+settings.ode.optionsdesc = odeset('Events',@event_landing);                   %ODE options for ballistic descent
 
 
 %% WIND DETAILS
@@ -171,12 +167,6 @@ settings.wind.input = false;
 % secon row: wind azimut angle (toward wind incoming direction) [deg]
 % third row: altitude
 
-% POST INTEGRATION
-% settings.wind.input_matr = [ 9*ones(1,7)
-%     337.5*ones(1,7)
-%     0    100  600  750  900  1500 2500 ];
-
-% IN RAMPA
 V0 = 3;
 C = [0 0 10 15 20 30 40];
     
@@ -195,7 +185,7 @@ settings.wind.input_uncertainty = [30,20];
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 4;                 % [m/s] Minimum Magnitude
-settings.wind.MagMax = 4;                  % [m/s] Maximum Magnitude
+settings.wind.MagMax = 8;                  % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (270)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
@@ -229,9 +219,8 @@ settings.prob.SafeEllipse.y0 = -300;
 settings.prob.SafeEllipse.alpha = 10;
 
 %% PLOT DETAILS
-
 settings.plots = true;
-settings.terrain = true;
+settings.terrain = false;
 
 %% LANDING POINTS
 settings.landing_map = true;

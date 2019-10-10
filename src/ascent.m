@@ -1,4 +1,4 @@
-function [dY,parout] = ascent(t,Y,settings,uw,vw,ww,uncert,Hour,Day,OMEGA)
+function [dY,parout] = ascent(t, Y, settings, uw, vw, ww, uncert, Hour, Day, OMEGA)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 | m | Ixx Iyy Izz )
 %
@@ -356,14 +356,17 @@ parout.interp.alpha = alpha_value;
 parout.interp.beta = beta_value;
 parout.interp.alt = -z;
 
-parout.wind.NED_wind = [uw vw ww];
+parout.wind.NED_wind = [uw, vw, ww];
 parout.wind.body_wind = wind;
 
-parout.forces.AeroDyn_Forces = [X Y Z];
+parout.forces.AeroDyn_Forces = [X, Y, Z];
 parout.forces.T = T;
 
 parout.air.rho = rho;
 parout.air.P = P;
+
+parout.accelerations.body_acc = [du, dv, dw];
+parout.accelerations.ang_acc = [dp, dq, dr];
 
 parout.coeff.CA = CA;
 parout.coeff.CYB = CYB;

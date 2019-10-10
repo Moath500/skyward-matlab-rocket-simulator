@@ -1,4 +1,4 @@
-function [LP,X,ApoTime,data_ascent,data_bal] = stoch_run_bal(settings)
+function [LP, X, ApoTime, data_ascent, data_bal] = stoch_run_bal(settings)
 %STD RUN - This function runs a stochastic simulation (parallel)
 % OUTPUTS
 % LP: Landing Points
@@ -12,11 +12,6 @@ function [LP,X,ApoTime,data_ascent,data_bal] = stoch_run_bal(settings)
 % License:  2-clause BSD
 
 warning off 
-
-
-if settings.ldf
-    error('Last Drogue Failure can''t be simulated in a balistic run, check config.m' )
-end
 
 if settings.wind.model && settings.wind.input
     error('Both wind model and input wind are true, select just one of them')
@@ -51,9 +46,9 @@ V0 = [0 0 0]';
 W0 = [0 0 0]';
 
 % PreAllocation
-LP = zeros(settings.stoch.N,3);
-X = zeros(settings.stoch.N,3);
-ApoTime = zeros(settings.stoch.N,1);
+LP = zeros(settings.stoch.N, 3);
+X = zeros(settings.stoch.N, 3);
+ApoTime = zeros(settings.stoch.N, 1);
 
 tf = settings.ode.final_time;
 
@@ -72,10 +67,10 @@ parfor i = 1:settings.stoch.N
         
         if settings.wind.input
             if settings.wind.input_uncertainty == 0
-                uncert = [0,0];
+                uncert = [0, 0];
             else
                 
-                signn = randi([1,4]); % 4 sign cases
+                signn = randi([1, 4]); % 4 sign cases
                 unc = settings.wind.input_uncertainty;
                 
                 switch signn
@@ -89,19 +84,18 @@ parfor i = 1:settings.stoch.N
                         unc = - unc;
                 end
                 
-                uncert = rand(1,2).*unc;
+                uncert = rand(1, 2).*unc;
             end
             uw = 0; vw = 0; ww = 0;
         else
-            [uw,vw,ww,~] = wind_const_generator(settings.wind.AzMin,settings.wind.AzMax,...
-                settings.wind.ElMin,settings.wind.ElMax,settings.wind.MagMin,...
-                settings.wind.MagMax);
+            [uw, vw, ww, ~] = wind_const_generator(settings.wind.AzMin, settings.wind.AzMax,...
+                settings.wind.ElMin, settings.wind.ElMax, settings.wind.MagMin, settings.wind.MagMax);
             uncert = [0; 0];
         end
         
     else
-        Day = randi([settings.wind.DayMin,settings.wind.DayMax]);
-        Hour = randi([settings.wind.HourMin,settings.wind.HourMax]);
+        Day = randi([settings.wind.DayMin, settings.wind.DayMax]);
+        Hour = randi([settings.wind.HourMin, settings.wind.HourMax]);
         uw = 0; vw = 0; ww = 0; uncert = [0; 0];
     end
     
@@ -111,31 +105,25 @@ parfor i = 1:settings.stoch.N
     PHI = settings.PHImin + rand*(settings.PHImax - settings.PHImin);
 
     % Attitude
-    Q0 = angle2quat(PHI,OMEGA,0*pi/180,'ZYX')';
-    X0a = [X0;V0;W0;Q0;settings.m0;settings.Ixxf;settings.Iyyf;settings.Izzf];
-    [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,...
-        settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
-    [data_ascent{i}] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww,uncert,Hour,Day,OMEGA);
+    Q0 = angle2quat(PHI, OMEGA, 0*pi/180, 'ZYX')';
+    Y0a = [X0; V0; W0; Q0; settings.m0; settings.Ixxf; settings.Iyyf; settings.Izzf];
+    [Ta,Ya] = ode113(@ascent, [0, tf], Y0a, settings.ode.optionsasc1, settings, uw, vw, ww, uncert, Hour, Day, OMEGA);
+    [data_ascent{i}] = RecallOdeFcn(@ascent, Ta, Ya, settings, uw, vw, ww, uncert, Hour, Day, OMEGA);
     data_ascent{i}.state.Y = Ya;
     data_ascent{i}.state.T = Ta;
     
     %% DESCEND
-    if not(settings.ao)
-        [Tb,Yb] = ode113(@descent_ballistic,[Ta(end),tf],Ya(end,1:13),settings.ode.optionsdesc,...
-            settings,uw,vw,ww,uncert,Hour,Day);
-        [data_bal{i}] = RecallOdeFcn(@descent_ballistic,Tb,Yb,settings,uw,vw,ww,uncert,Hour,Day);
-        data_bal{i}.state.Y = Yb;
-        data_bal{i}.state.T = Tb;
-    end
+    [Tb, Yb] = ode113(@descent_ballistic, [Ta(end), tf], Ya(end, 1:13), settings.ode.optionsdesc,...
+        settings, uw, vw, ww, uncert, Hour, Day);
+    [data_bal{i}] = RecallOdeFcn(@descent_ballistic, Tb, Yb, settings, uw, vw, ww, uncert, Hour, Day);
+    data_bal{i}.state.Y = Yb;
+    data_bal{i}.state.T = Tb;
     
     %% FINAL STATE ASSEMBLING
-    
     %Total State
-    if not(settings.ao)
-        LP(i,:) = Yb(end,1:3);
-    end
-    
-    X(i,:) = [Ya(end,1); Ya(end,2); -Ya(end,3)]
+    LP(i, :) = Yb(end, 1:3);
+   
+    X(i, :) = [Ya(end, 1); Ya(end, 2); -Ya(end, 3)]
     ApoTime(i) = Ta(end);
     
     parfor_progress;

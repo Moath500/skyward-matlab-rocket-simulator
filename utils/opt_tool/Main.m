@@ -9,7 +9,7 @@ clc
 run config.m
 
 % data of the analyis 
-caso='ms';
+caso='matrici';
 
 switch caso
     case 'z0'
@@ -29,6 +29,10 @@ switch caso
         OMEGA=[85 86 87 89]*pi/180;
         n=length(OMEGA);
         var=OMEGA;
+    case 'matrici'
+        r_name={'R2A' 'R1X'};
+        n=length(r_name);
+        var=1:n;
 end
 
 
@@ -37,7 +41,7 @@ end
 %% RUN 
 
 % preallocation 
-grafico=false;
+grafico=true;
 
 apogee=zeros(1,n);
 max_a=zeros(1,n);
@@ -55,16 +59,42 @@ for i=1:n
             settings.lrampa=lrampa(i);
         case 'OMEGA'
             settings.OMEGA=OMEGA(i);
+        case 'matrici'
+            filename=r_name{i};
+            
+            % Coefficients in full configuration
+            filename_full = strcat(filename,'_full.mat');
+            CoeffsF = load(filename_full,'Coeffs');
+            settings.CoeffsF = CoeffsF.Coeffs;
+            clear('CoeffsF');
+            
+            % Coefficients in empty configuration
+            filename_empty = strcat(filename,'_empty.mat');
+            CoeffsE = load(filename_empty,'Coeffs');
+            settings.CoeffsE = CoeffsE.Coeffs;
+            clear('CoeffsE');
+            
+            
+            s = load(filename_full,'State');
+            settings.Alphas = s.State.Alphas';
+            settings.Betas = s.State.Betas';
+            settings.Altitudes = s.State.Altitudes';
+            settings.Machs = s.State.Machs';
+            clear('s');
     end
 
     
     [apogee(i), max_a(i),Vexit(i),t,vect_XCP]=start_simulation(settings);
    
+    % ottimizzazione 
+    
+    
+    
     if grafico 
         plot(t,vect_XCP,'.')
         xlabel('time [s]')
         ylabel('S / M')
-        hold on
+        hold on 
     end
     
     
@@ -72,6 +102,8 @@ end
 
 
 %% PLOT 
+
+
 
 % plot apogee
 figure()
@@ -84,6 +116,8 @@ figure()
 plot(var,max_a,'o-')
 xlabel(caso)
 ylabel('max |a|')
+
+
 
 
 

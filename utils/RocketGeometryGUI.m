@@ -12,7 +12,6 @@ function data = RocketGeometryGUI
 % Website: http://www.skywarder.eu
 % Release date: 11 October 2019 | First Version
 % License:  2-clause BSD
-
 close all
 clear all
 clc
@@ -29,6 +28,9 @@ data.BottomDist = 0.0;
 data.XLe = data.RocketLength - data.BottomDist - [data.FinMaxChord ; ...
     data.FinMaxChord-(data.FinMaxChord-data.FinMinChord)/2];
 data.XCG = 126;
+data.ZCG = 0;
+data.NShape = 'KARMAN';
+data.NPower = 0.5;
 
 % Fin cross section
 data.FinT = 0.4;
@@ -40,69 +42,85 @@ data.LmaxMaxChord = 0.5*(data.FinMaxChord - data.LflatMaxChord);
 data.LmaxMinChord = 0.5*(data.FinMinChord - data.LflatMinChord);
 
 %% Create layout
-f = figure('Visible','off','Position',[100 100 763 638]);
+f = figure('Visible','off','Position',[100 100 850 638]);
 f.Name = 'Rocket Geometry';
 
 RocketUIAxes = axes('Units','Pixels','Position',[56 355 503 265],'Title',...
     'Rocket');
-RocketUIAxes.XGrid = 'on';
-RocketUIAxes.YGrid = 'on';
-xlabel(RocketUIAxes, 'X [cm]')
-ylabel(RocketUIAxes, 'Y [cm]')
-title(RocketUIAxes,'Rocket');
+% RocketUIAxes.XGrid = 'on';
+% RocketUIAxes.YGrid = 'on';
+% xlabel(RocketUIAxes, 'X [cm]')
+% ylabel(RocketUIAxes, 'Z [cm]')
+% title(RocketUIAxes,'Rocket');
 
 FinsUIAxes = axes('Units','Pixels','Position',[56 50 503 255],'Title',...
     'Fins');
-FinsUIAxes.XGrid = 'on';
-FinsUIAxes.YGrid = 'on';
-xlabel(FinsUIAxes, 'X [cm]')
-ylabel(FinsUIAxes, 'Y [cm]')
-title(FinsUIAxes,'Fins');
+% FinsUIAxes.XGrid = 'on';
+% FinsUIAxes.YGrid = 'on';
+% xlabel(FinsUIAxes, 'X [cm]')
+% ylabel(FinsUIAxes, 'Y [cm]')
+% title(FinsUIAxes,'Fins');
 
 
 Label = uicontrol('Style','text','String','Measures in [cm]',...
-    'Position',[636 595 100 22]);
+    'Position',[650 610 100 22]);
 
 RocketLengthLabel = uicontrol('Style','text','String','Rocket Length',...
-    'Position',[575 566 83 22],'Parent',f);
+    'Position',[575 587 83 22],'Parent',f);
 RocketLengthEditField = uicontrol('Style','edit',...
-    'Position',[660 570 83 22 ]);
+    'Position',[660 590 83 22 ]);
 
 NoseLengthLabel = uicontrol('Style','text','String','Nose Length',...
-    'Position',[575 536 83 22]);
+    'Position',[575 562 83 22]);
 NoseLengthEditField = uicontrol('Style','edit',...
-    'Position',[660 540 83 22 ]);
+    'Position',[660 565 83 22 ]);
 
 MaxChordLabel = uicontrol('Style','text','String','Max Chord',...
-    'Position',[575 506 83 22]);
+    'Position',[575 537 83 22]);
 MaxChordEditField = uicontrol('Style','edit',...
-    'Position',[660 510 83 22 ]);
+    'Position',[660 540 83 22 ]);
 
-MinChordLabel = uicontrol('Style','text','String','Max Chord',...
-    'Position',[575 476 83 22]);
+MinChordLabel = uicontrol('Style','text','String','Min Chord',...
+    'Position',[575 512 83 22]);
 MinChordEditField = uicontrol('Style','edit',...
-    'Position',[660 480 83 22 ]);
+    'Position',[660 515 83 22 ]);
 
 XLe1Label = uicontrol('Style','text','String','XLe(1)',...
-    'Position',[575 446 83 22]);
+    'Position',[575 487 83 22]);
 XLe1EditField = uicontrol('Style','edit',...
-    'Position',[660 450 83 22 ]);
+    'Position',[660 490 83 22 ]);
 
 XLe2Label = uicontrol('Style','text','String','XLe(2)',...
-    'Position',[575 416 83 22]);
+    'Position',[575 462 83 22]);
 XLe2EditField = uicontrol('Style','edit',...
-    'Position',[660 420 83 22 ]);
+    'Position',[660 465 83 22 ]);
 
 FinHLabel = uicontrol('Style','text','String','Fin Height',...
-    'Position',[575 386 83 22]);
+    'Position',[575 437 83 22]);
 FinHEditField = uicontrol('Style','edit',...
-    'Position',[660 390 83 22 ]);
+    'Position',[660 440 83 22 ]);
 
 XCGLabel = uicontrol('Style','text','String','XCG',...
-    'Position',[575 356 83 22]);
+    'Position',[575 412 83 22]);
 XCGEditField = uicontrol('Style','edit',...
-    'Position',[660 360 83 22 ]);
+    'Position',[660 415 83 22 ]);
+ZCGLabel = uicontrol('Style','text','String','ZCG',...
+    'Position',[575 387 83 22]);
+ZCGEditField = uicontrol('Style','edit',...
+    'Position',[660 390 83 22 ]);
 
+NShapeLabel = uicontrol('Style','text','String','Nose Shape',...
+    'Position',[575 362 83 22]);
+NShapePopup = uicontrol('Style','popupmenu',...
+           'String',{'KARMAN','POWER','OGIVE','CONICAL'},...
+           'Position',[660,365,83,22]);
+% Only for power nose shape
+NPowerLabel = uicontrol('Style','text','String','Power',...
+    'Position',[750 362 45 22]);
+NPowerEditField = uicontrol('Style','edit',...
+    'Position',[800,365,43,22],'Enable','off');
+
+% Cross section
 
 ThicknessLabel = uicontrol('Style','text','String','Thickness',...
     'Position',[562 246 83 22]);
@@ -110,19 +128,18 @@ ThicknessEditField = uicontrol('Style','edit',...
     'Position',[660 250 83 22 ]);
 
 LflatMaxCLabel = uicontrol('Style','text','String','Lflat (Max chord)',...
-    'Position',[562 216 103 22]);
+    'Position',[562 222 103 22]);
 LflatMaxCEditField = uicontrol('Style','edit',...
-    'Position',[660 220 83 22 ]);
+    'Position',[660 225 83 22 ]);
 LflatMaxCEditField.Callback = @LflatMaxCEditFieldValueChanged;
 
 LflatMinCLabel = uicontrol('Style','text','String','Lflat (Min chord)',...
-    'Position',[562 186 103 22]);
+    'Position',[562 197 103 22]);
 LflatMinCEditField = uicontrol('Style','edit',...
-    'Position',[660 190 83 22 ]);
+    'Position',[660 200 83 22 ]);
 
 Button = uicontrol('Style','pushbutton','String','Print DATCOM text',...
-    'Position',[630 145 100 22 ],'Callback',@PrintDATCOM);
-
+    'Position',[640 145 120 26 ],'Callback',@PrintDATCOM);
 
 %% Set default values
 RocketLengthEditField.String = num2str(data.RocketLength);
@@ -133,10 +150,13 @@ XLe1EditField.String = num2str(data.XLe(1));
 XLe2EditField.String = num2str(data.XLe(2));
 FinHEditField.String = num2str(data.FinHeight);
 XCGEditField.String = num2str(data.XCG);
+ZCGEditField.String = num2str(data.ZCG);
+NPowerEditField.String = num2str(data.NPower);
 
 ThicknessEditField.String = num2str(data.FinT);
 LflatMaxCEditField.String = num2str(data.LflatMaxChord);
 LflatMinCEditField.String = num2str(data.LflatMinChord);
+
 
 updateplot;
 
@@ -145,6 +165,7 @@ updateplot;
 NoseLengthEditField.Callback = @NoseLengthEditFieldValueChanged;
 RocketLengthEditField.Callback = @RocketLengthEditFieldValueChanged;
 XCGEditField.Callback = @XCGEditFieldValueChanged;
+ZCGEditField.Callback = @ZCGEditFieldValueChanged;
 LflatMaxCEditField.Callback = @LflatMaxCEditFieldValueChanged;
 LflatMinCEditField.Callback = @LflatMinCEditFieldValueChanged;
 XLe1EditField.Callback = @XLe1EditFieldValueChanged;
@@ -153,6 +174,8 @@ MaxChordEditField.Callback = @MaxChordEditFieldValueChanged;
 MinChordEditField.Callback = @MinChordEditFieldValueChanged;
 FinHEditField.Callback = @FinHeightEditFieldValueChanged;
 ThicknessEditField.Callback = @FinThicknessEditFieldValueChanged;
+NShapePopup.Callback = {@popup_menu_Callback,NPowerEditField};
+NPowerEditField.Callback = @NPowerEditFieldValueChanged;
 
 % Make the UI visible.
 f.Visible = 'on';
@@ -166,7 +189,10 @@ f.Visible = 'on';
         str = sprintf('%s LREF=%4.3f,\n',str,data.D/100);
         str = sprintf('%s LATREF=%4.2f,$\n',str,data.D/100);
         str = sprintf('%s$AXIBOD\n',str);
-        str = sprintf('%s TNOSE=KARMAN,\n',str);
+        str = sprintf('%s TNOSE=%s,\n',str,data.NShape);
+        if strcmp(data.NShape,'POWER')
+            str = sprintf('%s POWER=%4.3f,\n',str,data.NPower);
+        end
         str = sprintf('%s LNOSE=%4.2f,\n',str,data.NoseLength/100);
         str = sprintf('%s DNOSE=%4.2f,\n',str,data.D/100);
         str = sprintf('%s LCENTR=%4.2f,\n',str,(data.RocketLength-data.NoseLength)/100);
@@ -189,6 +215,37 @@ f.Visible = 'on';
             data.LflatMinChord/data.FinMinChord);
              
         fprintf(str)
+        fid = fopen('for005.dat','w');
+        fprintf(fid,str);
+        fclose(fid);
+    end
+
+    function popup_menu_Callback(source,eventdata,editfield) 
+      % Determine the selected data set.
+      str = source.String;
+      val = source.Value;
+      switch str{val}
+      case 'KARMAN'
+         data.NShape = 'KARMAN';
+         editfield.Enable = 'off';
+      case 'CONICAL' 
+         data.NShape = 'CONICAL';
+         editfield.Enable = 'off';
+      case 'OGIVE' 
+         data.NShape = 'OGIVE';
+         editfield.Enable = 'off';
+      case 'POWER'
+          data.NShape = 'POWER';
+          editfield.Enable = 'on';
+      end
+      updateplot;
+    end
+
+     % Value changed function: RocketLengthEditField
+    function NPowerEditFieldValueChanged(src,event)
+        value = str2double(src.String);
+        data.NPower = value;
+        updateplot;
     end
 
      % Value changed function: RocketLengthEditField
@@ -325,11 +382,29 @@ f.Visible = 'on';
         updateplot;
     end
 
+    % Value changed function: ZCGEditField
+    function ZCGEditFieldValueChanged(src,event)
+        value = str2double(get(src,'String'));
+        data.ZCG = value;
+        updateplot;
+    end
+
     function updateplot
         % Nose
         xn = linspace(0,data.NoseLength);
-        theta = acos(1-2.*xn./data.NoseLength);
-        yn = data.D/2./sqrt(pi).*sqrt(theta-sin(2*theta)/2);
+        switch data.NShape
+            case 'KARMAN'
+                theta = acos(1-2.*xn./data.NoseLength);
+                yn = data.D/2./sqrt(pi).*sqrt(theta-sin(2*theta)/2);
+            case 'CONICAL'
+                yn = xn.*data.D/2/data.NoseLength;
+            case 'OGIVE'
+                rho = ((data.D/2)^2+(data.NoseLength)^2)/data.D;
+                yn = sqrt(rho^2-(data.NoseLength-xn).^2)+data.D/2-rho;
+            case 'POWER'
+                yn = data.D/2.*(xn/data.NoseLength).^data.NPower;
+        end
+        
         % Body coordinates
         xb = [xn data.RocketLength data.RocketLength];
         yb = [yn data.D/2 0];
@@ -342,13 +417,14 @@ f.Visible = 'on';
         plot(RocketUIAxes,xb,-yb,'-b');
         plot(RocketUIAxes,xf,yf,'-b');
         plot(RocketUIAxes,xf,-yf,'-b');
-        h2 = plot(RocketUIAxes,data.XCG,0,'or');
-        plot(RocketUIAxes,data.XCG,0,'+r');
+        h2 = plot(RocketUIAxes,data.XCG,data.ZCG,'or');
+        plot(RocketUIAxes,data.XCG,data.ZCG,'+r');
         RocketUIAxes.YLim = [-data.D*2 data.D*2];
         RocketUIAxes.XLim = [-15 (15+data.RocketLength)];
         xlabel(RocketUIAxes, 'X [cm]')
-        ylabel(RocketUIAxes, 'Y [cm]')
+        ylabel(RocketUIAxes, 'Z [cm]')
         legend([h1,h2],'Rocket','CG');
+        grid(RocketUIAxes,'on');
         hold(RocketUIAxes,'off');
         
         % Draw fins
@@ -368,7 +444,8 @@ f.Visible = 'on';
         FinsUIAxes.YLim = [-data.FinT data.FinT];
         xlabel(FinsUIAxes, 'X [cm]')
         ylabel(FinsUIAxes, 'Y [cm]')
-         legend([h1,h2],'Cross section at fin root','Cross section at fin tip');
+        grid(FinsUIAxes,'minor');
+        legend([h1,h2],'Cross section at fin root','Cross section at fin tip');
         hold(FinsUIAxes,'off');
     end
 end

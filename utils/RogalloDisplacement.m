@@ -1,5 +1,7 @@
 clc; clear; close all
 run('config_R2A_hermes.m')
+load funZ.mat
+settings.funZ = funZ;
 
 heights = 200:100:800;
 magn_w = 4:10;

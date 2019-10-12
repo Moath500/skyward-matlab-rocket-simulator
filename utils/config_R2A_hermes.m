@@ -15,7 +15,7 @@
 %% LAUNCH SETUP
 
 % rocket name
-settings.rocket_name = "R2A_hermes_V1";
+settings.rocket_name = "R2A_hermes";
 
 % launchpad 
 settings.z0 = 1416;                   %[m] Launchpad Altitude
@@ -81,14 +81,21 @@ switch engine
             4.589 0.000  ] * 9.81/2.2;                                      % [N]
         
         settings.mp = 0.889;                                                % [kg]   Propellant Mass
-        settings.mnc = 0.300;                                               % [kg]   Nosecone Mass
+        settings.mnc = 0.158;                                               % [kg]   Nosecone Mass
         settings.tb = 3.5;                                                  % [s]    Burning time
         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
         
         if settings.fins == 1 % 10-5-5
             
-            settings.ms = 4.8;                                                % [kg]   Total Mass
-            settings.m0 = settings.ms + settings.mp;                         % [kg]   Structural Mas            
+            settings.m0 = 8.142;                                                % [kg]   Total Mass
+            settings.ms = settings.m0 - settings.mp;                         % [kg]   Structural Mass
+            
+            
+        else % 17-8-8
+            
+            settings.m0 = 8.368;                                                % [kg]   Total Mass
+            settings.ms = settings.m0 - settings.mp;                         % [kg]   Structural Mass
+            
         end
         
 end
@@ -99,24 +106,39 @@ end
 
 settings.C = 0.09;                          % [m]      Caliber (Fuselage Diameter)
 settings.S = 0.0064;                        % [m^2]    Cross-sectional Surface
-L = 1.895;                                   % [m]      Rocket length
+L = 1.97;                                   % [m]      Rocket length
 
 %% MASS GEOMERTY DETAILS
 % x-axis: along the fuselage
 % y-axis: right wing
 % z-axis: downward
 
-% fins [10-5-5]   
-% inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-settings.Ixxf = 0.004612382;                   % [kg*m^2] Inertia to x-axis
-settings.Iyyf = 1.194050037;                    % [kg*m^2] Inertia to y-axis
-settings.Izzf = 1.194116615;                     % [kg*m^2] Inertia to z-axis
-
-% inertias for empty configuration (all the propellant consumed) obtained with CAD's
-settings.Ixxe = 0.004293335;                   % [kg*m^2] Inertia to x-axis
-settings.Iyye = 0.931311998;                     % [kg*m^2] Inertia to y-axis
-settings.Izze = 0.931376985;                    % [kg*m^2] Inertia to z-axis
+if settings.fins == 1  % 10-5-5
+    
+    % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
+    settings.Ixxf = 0.008935;                   % [kg*m^2] Inertia to x-axis
+    settings.Iyyf = 2.06968;                    % [kg*m^2] Inertia to y-axis
+    settings.Izzf = 2.0698;                     % [kg*m^2] Inertia to z-axis
+    
+    % inertias for empty configuration (all the propellant consumed) obtained with CAD's
+    settings.Ixxe = 0.00940;                   % [kg*m^2] Inertia to x-axis
+    settings.Iyye = 1.7459;                     % [kg*m^2] Inertia to y-axis
+    settings.Izze = 1.74615;                    % [kg*m^2] Inertia to z-axis
      
+else % 17-8-8
+    
+    % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
+    settings.Ixxf = 0.01083;                    % [kg*m^2] Inertia to x-axis
+    settings.Iyyf = 2.33755;                    % [kg*m^2] Inertia to y-axis
+    settings.Izzf = 2.33782;                    % [kg*m^2] Inertia to z-axis
+    
+    % inertias for empty configuration (all the propellant consumed) obtained with CAD's
+    settings.Ixxe = 0.10519;                    % [kg*m^2] Inertia to x-axis
+    settings.Iyye = 2.01784;                    % [kg*m^2] Inertia to y-axis
+    settings.Izze = 2.01811;                    % [kg*m^2] Inertia to z-axis
+    
+end
+
 %% AERODYNAMICS DETAILS
 % These coefficients are obtained using MISSILE DATCOM
 % (after parsing with the tool datcom_parser.py)
@@ -133,47 +155,35 @@ settings.Izze = 0.931376985;                    % [kg*m^2] Inertia to z-axis
 DATA_PATH = '../data/';
 filename = strcat(DATA_PATH, settings.rocket_name);
 
-% Coefficients in full configuration
-filename_full = strcat(filename,'_full.mat');
-CoeffsF = load(filename_full,'Coeffs');
-settings.CoeffsF = CoeffsF.Coeffs;
-clear('CoeffsF');
-
-% Coefficients in empty configuration
-filename_empty = strcat(filename,'_empty.mat');
-CoeffsE = load(filename_empty,'Coeffs');
-settings.CoeffsE = CoeffsE.Coeffs;
-clear('CoeffsE');
-
-% if settings.fins == 1
-%     
-%     % Coefficients in full configuration
-%     filename_full = strcat(filename,'_full_V1.mat');
-%     CoeffsF = load(filename_full,'Coeffs');
-%     settings.CoeffsF = CoeffsF.Coeffs;
-%     clear('CoeffsF');
-%     
-%     % Coefficients in empty configuration
-%     filename_empty = strcat(filename,'_empty_V1.mat');
-%     CoeffsE = load(filename_empty,'Coeffs');
-%     settings.CoeffsE = CoeffsE.Coeffs;
-%     clear('CoeffsE');
-%     
-% else
-%     
-%     % Coefficients in full configuration
-%     filename_full = strcat(filename,'_full_V2.mat');
-%     CoeffsF = load(filename_full,'Coeffs');
-%     settings.CoeffsF = CoeffsF.Coeffs;
-%     clear('CoeffsF');
-%     
-%     % Coefficients in empty configuration
-%     filename_empty = strcat(filename,'_empty_V2.mat');
-%     CoeffsE = load(filename_empty,'Coeffs');
-%     settings.CoeffsE = CoeffsE.Coeffs;
-%     clear('CoeffsE');
-%     
-% end
+if settings.fins == 1
+    
+    % Coefficients in full configuration
+    filename_full = strcat(filename,'_full_V1.mat');
+    CoeffsF = load(filename_full,'Coeffs');
+    settings.CoeffsF = CoeffsF.Coeffs;
+    clear('CoeffsF');
+    
+    % Coefficients in empty configuration
+    filename_empty = strcat(filename,'_empty_V1.mat');
+    CoeffsE = load(filename_empty,'Coeffs');
+    settings.CoeffsE = CoeffsE.Coeffs;
+    clear('CoeffsE');
+    
+else
+    
+    % Coefficients in full configuration
+    filename_full = strcat(filename,'_full_V2.mat');
+    CoeffsF = load(filename_full,'Coeffs');
+    settings.CoeffsF = CoeffsF.Coeffs;
+    clear('CoeffsF');
+    
+    % Coefficients in empty configuration
+    filename_empty = strcat(filename,'_empty_V2.mat');
+    CoeffsE = load(filename_empty,'Coeffs');
+    settings.CoeffsE = CoeffsE.Coeffs;
+    clear('CoeffsE');
+    
+end
  
  s = load(filename_full,'State');
  settings.Alphas = s.State.Alphas';
@@ -185,6 +195,8 @@ clear('CoeffsE');
 
 %% PARACHUTES DETAILS
 
+settings.Ndrogues = 2; % Number of parachutes
+
 % drogue 1
 settings.para1.S = 0.7;              % [m^2]   Surface
 settings.para1.mass = 0.075;         % [kg]   Parachute Mass
@@ -192,12 +204,12 @@ settings.para1.CD = 0.75;            % [/] Parachute Drag Coefficient
 settings.para1.CL = 0;               % [/] Parachute Lift Coefficient
 settings.para1.delay = 1;            % drogue opening delay [s]
 
-% drogue 2
-settings.para2.S = 10.3;              % [m^2]   Surface
+% rogallo wing
+settings.para2.S = 7;                % [m^2]   Surface
 settings.para2.mass = 0.45;          % [kg]   Parachute Mass
-settings.para2.CD = 0.7;             % [/] Parachute Drag Coefficient
-settings.para2.CL = 0.0;             % [/] Parachute Lift Coefficient
-settings.zdrg2 = 300;                % [m] Altitude of drogue 2 opening
+settings.para2.CD = 0.4;             % [/] Parachute Drag Coefficient
+settings.para2.CL = 0.9;             % [/] Parachute Lift Coefficient
+settings.zdrg2 = 200;                % [m] Altitude of drogue 2 opening
 
 
 %% INTEGRATION OPTIONS
@@ -222,7 +234,10 @@ settings.ode.optionsdrg1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_drg2_opening);              %ODE options for drogue
 
 settings.ode.optionsdrg2 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
-    'Events',@event_landing);              %ODE options for drogue
+    'Events',@event_rog_opening);              %ODE options for drogue
+
+settings.ode.optionsrog = odeset('AbsTol',1E-3,'RelTol',1E-3,...
+    'Events',@event_landing);              %ODE options for descent
 
 settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
     'Events',@event_landing);                   %ODE options for ballistic descent
@@ -246,7 +261,7 @@ settings.wind.ww = 0;                               % [m/s] Vertical wind speed
                 
 
 %%%%% Input wind 
-settings.wind.input = false;
+settings.wind.input = true;
 % Wind is generated for every altitude interpolating with the coefficient defined below
 
 % first row: wind magnitude [m/s]
@@ -260,7 +275,7 @@ settings.wind.input = false;
 
 % IN RAMPA
 V0 = 3;
-C = [0 0 10 15 20 20 30];
+C = [0 0 10 15 20 30 40];
     
 settings.wind.input_matr = [ (V0+V0*C/100)
     120*ones(1,7)
@@ -276,12 +291,12 @@ settings.wind.input_uncertainty = [30,20];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 8;                 % [m/s] Minimum Magnitude
-settings.wind.MagMax = 8;                  % [m/s] Maximum Magnitude
+settings.wind.MagMin = 9.8;                 % [m/s] Minimum Magnitude
+settings.wind.MagMax = 9.8;                  % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;             % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;             % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (45)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (45)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (180)*pi/180;           % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (180)*pi/180;         % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -292,7 +307,7 @@ settings.wind.AzMax = (45)*pi/180;         % [rad] Maximum Azimuth, user input i
 %% BALLISTIC SIMULATION
 % Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = true;    
+settings.ballistic = false;    
 
 %% LAST DROGUE FAILURE SIMULATION
 % simulation in which rogallo wing does not open and thus landing is

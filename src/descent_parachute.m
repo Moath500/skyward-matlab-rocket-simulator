@@ -1,19 +1,45 @@
-function [dY,parout] = descent_parachute(t,Y,settings,uw,vw,ww,para,uncert,Hour,Day)
-% ODE-Function for Parachute descent 
-% State = ( x y z | u v w  )
+function [dY, parout] = descent_parachute(t, Y, settings, uw, vw, ww, para, uncert, Hour, Day)
+%{ 
 
-% Author: Ruben Di Battista
-% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
-% email: ruben.dibattista@skywarder.eu
-% Website: http://www.skywarder.eu
-% April 2014; Last revision: 25.IV.2014
-% License:  2-clause BSD
+ASCENT - ode function of the 6DOF Rigid Rocket Model
 
-% Author: Francesco Colombi
-% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
-% email: francesco.colombi@skywarder.eu
-% Release date: 16/04/2016
+INPUTS:      
+            - t, integration time;
+            - Y, state vector, [ x y z | u v w ]:
 
+                                * (x y z), NED{north, east, down} horizontal frame; 
+                                * (u v w), horizontal frame velocities.
+
+            - settings, rocket data structure;
+            - uw, wind component along x;
+            - vw, wind component along y;
+            - ww, wind component along z;
+            - uncert, wind uncertanties;
+            - Hour, hour of the day of the needed simulation;
+            - Day, day of the month of the needed simulation;
+
+OUTPUTS:    
+            - dY, state derivatives;
+            - parout, interesting fligth quantities structure (aerodyn coefficients, forces and so on..).
+
+Author: Ruben Di Battista
+Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+email: ruben.dibattista@skywarder.eu
+April 2014; Last revision: 31.XII.2014
+
+Author: Francesco Colombi
+Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+email: francesco.colombi@skywarder.eu
+Release date: 16/04/2016
+
+Author: Adriano Filippo Inno
+Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
+email: adriano.filippo.inno@skywarder.eu
+Release date: 13/01/2018
+
+%}
+
+% recalling the state
 % x = Y(1);
 % y = Y(2);
   z = Y(3);
@@ -47,28 +73,17 @@ wr = w - wind(3);
 V_norm = norm([ur vr wr]);
 
 %% CONSTANTS
-
-switch para
-    case 1
-        S = settings.para1.S;                                               % [m^2]   Surface
-        CD = settings.para1.CD;                                             % [/] Parachute Drag Coefficient
-        CL = settings.para1.CL;                                             % [/] Parachute Lift Coefficient
-        pmass = 0;                                                          % [kg] detached mass
-    case 2
-        S = settings.para2.S;                                               % [m^2]   Surface
-        CD = settings.para2.CD;                                             % [/] Parachute Drag Coefficient
-        CL = settings.para2.CL;                                             % [/] Parachute Lift Coefficient
-        pmass = settings.para1.mass + settings.mnc;                         % [kg] detached mass(drogue1 + nosecone)
-    case 3
-        S = settings.para3.S;                                               % [m^2]   Surface
-        CD = settings.para3.CD;                                             % [/] Parachute Drag Coefficient
-        CL = settings.para3.CL;                                             % [/] Parachute Lift Coefficient
-        pmass = settings.para1.mass + settings.para2.mass + settings.mnc;   % [kg] detached mass(drogue1/2 + nosecone)
-    otherwise
+S = settings.para(para).S;                                               % [m^2]   Surface
+CD = settings.para(para).CD;                                             % [/] Parachute Drag Coefficient
+CL = settings.para(para).CL;                                             % [/] Parachute Lift Coefficient
+if para == 1
+    pmass = 0 ;                                                          % [kg] detached mass
+else
+    pmass = sum(settings.para(1:para-1).mass) + settings.mnc;
 end
 
-g = 9.80655;                                                                % [N/kg] magnitude of the gravitational field at zero
-m = settings.ms - pmass;                                                    % [kg] descend mass
+g = 9.80655;                                                             % [N/kg] magnitude of the gravitational field at zero
+m = settings.ms - pmass;                                                 % [kg] descend mass
 
 %% ATMOSPHERE DATA
 
@@ -130,10 +145,12 @@ if settings.plots
     
     parout.integration.t = t;
     parout.interp.alt = -z;
-    parout.wind.body_wind = [uw vw ww];
-    parout.wind.NED_wind = [uw vw ww];
+    parout.wind.body_wind = [uw, vw, ww];
+    parout.wind.NED_wind = [uw, vw, ww];
     
     parout.air.rho = rho;
     parout.air.P = P;
+    
+    parout.accelerations.body_acc = [du, dv, dw];
     
 end

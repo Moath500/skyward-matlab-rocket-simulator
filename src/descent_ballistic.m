@@ -1,32 +1,53 @@
-function [dY,parout] = descent_ballistic(t,Y,settings,uw,vw,ww,uncert,Hour,Day)
-% ODE-Function of the 6DOF Rigid Rocket Model
-% State = ( x y z | u v w | p q r | q0 q1 q2 q3 )
-%
-% (x y z): NED Earth's Surface Centered Frame ("Inertial") coordinates
-% (u v w): body frame velocities
-% (p q r): body frame angular rates
-% (q0 q1 q2 q3): attitude unit quaternion
-%
-%
-% NOTE: To get the NED velocities the body-frame must be multiplied for the
-% conjugated of the current attitude quaternion
-% E.G.
-%
-%
-% quatrotate(quatconj(Y(:,10:13)),Y(:,4:6))
+function [dY, parout] = descent_ballistic(t, Y, settings, uw, vw, ww, uncert, Hour, Day)
+%{ 
 
-% Author: Ruben Di Battista
-% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
-% email: ruben.dibattista@skywarder.eu
-% Website: http://www.skywarder.eu
-% April 2014; Last revision: 31.XII.2014
-% License:  2-clause BSD
+ASCENT - ode function of the 6DOF Rigid Rocket Model
 
-% Author: Francesco Colombi
-% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
-% email: francesco.colombi@skywarder.eu
-% Release date: 16/04/2016
+INPUTS:      
+            - t, integration time;
+            - Y, state vector, [ x y z | u v w | p q r | q0 q1 q2 q3 ]:
 
+                                * (x y z), NED{north, east, down} horizontal frame; 
+                                * (u v w), body frame velocities;
+                                * (p q r), body frame angular rates;
+                                * (q0 q1 q2 q3), attitude unit quaternion.
+
+            - settings, rocket data structure;
+            - uw, wind component along x;
+            - vw, wind component along y;
+            - ww, wind component along z;
+            - uncert, wind uncertanties;
+            - Hour, hour of the day of the needed simulation;
+            - Day, day of the month of the needed simulation;
+
+OUTPUTS:    
+            - dY, state derivatives;
+            - parout, interesting fligth quantities structure (aerodyn coefficients, forces and so on..).
+
+
+NOTE: To get the NED velocities the body-frame must be multiplied for the
+conjugated of the current attitude quaternion
+E.G.  quatrotate(quatconj(Y(:,10:13)),Y(:,4:6))
+
+
+Author: Ruben Di Battista
+Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+email: ruben.dibattista@skywarder.eu
+April 2014; Last revision: 31.XII.2014
+
+Author: Francesco Colombi
+Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+email: francesco.colombi@skywarder.eu
+Release date: 16/04/2016
+
+Author: Adriano Filippo Inno
+Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
+email: adriano.filippo.inno@skywarder.eu
+Release date: 13/01/2018
+
+%}
+
+% recalling the state
 % x = Y(1);
 % y = Y(2);
   z = Y(3);
@@ -225,13 +246,19 @@ parout.interp.alpha = alpha_value;
 parout.interp.beta = beta_value;
 parout.interp.alt = -z;
 
-parout.wind.NED_wind = [uw vw ww];
+parout.wind.NED_wind = [uw, vw, ww];
 parout.wind.body_wind = wind;
+
+parout.forces.AeroDyn_Forces = [X, Y, Z];
+parout.forces.T = T;
 
 parout.air.rho = rho;
 parout.air.P = P;
 
-parout.forces.AeroDyn_Forces = [X Y Z];
+parout.accelerations.body_acc = [du, dv, dw];
+parout.accelerations.ang_acc = [dp, dq, dr];
+
+parout.forces.AeroDyn_Forces = [X, Y, Z];
 parout.forces.T = T;
 parout.coeff.CA = CA;
 parout.coeff.CYB = CYB;

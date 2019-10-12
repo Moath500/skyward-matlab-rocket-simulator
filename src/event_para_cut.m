@@ -1,8 +1,10 @@
-function [value, isterminal, direction] = event_landing(~, Y, settings, varargin)
+function [value, isterminal, direction] = event_para_cut(~, Y, settings, varargin)
 %{
 
-EVENT_LANDING - Event function to stop simulation at landing checking when a value tends to zero;
-               the value taken is to account is the vertical position, z = 0 --> landing
+EVENT_PARA_CUT - Event function to stop simulation at the chosen altitude to cut the 
+                 parachute, checking when a value tends to zero;
+                 the value taken is to account is the vertical position respect to the chosen altitude,
+                 z - zcut = 0 --> parachute cut
 
 INPUTS:     
             - t, integration time;
@@ -30,7 +32,7 @@ April 2014; Last revision: 25.IV.2014
 Author: Adriano Filippo Inno
 Skyward Experimental Rocketry | AFD Dept | crd@skywarder.eu
 email: adriano.filippo.inno@skywarder.eu
-Last Revision: 19/05/2018
+Last Revision: 09/10/2019
 
 %}
 
@@ -38,25 +40,25 @@ x = Y(1);
 y = Y(2);
 z = -Y(3);
 
+para = varargin{4};
+
 if settings.terrain
     zloc = -settings.funZ(x,y);
-    if zloc > 853
-        zloc = 853;
+    if zloc > 859
+        zloc = 859;
     end
     
-    if zloc < -656
-        zloc = -656;
+    if zloc < -845
+        zloc = -845;
     end
     
-    value = z - zloc;
+    value = z - zloc - settings.para(para).z_cut;
 else
-    value = z;
+    value = z - settings.para(para).z_cut;
 end
-
 
 isterminal = 1;
 direction = 0;
-
 
 end
 

@@ -12,8 +12,8 @@ function data = RocketGeometryGUI
 % Website: http://www.skywarder.eu
 % Release date: 11 October 2019 | First Version
 % License:  2-clause BSD
-close all
-clear all
+% close all
+% clear all
 clc
 %% Set default values - Dimensions in cm
 data = struct();

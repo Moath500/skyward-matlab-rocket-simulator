@@ -90,6 +90,11 @@ for i=1:n
     
     
     
+    
+    
+    
+    % grafici stabilità 
+    
     if grafico 
         plot(t,vect_XCP,'.')
         xlabel('time [s]')

@@ -22,9 +22,9 @@ settings.funZ = funZ_gen('zdata.mat', settings.lat0, settings.lon0, true, 'xy');
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
 settings.OMEGAmin = 85*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
-settings.OMEGAmax = 85*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 0*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.OMEGAmax = 89*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.PHImin = 180*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 180*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;              % If true, phi is selected according to wind direction (constant wind model only)
 settings.PHIsigma = 0*pi/180;         % Stocasthic simulation only
 
@@ -119,13 +119,13 @@ settings.para(1).mass = 0.075;                                      % [kg]   Par
 settings.para(1).CD = 0.75;                                         % [/] Parachute Drag Coefficient
 settings.para(1).CL = 0;                                            % [/] Parachute Lift Coefficient
 settings.para(1).delay = 0;                                         % [s] drogue opening delay 
-settings.para(1).z_cut = 300;                                       % [m] Final altitude of the parachute
+settings.para(1).z_cut = 200;                                       % [m] Final altitude of the parachute
 
 % parachute 2
-settings.para(2).S = 10.3;                                          % [m^2]   Surface
+settings.para(2).S = 7;                                          % [m^2]   Surface
 settings.para(2).mass = 0.45;                                       % [kg]   Parachute Mass
-settings.para(2).CD = 0.7;                                          % [/] Parachute Drag Coefficient
-settings.para(2).CL = 0.0;                                          % [/] Parachute Lift Coefficient
+settings.para(2).CD = 0.4;                                          % [/] Parachute Drag Coefficient
+settings.para(2).CL = 0.9;                                          % [/] Parachute Lift Coefficient
 settings.para(2).z_cut = 0;                                         % [m] Final altitude of the parachute
 
 %% INTEGRATION OPTIONS
@@ -189,12 +189,12 @@ settings.wind.input_uncertainty = [30, 20];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 4;                           % [m/s] Minimum Magnitude
-settings.wind.MagMax = 8;                           % [m/s] Maximum Magnitude
+settings.wind.MagMin = 3;                           % [m/s] Minimum Magnitude
+settings.wind.MagMax = 12;                           % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;                     % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;                     % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (270)*pi/180;                 % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (270)*pi/180;                 % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (0)*pi/180;                 % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (359)*pi/180;                 % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -210,7 +210,7 @@ settings.ballistic = false;
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;                               % Number of cases
+settings.stoch.N = 1000;                               % Number of cases
 
 %%% launch probability details
 settings.stoch.prob.x_lim = 2e3;                    % Max ovest displacement [m]

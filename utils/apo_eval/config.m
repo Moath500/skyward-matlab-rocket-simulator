@@ -93,6 +93,42 @@ settings.Iyye = 1.81314;                    % [kg*m^2] Inertia to y-axis
 settings.Izze = 1.81333;                    % [kg*m^2] Inertia to z-axis
 
 
+%% AERODYNAMICS DETAILS
+% These coefficients are obtained using MISSILE DATCOM
+% (after parsing with the tool datcom_parser.py)
+% The files are stored in the ../data folder with the following rule:
+% rocket_name_full.mat | rocket_name_empty.mat
+% e.g. R2a_full.mat    | R2a_empty.mat
+% Relative Path of the data files (default: ../data/). Remember the trailing slash!!
+
+% Coeffs is a 4D matrix given by Datcom that contains the aerodynamics
+% coefficient computed for the input parameters (AoA,Betas,Altitudes,Machs)
+% Note: All the parameters (AoA,Betas,Altitudes,Machs) must be the same for
+% empty and full configuration
+
+ DATA_PATH = 'data/';
+ %filename = strcat(DATA_PATH, settings.rocket_name);
+ %filename =  settings.rocket_name;
+
+ % Coefficients in full configuration
+ filename_full = strcat(DATA_PATH,'full.mat');
+ CoeffsF = load(filename_full,'Coeffs');
+ settings.CoeffsF = CoeffsF.Coeffs;
+ clear('CoeffsF');
+ 
+ % Coefficients in empty configuration
+ filename_empty = strcat(DATA_PATH,'empty.mat');
+ CoeffsE = load(filename_empty,'Coeffs');
+ settings.CoeffsE = CoeffsE.Coeffs;
+ clear('CoeffsE');
+ 
+ 
+ s = load(filename_full,'State');
+ settings.Alphas = s.State.Alphas';
+ settings.Betas = s.State.Betas';
+ settings.Altitudes = s.State.Altitudes';
+ settings.Machs = s.State.Machs';
+ clear('s');
 
 %% INTEGRATION OPTIONS
 

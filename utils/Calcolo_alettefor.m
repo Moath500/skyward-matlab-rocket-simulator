@@ -7,7 +7,7 @@ L = 2.02; %Length [m]
 
 Chord_1 = 0.10; %[m]
 Chord_2 = 0.05; %[m]
-Alt = 0.05; %[m]
+Alt = 0.07; %[m]
 
 Spess = 0.003; %[m]
 Dist = 0.00; %[m]

@@ -16,12 +16,12 @@ clc
 %% DATA
 run config.m
 
-r_name = {'R2A' 'R1X'};
+r_name = {'1055' '1056' '1057' '1055i' '1056i'};
 n = length(r_name);
 
 % settings 
 grafico = false;
-cal_min = 1;                    % minum stability margin required
+cal_min = 2;                    % minum stability margin required
 
 %% RUN 
 
@@ -64,8 +64,8 @@ end
 index=find(XCP(1:n,1)>cal_min);
 v_xcp=XCP(index,1);
 
-[apo_max,ind_max]=max(apogee(index));
-
+apo_ok=apogee(index);
+[apo_max,ind_max]=max(apo_ok);
 
 
 

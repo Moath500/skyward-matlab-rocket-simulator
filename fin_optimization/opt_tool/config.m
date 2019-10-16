@@ -60,10 +60,10 @@ switch engine
             178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
             4.589 0.000  ] * 9.81/2.2;                                      % [N]
         
-        settings.ms = 6.605;                                                % [kg]   Structural Mass
+        settings.ms = 6.330;                                                % [kg]   Structural Mass
         settings.mp = 0.889;                                                % [kg]   Propellant Mass
         settings.m0 = settings.ms + settings.mp;                            % [kg]   Overall Mas                                       
-        settings.mnc = 0.120;                                               % [kg]   Nosecone Mass
+        settings.mnc = 0.300;                                               % [kg]   Nosecone Mass
         settings.tb = 3.5;                                                  % [s]    Burning time
         settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
         
@@ -75,7 +75,7 @@ end
 
 settings.C = 0.09;                          % [m]      Caliber (Fuselage Diameter)
 settings.S = 0.0064;                        % [m^2]    Cross-sectional Surface
-L = 1.97;                                   % [m]      Rocket length
+L = 2.02;                                   % [m]      Rocket length
 
 %% MASS GEOMERTY DETAILS
 % x-axis: along the fuselage
@@ -83,14 +83,14 @@ L = 1.97;                                   % [m]      Rocket length
 % z-axis: downward
 
 % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-settings.Ixxf = 0.01001;                    % [kg*m^2] Inertia to x-axis
-settings.Iyyf = 2.12361;                    % [kg*m^2] Inertia to y-axis
-settings.Izzf = 2.12380;                    % [kg*m^2] Inertia to z-axis
+settings.Ixxf = 0.008795446;                    % [kg*m^2] Inertia to x-axis
+settings.Iyyf = 2.050393979;                    % [kg*m^2] Inertia to y-axis
+settings.Izzf = 2.050413838;                    % [kg*m^2] Inertia to z-axis
 
 % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-settings.Ixxe = 0.00969;                    % [kg*m^2] Inertia to x-axis
-settings.Iyye = 1.81314;                    % [kg*m^2] Inertia to y-axis
-settings.Izze = 1.81333;                    % [kg*m^2] Inertia to z-axis
+settings.Ixxe = 0.008472446;                    % [kg*m^2] Inertia to x-axis
+settings.Iyye = 1.712284592;                    % [kg*m^2] Inertia to y-axis
+settings.Izze = 1.712304085;                    % [kg*m^2] Inertia to z-axis
 
 
 

@@ -20,7 +20,7 @@ r_name = {'1055' '1056' '1057' '1055i' '1056i'};
 n = length(r_name);
 
 % settings 
-grafico = false;
+grafico = true;
 cal_min = 2;                    % minum stability margin required
 
 %% RUN 

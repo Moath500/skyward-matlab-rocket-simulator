@@ -22,7 +22,7 @@ settings.funZ = funZ_gen('zdata.mat', settings.lat0, settings.lon0, true, 'xy');
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
 settings.OMEGAmin = 85*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
-settings.OMEGAmax = 89*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmax = 85*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
 settings.PHImin = 180*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.PHImax = 180*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;              % If true, phi is selected according to wind direction (constant wind model only)
@@ -30,28 +30,28 @@ settings.PHIsigma = 0*pi/180;         % Stocasthic simulation only
 
 %% ENGINE DETAILS
 % Aerotech K550W-L
-% settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
-%     1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
-% 
-% settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
-%     178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
-%     4.589 0.000  ] * 9.81/2.2;                                      % [N]
-% 
-% settings.mp = 0.889; 
+settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
+    1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
+
+settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
+    178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
+    4.589 0.000  ] * 9.81/2.2;                                      % [N]
+
+settings.mp = 0.889; 
 
 % Aerotech K695
-settings.motor.exp_time = [0, 0.02:0.05:0.82, 0.88:0.05:2.23];
-
-settings.motor.exp_thrust = [ 0 540.57 716.61 724.39 740.18 751.53 762.31 821.36 908.55 894.53 885.86 881.97 875.41 869.85 863.18 857.51 847.39,...
-  844.38 834.96 825.7 817.69 810.69 793.9 781.77 766.09 750.53 739.41 721.05 703.71 689.03 674.91 662.67 646.1,...
-  633.76 616.52 603.96 590.2 574.71 567.59 569.37 463.39 268.23 121.55 40.92 7.23 3.91]; 
-    
-settings.mp = 0.918;
+% settings.motor.exp_time = [0, 0.02:0.05:0.82, 0.88:0.05:2.23];
+% 
+% settings.motor.exp_thrust = [ 0 540.57 716.61 724.39 740.18 751.53 762.31 821.36 908.55 894.53 885.86 881.97 875.41 869.85 863.18 857.51 847.39,...
+%   844.38 834.96 825.7 817.69 810.69 793.9 781.77 766.09 750.53 739.41 721.05 703.71 689.03 674.91 662.67 646.1,...
+%   633.76 616.52 603.96 590.2 574.71 567.59 569.37 463.39 268.23 121.55 40.92 7.23 3.91]; 
+%     
+% settings.mp = 0.918;
                                                                     % [kg]   Propellant Mass
 settings.mnc = 0.300;                                               % [kg]   Nosecone Mass
 settings.tb = settings.motor.exp_time(end);                         % [s]    Burning time
 settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
-settings.ms = 4.8;                                                  % [kg]   Total Mass
+settings.ms = 6.330;                                                  % [kg]   Total Mass
 settings.m0 = settings.ms + settings.mp;                            % [kg]   Structural Mass
 
 %% GEOMETRY DETAILS
@@ -60,7 +60,7 @@ settings.m0 = settings.ms + settings.mp;                            % [kg]   Str
 
 settings.C = 0.09;                                                  % [m]      Caliber (Fuselage Diameter)
 settings.S = 0.0064;                                                % [m^2]    Cross-sectional Surface
-L = 1.895;                                                          % [m]      Rocket length
+L = 2.02;                                                          % [m]      Rocket length
 
 %% MASS GEOMERTY DETAILS
 % x-axis: along the fuselage
@@ -68,14 +68,14 @@ L = 1.895;                                                          % [m]      R
 % z-axis: downward
 
 % inertias for full configuration (with all the propellant embarqued) obtained with CAD's
-settings.Ixxf = 0.004612382;                                        % [kg*m^2] Inertia to x-axis
-settings.Iyyf = 1.194050037;                                        % [kg*m^2] Inertia to y-axis
-settings.Izzf = 1.194116615;                                        % [kg*m^2] Inertia to z-axis
+settings.Ixxf = 0.008795446;                    % [kg*m^2] Inertia to x-axis
+settings.Iyyf = 2.050393979;                    % [kg*m^2] Inertia to y-axis
+settings.Izzf = 2.050413838;                    % [kg*m^2] Inertia to z-axis
 
 % inertias for empty configuration (all the propellant consumed) obtained with CAD's
-settings.Ixxe = 0.004293335;                                        % [kg*m^2] Inertia to x-axis
-settings.Iyye = 0.931311998;                                        % [kg*m^2] Inertia to y-axis
-settings.Izze = 0.931376985;                                        % [kg*m^2] Inertia to z-axis
+settings.Ixxe = 0.008472446;                    % [kg*m^2] Inertia to x-axis
+settings.Iyye = 1.712284592;                    % [kg*m^2] Inertia to y-axis
+settings.Izze = 1.712304085;                    % [kg*m^2] Inertia to z-axis
      
 %% AERODYNAMICS DETAILS
 % These coefficients are obtained using MISSILE DATCOM
@@ -190,11 +190,11 @@ settings.wind.input_uncertainty = [30, 20];
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 3;                           % [m/s] Minimum Magnitude
-settings.wind.MagMax = 12;                           % [m/s] Maximum Magnitude
+settings.wind.MagMax = 3;                           % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;                     % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;                     % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (0)*pi/180;                 % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (359)*pi/180;                 % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (0)*pi/180;                 % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -205,12 +205,12 @@ settings.wind.AzMax = (359)*pi/180;                 % [rad] Maximum Azimuth, use
 %% BALLISTIC SIMULATION
 % Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = false;    
+settings.ballistic = true;    
 
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1000;                               % Number of cases
+settings.stoch.N = 1;                               % Number of cases
 
 %%% launch probability details
 settings.stoch.prob.x_lim = 2e3;                    % Max ovest displacement [m]

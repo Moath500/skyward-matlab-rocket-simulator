@@ -61,6 +61,12 @@ end
 % results control
 
 
+index=find(XCP(1:n,1)>cal_min);
+v_xcp=XCP(index,1);
+
+[apo_max,ind_max]=max(apogee(index));
+
+
 
 
 

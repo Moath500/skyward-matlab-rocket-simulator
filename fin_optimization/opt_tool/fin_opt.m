@@ -59,14 +59,24 @@ for i=1:n
     end
 end
 
-% results control
-
+%% results control
 
 index=find(XCP(1:n,1)>cal_min);
 v_xcp=XCP(index,1);
 
 apo_ok=apogee(index);
 [apo_max,ind_max]=max(apo_ok);
+
+ind = index(ind_max); 
+
+%% print results 
+
+fprintf('il massimo apogeo è %g ottenuto con le alette: \n',apo_max)
+fprintf('forma a %s \n',data{ind}.shape)
+fprintf('corda max %g [m] \n',data{ind}.c_max)
+fprintf('corda min %g [m] \n',data{ind}.c_min)
+fprintf('altezza %g [m] \n',data{ind}.h)
+
 
 toc 
 

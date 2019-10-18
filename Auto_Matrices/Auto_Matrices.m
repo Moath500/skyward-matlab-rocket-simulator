@@ -17,7 +17,7 @@ Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
 email: mauro.defrancesco@skywarder.eu
 
 %}
-
+tic
 clear; close all; clc
 
 %% States
@@ -242,7 +242,7 @@ for i = 1:N1
             if ismac
                 system('./datcom for005.dat' );
             else
-                system('./datcom.exe for005.dat' );
+                system('datcom.exe for005.dat' );
             end
             
             value = 0;
@@ -250,7 +250,7 @@ for i = 1:N1
                 value = exist('for006.dat','file');
                 pause(0.1);
             end
-            
+            clc
             if k == 1 
                 mat_name = 'full';
             else
@@ -279,3 +279,4 @@ delete('for003.dat', 'for004.dat', 'for005.dat', 'for006.dat', 'for009.dat',...
     'for010.dat', 'for011.dat', 'for012.dat', 'empty.mat', 'full.mat')
 
 clearvars -except data
+toc

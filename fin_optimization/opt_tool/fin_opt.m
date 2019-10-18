@@ -31,6 +31,7 @@ cal_min = 1;                    % minum stability margin required
 % preallocation 
 apogee = zeros(1,n);
 XCP = zeros(2,n);
+leg = cell(1,n);
 j = 1;
 
 tic 
@@ -56,8 +57,11 @@ for i=1:n
         xlabel('time [s]')
         ylabel('S / M')
         hold on 
+        
+        leg{i}=strcat('Matrice_',int2str(i));
     end
 end
+legend(leg);
 
 %% results control
 
@@ -73,9 +77,9 @@ ind = index(ind_max);
 
 fprintf('il massimo apogeo è %g ottenuto con le alette: \n',apo_max)
 fprintf('forma a %s \n',data{ind}.shape)
-fprintf('corda max %g [m] \n',data{ind}.c_max)
-fprintf('corda min %g [m] \n',data{ind}.c_min)
-fprintf('altezza %g [m] \n',data{ind}.h)
+fprintf('corda max: %g [m] \n',data{ind}.c_max)
+fprintf('corda min: %g [m] \n',data{ind}.c_min)
+fprintf('altezza: %g [m] \n',data{ind}.h)
 
 
 toc 

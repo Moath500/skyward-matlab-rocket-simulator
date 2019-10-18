@@ -1,8 +1,4 @@
-function [Tf,Yf,Ta,Ya,bound_value] = std_run_ballistic(settings)
-% STD RUN BALLISTIC - This function runs a ballistic (non-stochastic) simulation
-% OUTPUTS
-% Tf: Time steps
-% Yf: Final State
+function [apogee,t,vect_XCP] = run_sim(settings)
 
 % Author: Ruben Di Battista
 % Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
@@ -40,20 +36,12 @@ tf = settings.ode.final_time;
 [Ta,Ya] = ode113(@ascent,[0,tf],X0a,settings.ode.optionsasc,...
     settings,uw,vw,ww);
 [data_ascent] = RecallOdeFcn(@ascent,Ta,Ya,settings,uw,vw,ww);
-data_ascent.state.Y = Ya;
-data_ascent.state.T = Ta;
-save('data_ascent.mat', 'data_ascent');
 
-%% FINAL STATE ASSEMBLING 
-    
-% Total State
-Yf = [Ya(:,1:3) quatrotate(quatconj(Ya(:,10:13)),Ya(:,4:6)) Ya(:,7:13)];
-% Total Time
-Tf = [Ta];
 
-%% TIME, POSITION AND VELOCITY AT APOGEE
+%% CALCULATE OUTPUT QUANTITIES 
 
-bound_value.td1 = Ta(end);
-bound_value.Xd1 = [Ya(end,2), Ya(end,1), -Ya(end,3)];
-bound_value.Vd1 = quatrotate(quatconj(Ya(end,10:13)),Ya(end,4:6));
+[apogee,] = max(-Ya(:,3));
+t=Ta;
+vect_XCP=-data_ascent.coeff.XCP;
+ 
 

@@ -21,7 +21,7 @@ n = length(r_name);
 
 % settings 
 grafico = true;
-cal_min = 2;                    % minum stability margin required
+cal_min = 1;                    % minum stability margin required
 
 %% RUN 
 
@@ -37,7 +37,7 @@ for i=1:n
    
     % running simulation 
     [settings.CoeffsF,settings.CoeffsE,settings.Alphas,settings.Betas,settings.Altitudes,settings.Machs] = takefile(r_name{i});
-    [apogee(i), max_a(i),Vexit(i),t,Xcp] = start_simulation(settings);
+    [apogee(i),t,Xcp] = run_sim(settings);
    
     % ottimizzazione 
     check=isnan(Xcp);

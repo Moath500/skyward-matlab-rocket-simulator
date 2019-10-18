@@ -8,8 +8,10 @@ blocks = blocks(2:end);
 
 %% get_coeffs_name
 pattern =  ' *\<ALPHA\> *([\w -/]*)';
-names = {};
-for i = 1:length(blocks)
+names = cell(26,1);
+index = 1;
+
+for i = 1:4
     block = blocks{i};
     token = regexp(block,pattern,'tokens');
    
@@ -31,7 +33,8 @@ for i = 1:length(blocks)
         correct{j} = [a,b];
     end
     
-    names{end+1} = correct;
+    names(index:index+length(correct)-1) = correct;
+    index = index+length(correct);
 end
 
 
@@ -41,55 +44,78 @@ pattern2 = ' *\<ALTITUDE\> *= * (-*[\d]+.[\d]*)';
 pattern3 = ' *\<SIDESLIP\> *= * (-*[\d]+.[\d]*)';
 pattern4 = ' *\<MOMENT CENTER\> *= * (-*[\d]+.[\d]*)';
 
-M=[];
-A=[];
-B=[];
-XM=[];
+M=zeros(1,length(blocks)/4);
+A=zeros(1,length(blocks)/4);
+B=zeros(1,length(blocks)/4);
+XM=zeros(1,length(blocks)/4);
 
-for i = 1:length(blocks)
-    block = blocks{i};
+for i = 1:length(blocks)/4
+    block = blocks{(i-1)*4+1};
     mach = regexp(block,pattern1,'tokens');
-    M = [M, str2double(mach{1})];
+    M(i) = str2double(mach{1});
     sslip = regexp(block,pattern3,'tokens');
-    B = [B, str2double(sslip{1})];
+    B(i) = str2double(sslip{1});
     alt = regexp(block,pattern2,'tokens');
-    A = [A, str2double(alt{1})];
+    A(i) = str2double(alt{1});
     mcenter = regexp(block,pattern4,'tokens');
-    XM = [XM, str2double(mcenter{1})];
+    XM(i) = str2double(mcenter{1});
 end
 
-%% get_rawdata
+%% get_alpha
 pattern = '^[-\d](?=[\d\.])';
 pattern2 = '\n\t?';
 
-raw_data = {};
+block = blocks{2}; 
+lines = regexp(block,pattern2,'split');
+index = 0;
+new_1 = cell(200,1);
+
+for j = 1:length(lines)
+    line = lines{j};
+    line = strip(line);
+    
+    if regexp(line,pattern,'once')
+        index = index + 1;
+        new_1{index} = str2double(split(line));
+    end
+    
+end
+
+alpha = zeros(1,index);
+
+for j = 1:index
+    row = new_1{j};
+    alpha(j) = row(1);
+end
+%% get_rawdata
+raw_data = cell(1,length(blocks));
 
 for i = 1:length(blocks)
     block = blocks{i};
     lines = regexp(block,pattern2,'split');
-    new_1 = {};
+    index = 0;
+    new_1 = cell(200,1);
     
     for j = 1:length(lines)
         line = lines{j};
         line = strip(line);
         
-        if not(isempty(regexp(line,pattern)))
-            new_1{end+1} = str2double(split(line));
+        if regexp(line,pattern,'once')
+            index = index + 1;
+            new_1{index} = str2double(split(line));
         end
         
     end
     
-    alpha = [];
-    new_1_1 = {};
+    new_1_1 = cell(1,index);
     
-    for j = 1:length(new_1)
+    for j = 1:index
         row = new_1{j};
-        alpha = [alpha, row(1)];
-        new_1_1{end+1} = row(2:end);
+        new_1_1{j} = row(2:end);
     end
+    
     new_1 = new_1_1;
     l = length(new_1{1});
-    
     
     for j = 1:length(new_1_1)
         row = new_1_1{j};
@@ -103,57 +129,54 @@ for i = 1:length(blocks)
     
     new_1 = transpose(cell2mat(new_1(1:index)));
     
-    raw_data{end+1} = new_1;
+    raw_data{i} = new_1;
             
 end
 
-if index ~= length(new_1_1)
-    alpha = alpha(1:end/2);
-end
 
 raw_data = cell2mat(raw_data);
 
 %% savemat
-realM = [M(1)];
-realA = [A(1)];
-realB = [B(1)];
-realXM = [XM(1)];
+realM = [M(1), zeros(1,200)];
+realA = [A(1), zeros(1,200)];
+realB = [B(1), zeros(1,200)];
+
+iM = 1;
+iA = 1;
+iB = 1;
 
 for i = 2:length(M)
     if not(any(realM == M(i)))
-        realM = [realM, M(i)];
+        iM = iM + 1;
+        realM(iM) = M(i);
     end
     if not(any(realA == A(i)))
-        realA = [realA, A(i)];
+        iA = iA + 1;
+        realA(iA) = A(i);
     end
     if not(any(realB == B(i)))
-        realB = [realB, B(i)];
+        iB = iB + 1;
+        realB(iB) = B(i);
     end
-    if not(any(realXM == XM(i)))
-        realXM = [realXM, XM(i)];
-    end  
 end
 
-n_ind = length(realA)*length(realB)*length(realM);
-n_rep = length(blocks)/(length(realA)*length(realB)*length(realM));
+realM = realM(1:iM);
+realA = realA(1:iA);
+realB = realB(1:iB);
 
-realNames = {};
-for i = 1:n_rep
-    realNames = [realNames;names{i}];
-end
 
-    for j = 1:length(realNames)
-        Coeffs.(realNames{j}) = zeros(length(alpha),length(realM),length(realB),length(realA));
+    for j = 1:length(names)
+        Coeffs.(names{j}) = zeros(length(alpha),iM,iB,iA);
     end
 
-for i = 0:n_ind-1
-    index = i*n_rep+1;
+for i = 1:length(blocks)/4
+    index = i;
     iA = find(realA==A(index));
     iB = find(realB==B(index));
     iM = find(realM==M(index));
     
-    for j = 1:length(realNames)
-        Coeffs.(realNames{j})(:,iM,iB,iA) = raw_data(:,length(realNames)*i+j);
+    for j = 1:length(names)
+        Coeffs.(names{j})(:,iM,iB,iA) = raw_data(:,length(names)*(i-1)+j);
     end
     
    

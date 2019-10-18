@@ -34,8 +34,8 @@ Nalt = length(Alt);
 
 %% Design Parameters
 % looping for various dimension of the fins
-Chord1 = 0.1:0.01:0.11; N1 = length(Chord1);
-Chord2 = 0.09:0.01:0.1; N2 = length(Chord2);
+Chord1 = 0.1:0.01:0.12; N1 = length(Chord1);
+Chord2 = 0.05:0.01:0.7; N2 = length(Chord2);
 shape = 'rect';
 
 %% Fixed Parameters

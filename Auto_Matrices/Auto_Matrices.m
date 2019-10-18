@@ -1,310 +1,281 @@
-% Auto_Matrices
+%{
 
-% Skyward Experimental Rocketry 
+Auto_Matrices - This script compiles many aerodynamic prediction using MISSILE
+DATCOM to optimize rocket fins.
+The output is a cell array composed by structures in which the aerodynamic
+coefficients are stored.
+In each prediction just the fin parameters are varying.
+Check section " Design Parameters " to compose the for loop
 
-% Written by: | Mauro De Francesco | MSA Team Leader |
-% mauro.defrancesco@skywarder.eu
+Author: Adriano Filippo Inno
+Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+email: adriano.filippo.inno@skywarder.eu
+Release date: 18/10/2019
 
-% Approved by: | Mauro De Francesco | MSA Team Leader | 
-% mauro.defrancesco@skywarder.eu 
+Author: Mauro De Francesco
+Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+email: mauro.defrancesco@skywarder.eu
 
+%}
 
-% This program is used to determine the stability of a rocket through the
-% change of some of the parameters of the fins.
-% This require in the path for matlab, datcom.exe and datcom_parser.
-% The program compiles a datcom input file, generate a datcom output file
-% and converts it to a matrix.
+clear; close all; clc
 
-%--------------------------------------------------------------------------
+%% States
+% State values in which the aerodynamic coefficients will be computed
+Mach = 0.05:0.05:0.65;
+Alpha = [-20 -15 -10 -7.5 -5 -2.5 -1.5 -1 -0.5 -0.1 0.1 0.5 1 1.5 2.5 5 7.5 10 15 20];
+Beta = [-0.1 0.1];
+Alt = 0:200:2400;
+Nm = length(Mach);
+Na = length(Alpha);
+Nb = length(Beta);
+Nalt = length(Alt);
 
-% Definition of the INPUT for the code:
-
-% XcgF : Longitudinal position of Gravity Center in wet condition
-% XcgE : Longitudinal position of Gravity Center in dry condition
-% Sref : Reference area
-% Lref : Longitudinal reference length
-% Latref : Lateral reference length
-% Tnose : Nose shape
-% Lnose : Nose length
-% Dnose : Nose diameter at base
-% Lcenter : Centerbody length
-% Dcenter : Centerbody diameter at base
-% Dexit : Nozzle diameter for base drag calculation
-% Base : Flag for base plume interaction
-% Xle : Distance from missile nose to chord leading edge at each semi-span location
-% Npanel : Numbers of panels
-% Phif : Angle from each panel
-% Ler : Leading edge radius at each span station
-% Sta : Chord station used in measuring sweep
-% Sspan : Semi-span location
-% Chord : Panel chord at each semi-span location
-% Zupper : Thickness to chord ratio of upper surface
-% Lmaxu : Fraction of chord from leading edge to max thickness of upper surface
-% Lflatu : Fraction of chord of constant thickness  section of upper surface
-
-%--------------------------------------------------------------------------
-
-tic
-clear 
-close all
-clc
-
-%% Flight Conditions
-
-Mach=[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2];
-Alpha=[-20 -15 -10 -7.5 -5 -2.5 -1.5 -1 -0.5 0.0 0.5 1 1.5 2.5 5 7.5 10 15 20];
-m=length(Mach);
-n=length(Alpha);
-Beta=0;
-Alt=[0 500 1000 1500 2000 2500 3000 3500 4000 4500 5000 5500 6000 6500 7000 8000 9000 10000];
 
 %% Design Parameters
-
-% Starting the loop for various dimension of the fins (change these if you
-% need some other parameters)
-radius= 0.087;
-height= 0.15; %put the values for different height
-LSspan=radius+height;
-LChord=0.32; %put the values for different chords
-d=0.05; %distance from end of rocket
+% looping for various dimension of the fins
+Chord1 = 0.1:0.01:0.11; N1 = length(Chord1);
+Chord2 = 0.09:0.01:0.1; N2 = length(Chord2);
+shape = 'rect';
 
 %% Fixed Parameters
+xcg = [1.149, 1.069];                               % [m] CG position [full, empty]
+D = 0.09;                                           % [m] rocket diameter
+r = D/2;                                            % [m] rocket radius
+S = r^2*pi;                                         % [m^2] cross section                         
+Lnose = 0.3;                                        % [m] nose length
+Lcenter = 1.72;                                     % [m] Lcenter : Centerbody length
+Npanel = 4;                                         % [m] number of fins
+Phif = [0 90 180 270];                              % [deg] Angle of each panel
+Ler = 0.003;                                        % [deg] Leading edge radius
+d = 0;                                              % [m] rocket tip-fin distance
+zup_raw = 0.0015;                                   % [m] fin semi-thickness 
+Lmaxu_raw = 0.006;                                  % [m] Fraction of chord from leading edge to max thickness
+C1Hratio = 2;                                       % [/] fin chord-heigth ratio
 
-% Reference Quantities
-Xcgf=2.624;
-Xcge=2.429;
-Sref=0.02378;
-Lref=0.174;
-Latref=0.174;
-
-% Axisymmetric Body Geometry
-Lnose=0.958;
-Dnose=0.174;
-Lcenter=3.442;
-Dcenter=0.174;
-
-% Define Fin Set n
-Npanel=4;
-Phif=[0 90 180 270];
-Ler=2*0.0015;
-Sta=0;
-Sweep=64;
-
-%% Creation of for005.dat
-
-for L1=1:length(LSspan)
-    for L2=1:length(LChord)
-% Create folder for your case
-        first_t=height(L1);
-        second_t=LChord(L2);        
-        Xle=4.4 - d - LChord(L2);
-        Sspan=[0.087 LSspan(L1)];
-        h_fin=Sspan(2)-Sspan(1);
-        chord_out=h_fin*tand(20)+LChord(L2)-h_fin*tand(64);
-        
-        if chord_out>0
-            newdir = sprintf('%g',first_t, -second_t, -d);
-            mkdir(fullfile(newdir)); 
-        end
-        
-        for Xcg=[Xcgf Xcge]
-
-% Define Fin Set n (Variables)
-
-
-if chord_out>0
+data = cell(N1, N2);
+mass_condition = {'full', 'empty'};
+for i = 1:N1
+    C1 = Chord1(i);
+    H = C1/C1Hratio;
     
-Chord=[LChord(L2) chord_out];
-
-Zupper=[2e-3/Chord(1) 2e-3/Chord(2)];
-Lmaxu=[3e-2/Chord(1) 3e-2/Chord(2)];
-Lflatu=[(Chord(1)-0.06)/Chord(1) (Chord(2)-0.06)/Chord(2)];
-
-
-% Creating for005.dat file from previous data
-fid = fopen(strcat(pwd,'\for005.dat'),'w+'); %w+ open or create file for reading and writing; discard existing contents
-% Flight Conditions
-fprintf(fid,'\n $FLTCON\r\n');
-fprintf(fid, '  BETA=-5.,\r\n');
-fprintf(fid, '  ALT=20*0.,\r\n');
-fprintf(fid, '  NMACH=20.');
-fprintf(fid, ',');
-fprintf(fid, '\r\n');
-fprintf(fid, '  MACH=');
-fprintf(fid, '%.2f',Mach(1));
-fprintf(fid, ',');
-for i=2:10
-    fprintf(fid, '%.1f',Mach(i));
-    fprintf(fid, ',');
-end
-fprintf(fid, '%.2f',Mach(11));
-fprintf(fid, ',');
-fprintf(fid, '%.1f',Mach(12));
-fprintf(fid, ',');
-fprintf(fid, '\r\n');
-fprintf(fid,  '  MACH(13)=');
-fprintf(fid, '%.2f',Mach(13));
-fprintf(fid, ',');
-for i=14:20
-    fprintf(fid, '%.1f',Mach(i));
-    fprintf(fid, ',');
-end
-fprintf(fid, '\r\n');
-fprintf(fid, '  NALPHA=19.');
-fprintf(fid, ',');
-fprintf(fid, '\r\n');
-fprintf(fid, '  ALPHA=');
-for i=1:10
-    fprintf(fid, '%.1f',Alpha(i));
-    fprintf(fid, ',');
-end
-fprintf(fid, '\r\n');
-fprintf(fid, '  ALPHA(10)=');
-for i=10:19
-    fprintf(fid, '%.1f',Alpha(i));
-    fprintf(fid, ',');
-end
-fprintf(fid, '$');
-
-% Reference Quantities
-fprintf(fid, '\r\n $REFQ\r\n');
-fprintf(fid, '  XCG=');
-fprintf(fid, '%.5f,\r\n', Xcg);
-fprintf(fid, '  SREF=');
-fprintf(fid, '%.5f,\r\n', Sref);
-fprintf(fid, '  LREF=');
-fprintf(fid, '%.3f,\r\n', Lref);
-fprintf(fid, '  LATREF=');
-fprintf(fid, '%.3f', Latref);
-fprintf(fid, ',');
-fprintf(fid, '$');
-
-% Axisymmetric Body Geometry
-fprintf(fid, '\r\n $AXIBOD\r\n');
-fprintf(fid, '  TNOSE=KARMAN');
-fprintf(fid, ',');
-fprintf(fid, '\r\n');
-fprintf(fid, '  LNOSE=');
-fprintf(fid, '%.3f,\r\n', Lnose);
-fprintf(fid, '  DNOSE=');
-fprintf(fid, '%.3f,\r\n', Dnose);
-fprintf(fid, '  LCENTR=');
-fprintf(fid, '%.3f,\r\n', Lcenter);
-fprintf(fid, '  DCENTR=');
-fprintf(fid, '%.3f,\r\n', Dcenter);
-fprintf(fid, '  DEXIT=0.161');
-fprintf(fid, ',');
-fprintf(fid, '\r\n');
-fprintf(fid, '  BASE=.FALSE.,$');
-
-% Finset
-fprintf(fid, '\r\n $FINSET1\r\n');
-fprintf(fid, '  XLE=');
-fprintf(fid, '%.3f,\r\n', Xle);
-fprintf(fid, '  NPANEL=');
-fprintf(fid, '%.1f,\r\n', Npanel);
-fprintf(fid, '  PHIF=');
-for i=1:length(Phif)
-fprintf(fid, '%.1f', Phif(i));
-fprintf(fid, ',');
-end
-fprintf(fid, '\r\n');
-fprintf(fid, '  LER=2*');
-fprintf(fid, '%.4f,\r\n', Ler);
-fprintf(fid, '  SWEEP=');
-fprintf(fid, '%.1f,\r\n', Sweep);
-fprintf(fid, '  STA=');
-fprintf(fid, '%.1f,\r\n', Sta);
-fprintf(fid, '  SSPAN=');
-for i=1:length(Sspan)
-fprintf(fid, '%.3f', Sspan(i));
-fprintf(fid, ',');
-end
-fprintf(fid, '\r\n');
-fprintf(fid, '  CHORD=');
-for i=1:length(Chord)
-fprintf(fid, '%.3f', Chord(i));
-fprintf(fid, ',');
-end
-fprintf(fid, '\r\n');
-fprintf(fid, '  SECTYP=HEX,');
-fprintf(fid, '\r\n');
-fprintf(fid, '  ZUPPER=');
-for i=1:length(Zupper)
-fprintf(fid, '%.4f', Zupper(i));
-fprintf(fid, ',');
-end
-fprintf(fid, '\r\n');
-fprintf(fid, '  LMAXU=');
-for i=1:length(Lmaxu)
-fprintf(fid, '%.4f', Lmaxu(i));
-fprintf(fid, ',');
-end
-fprintf(fid, '\r\n');
-fprintf(fid, '  LFLATU=');
-for i=1:length(Lflatu)
-fprintf(fid, '%.4f', Lflatu(i));
-fprintf(fid, ',');
-end
-fprintf(fid, '$\r\n');
-
-% Options
-fprintf(fid, 'DERIV RAD\r\n');
-fprintf(fid, 'DIM M\r\n');
-fprintf(fid, 'DAMP\r\n');
-fprintf(fid, 'SAVE\r\n');
-fprintf(fid, 'NEXT CASE\r\n');
-
-% Cases
-for j=1:length(Alt)
-    for k=1:length(Beta)
-        if Beta(k)==-5 && Alt(j)==0
-        else
-        fprintf(fid,' $FLTCON\r\n');
-        fprintf(fid,'  BETA=');
-        fprintf(fid, '%.1f,\r\n', Beta(k));
-        fprintf(fid,'  ALT=');
-        fprintf(fid, '%.1f', Alt(j));
-        fprintf(fid, '$\r\n');
-        fprintf(fid, 'DERIV RAD\r\n');
-        fprintf(fid, 'DIM M\r\n');
-        fprintf(fid, 'DAMP\r\n');
-        fprintf(fid, 'SAVE\r\n');
-        fprintf(fid, 'NEXT CASE\r\n');
-        end
-    end
-end
-fclose(fid);
+    for j = 1:N2
+        C2 = Chord2(j);
         
-
- %% Creating .dat files+parsing
-
-dos('datcoming')
-pause(20)
-dos('parsing')
-
-value=0;
-while value==0
-    value=exist('for006.mat','file');
-    pause(1);
-end
-
-%% Managing files
-
-s=sprintf('%s', pwd,'\', newdir);
-
-if Xcg==Xcgf
-     movefile(strcat(pwd,'\for006.mat'),strcat(s,'\R2A_full.mat'));
-     
-else
-    movefile(strcat(pwd,'\for006.mat'),strcat(s,'\R2A_empty.mat'));
-end
+        if C2 >= C1
+            break
+        end
+        
+        Xle1 = Lcenter + Lnose - d - C1;
+        diffC = C1-C2;
+        
+        switch shape
+            case 'rect'
+                Xle2 = Lcenter + Lnose - d - C2;
+                
+            case 'iso'
+                Xle2 = Lcenter + Lnose - d - diffC/2;
+        end
+        
+        % Defining Fin Section
+        Zup = [zup_raw/C1 zup_raw/C2];
+        Lmaxu = [Lmaxu_raw/C1 Lmaxu_raw/C2];
+        Lflatu = [(C1 - 2*Lmaxu_raw)/C1 (C2 - 2*Lmaxu_raw)/C2];
+        
+        for k = 1:2
+            XCG = xcg(k);
+            
+            %% Creating for005.dat file from previous data
+            if ismac   % mac procedure
+                fid  =  fopen(strcat(pwd, '/for005.dat'),'w+');
+            else
+                fid  =  fopen(strcat(pwd, '\for005.dat'),'w+');
+            end
+            
+            %%%%%%%%%%%% Flight Conditions
+            %%%% Beta
+            fprintf(fid, '\n $FLTCON\r\n');
+            fprintf(fid, '  BETA = ');
+            fprintf(fid, '%.2f,\r\n', Beta(1));
+            %%%% Alt
+            fprintf(fid, ' ALT = ');
+            fprintf(fid, '%d', Nm);
+            fprintf(fid, '*');
+            fprintf(fid, '%d.,\r\n', Alt(1));
+            %%%% Nmach
+            fprintf(fid, '  NMACH = ');
+            fprintf(fid, '%d., \r\n', Nm);
+            %%%% Mach
+            fprintf(fid, '  MACH = ');
+            for M = 1:11
+                fprintf(fid, '%.2f,',Mach(M));
+            end
+            fprintf(fid,  ' \r\n MACH(12) = ');
+            for M = 12:Nm
+                fprintf(fid, '%.2f',Mach(M));
+                fprintf(fid, ',');
+            end
+            fprintf(fid, '\r\n');
+            %%%% Nalpha
+            fprintf(fid, '  NALPHA = ');
+            fprintf(fid, '%d., \r\n', Na);
+            %%%% Alpha
+            fprintf(fid, '  ALPHA = ');
+            for a = 1:9
+                fprintf(fid, '%.1f,', Alpha(a));
+            end
+            fprintf(fid,  ' \r\n ALPHA(10) = ');
+            for a = 10:Na
+                fprintf(fid, '%.1f,', Alpha(a));
+            end
+            fprintf(fid, '$');
+            
+            %%%%%%%%%%%% Reference Quantities
+            fprintf(fid, '\r\n $REFQ\r\n');
+            %%%% XCG
+            fprintf(fid, '  XCG = ');
+            fprintf(fid, '%.4f,\r\n', XCG);
+            %%%% SREF
+            fprintf(fid, '  SREF = ');
+            fprintf(fid, '%.5f,\r\n', S);
+            %%%% LREF
+            fprintf(fid, '  LREF = ');
+            fprintf(fid, '%.3f,\r\n', D);
+            %%%% LATREF
+            fprintf(fid, '  LATREF = ');
+            fprintf(fid, '%.3f,$', D);
+            
+            %%%%%%%%%%%% Axisymmetric Body Geometry
+            fprintf(fid, '\r\n $AXIBOD\r\n');
+            %%%% TNOSE
+            fprintf(fid, '  TNOSE = KARMAN, \r\n');
+            %%%% LNOSE
+            fprintf(fid, '  LNOSE = ');
+            fprintf(fid, '%.3f, \r\n', Lnose);
+            %%%% DNOSE
+            fprintf(fid, '  DNOSE = ');
+            fprintf(fid, '%.3f, \r\n', D);
+            %%%% LCENTR
+            fprintf(fid, '  LCENTR = ');
+            fprintf(fid, '%.3f, \r\n', Lcenter);
+            %%%% DCENTR
+            fprintf(fid, '  DCENTR = ');
+            fprintf(fid, '%.3f, \r\n', D);
+            %%%% DEXIT
+            fprintf(fid, '  DEXIT = ');
+            fprintf(fid, '%.3f, \r\n', D);
+            %%%% BASE
+            fprintf(fid, '  BASE = .FALSE.,$');
+            
+            %%%%%%%%%%%% Finset
+            fprintf(fid, '\r\n $FINSET1 \r\n');
+            %%%% XLE
+            fprintf(fid, '  XLE = ');
+            fprintf(fid, '%.3f,', Xle1);
+            fprintf(fid, '%.3f, \r\n', Xle2);
+            %%%% NPANEL
+            fprintf(fid, '  NPANEL = ');
+            fprintf(fid, '%.1f,\r\n', Npanel);
+            %%%% PHIF
+            fprintf(fid, '  PHIF = ');
+            for P = 1:length(Phif)
+                fprintf(fid, '%.1f', Phif(P));
+                fprintf(fid, ',');
+            end
+            fprintf(fid, '\r\n');
+            %%%% LER
+            fprintf(fid, '  LER = 2*');
+            fprintf(fid, '%.4f,\r\n', Ler);
+            %%%% SSPAN
+            fprintf(fid, '  SSPAN = ');
+            fprintf(fid, '%.3f,', r);
+            fprintf(fid, '%.3f,\r\n', r + H);
+            %%%% CHORD
+            fprintf(fid, '  CHORD = ');
+            fprintf(fid, '%.3f,', C1);
+            fprintf(fid, '%.3f,\r\n', C2);
+            %%%% SECTYP
+            fprintf(fid, '  SECTYP = HEX, \r\n');
+            %%%% ZUPPER
+            fprintf(fid, '  ZUPPER = ');
+            fprintf(fid, '%.4f,', Zup(1));
+            fprintf(fid, '%.4f,\r\n', Zup(2));
+            %%%% LMAXU
+            fprintf(fid, '  LMAXU = ');
+            fprintf(fid, '%.4f,', Lmaxu(1));
+            fprintf(fid, '%.4f,\r\n', Lmaxu(2));
+            %%%% LMAXU
+            fprintf(fid, '  LFLATU = ');
+            fprintf(fid, '%.4f,', Lflatu(1));
+            fprintf(fid, '%.4f,$ \r\n', Lflatu(2));
+            
+            %%%%%%%%%%%% Options
+            fprintf(fid, 'DERIV RAD \r\n');
+            fprintf(fid, 'DIM M \r\n');
+            fprintf(fid, 'DAMP \r\n');
+            fprintf(fid, 'SAVE \r\n');
+            fprintf(fid, 'NEXT CASE \r\n');
+            
+            %%%%%%%%%%%% Cases
+            for A = 1:Nalt
+                for B = 1:Nb
+                    if A == 1 && B == 1
+                    else
+                        fprintf(fid,' $FLTCON \r\n');
+                        fprintf(fid,'  BETA = ');
+                        fprintf(fid, '%.1f, \r\n', Beta(B));
+                        fprintf(fid, ' ALT = ');
+                        fprintf(fid, '%d', Nm);
+                        fprintf(fid, '*');
+                        fprintf(fid, '%d .,$ \r\n', Alt(A));
+                        fprintf(fid, 'DERIV RAD\r\n');
+                        fprintf(fid, 'DIM M\r\n');
+                        fprintf(fid, 'DAMP\r\n');
+                        fprintf(fid, 'SAVE\r\n');
+                        fprintf(fid, 'NEXT CASE\r\n');
+                    end
+                end
+            end
+            fclose(fid);
+            
+            %% Datcom and parsing
+            if ismac
+                system('./datcom for005.dat' );
+            else
+                system('./datcom.exe for005.dat' );
+            end
+            
+            value = 0;
+            while value == 0
+                value = exist('for006.dat','file');
+                pause(0.1);
+            end
+            
+            if k == 1 
+                mat_name = 'full';
+            else
+                mat_name = 'empty';
+            end
+            
+            [Coeffs, State] = datcom_parser(mat_name);
+            
+            data{i, j}.(mass_condition{k}).Coeffs = Coeffs;
+            data{i, j}.(mass_condition{k}).State = State;
+            if k == 1
+                data{i, j}.c_max = C1;
+                data{i, j}.c_min = C2;
+                data{i, j}.h = H;
+                data{i, j}.shape = shape;
+            end
+        end
+        
+    end
     
 end
 
-        end
-    end
-end
+data = reshape(data, [N1*N2, 1]);
+data = data(~cellfun('isempty', data));
+delete('for003.dat', 'for004.dat', 'for005.dat', 'for006.dat', 'for009.dat',...
+    'for010.dat', 'for011.dat', 'for012.dat', 'empty.mat', 'full.mat')
 
-beep %gives an alarm when the program stopped working
-toc
+clearvars -except data

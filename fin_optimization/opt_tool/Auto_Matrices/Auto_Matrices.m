@@ -33,13 +33,13 @@ Nalt = length(Alt);
 
 
 %% Design Parameters
-% looping for various dimension of the fins
+% looping for various dimension of the fins [m]
 Chord1 = 0.1:0.01:0.12; N1 = length(Chord1);
-Chord2 = 0.05:0.01:0.7; N2 = length(Chord2);
+Chord2 = 0.05:0.01:0.07; N2 = length(Chord2);
 shape = 'rect';
 
 %% Fixed Parameters
-xcg = [1.149, 1.069];                               % [m] CG position [full, empty]
+xcg = [1.251, 1.171];                               % [m] CG position [full, empty]
 D = 0.09;                                           % [m] rocket diameter
 r = D/2;                                            % [m] rocket radius
 S = r^2*pi;                                         % [m^2] cross section                         

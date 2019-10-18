@@ -14,10 +14,13 @@ close all
 clc 
 
 %% DATA
+
+run Auto_Matrices.m
+
+
 run config.m
 
-r_name = {'1055' '1056' '1057' '1055i' '1056i'};
-n = length(r_name);
+n=length(data);
 
 % settings 
 grafico = true;
@@ -27,16 +30,14 @@ cal_min = 1;                    % minum stability margin required
 
 % preallocation 
 apogee = zeros(1,n);
-max_a = zeros(1,n);
-Vexit = zeros(1,n);
 XCP = zeros(2,n);
 j = 1;
 
-
+tic 
 for i=1:n
    
     % running simulation 
-    [settings.CoeffsF,settings.CoeffsE,settings.Alphas,settings.Betas,settings.Altitudes,settings.Machs] = takefile(r_name{i});
+    [settings.CoeffsF,settings.CoeffsE,settings.Alphas,settings.Betas,settings.Altitudes,settings.Machs] = takefile(data{i});
     [apogee(i),t,Xcp] = run_sim(settings);
    
     % ottimizzazione 
@@ -67,8 +68,7 @@ v_xcp=XCP(index,1);
 apo_ok=apogee(index);
 [apo_max,ind_max]=max(apo_ok);
 
-
-
+toc 
 
 
 

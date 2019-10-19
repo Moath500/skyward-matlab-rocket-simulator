@@ -1,4 +1,5 @@
 function [Coeffs, State] = datcom_parser(mat_name)
+
 linestring = fileread('for006.dat');
 
 %% blocksplit
@@ -37,30 +38,28 @@ for i = 1:4
     index = index+length(correct);
 end
 
-
 %% get_data
 pattern1 = ' *\<MACH NO\> *= * (-*[\d]+.[\d]*)';
 pattern2 = ' *\<ALTITUDE\> *= * (-*[\d]+.[\d]*)';
 pattern3 = ' *\<SIDESLIP\> *= * (-*[\d]+.[\d]*)';
-pattern4 = ' *\<MOMENT CENTER\> *= * (-*[\d]+.[\d]*)';
 
-M=zeros(1,length(blocks)/4);
-A=zeros(1,length(blocks)/4);
-B=zeros(1,length(blocks)/4);
-XM=zeros(1,length(blocks)/4);
+M=cell(1,length(blocks)/4);
+A=cell(1,length(blocks)/4);
+B=cell(1,length(blocks)/4);
 
 for i = 1:length(blocks)/4
     block = blocks{(i-1)*4+1};
     mach = regexp(block,pattern1,'tokens');
-    M(i) = str2double(mach{1});
+    M{i} = char(mach{1});
     sslip = regexp(block,pattern3,'tokens');
-    B(i) = str2double(sslip{1});
+    B{i} = char(sslip{1});
     alt = regexp(block,pattern2,'tokens');
-    A(i) = str2double(alt{1});
-    mcenter = regexp(block,pattern4,'tokens');
-    XM(i) = str2double(mcenter{1});
+    A{i} = char(alt{1});
 end
 
+M = str2num(strjoin(M));
+A = str2num(strjoin(A));
+B = str2num(strjoin(B));
 %% get_alpha
 pattern = '^[-\d](?=[\d\.])';
 pattern2 = '\n\t?';
@@ -102,7 +101,8 @@ for i = 1:length(blocks)
         
         if regexp(line,pattern,'once')
             index = index + 1;
-            new_1{index} = str2double(split(line));
+            new_1{index} = transpose(str2num(line));
+            
         end
         
     end
@@ -163,7 +163,6 @@ end
 realM = realM(1:iM);
 realA = realA(1:iA);
 realB = realB(1:iB);
-
 
     for j = 1:length(names)
         Coeffs.(names{j}) = zeros(length(alpha),iM,iB,iA);

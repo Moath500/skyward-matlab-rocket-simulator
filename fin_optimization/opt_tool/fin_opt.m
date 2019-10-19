@@ -18,11 +18,12 @@ clc
 path = genpath(pwd);
 addpath(path);
 
-%% RETRIVING GEOMETRICAL DATA
-run config.m
 
 %% COMPUTING AERODYNAMIC DATA
 run Auto_Matrices.m
+
+%% RETRIVING GEOMETRICAL DATA
+run config.m
 
 %% FINSETs SIMULATION 
 tic

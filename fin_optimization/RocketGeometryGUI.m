@@ -387,6 +387,7 @@ f.Visible = 'on';
         RocketUIAxes.XLim = [-15 (15+data.RocketLength)];
         xlabel(RocketUIAxes, 'X [cm]')
         ylabel(RocketUIAxes, 'Z [cm]')
+        axis(RocketUIAxes, 'equal')
         legend([h1,h2],'Rocket','CG');
         axis(RocketUIAxes,'equal');
         grid(RocketUIAxes,'on');
@@ -409,6 +410,7 @@ f.Visible = 'on';
         FinsUIAxes.YLim = [-data.FinT data.FinT];
         xlabel(FinsUIAxes, 'X [cm]')
         ylabel(FinsUIAxes, 'Y [cm]')
+        axis(FinsUIAxes, 'equal')
         grid(FinsUIAxes,'minor');
         axis(FinsUIAxes,'equal');
         legend([h1,h2],'Cross section at fin root','Cross section at fin tip');

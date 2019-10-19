@@ -227,7 +227,7 @@ for i = 1:N1
                         fprintf(fid, ' ALT = ');
                         fprintf(fid, '%d', Nm);
                         fprintf(fid, '*');
-                        fprintf(fid, '%d .,$ \r\n', Alt(A));
+                        fprintf(fid, '%d.,$ \r\n', Alt(A));
                         fprintf(fid, 'DERIV RAD\r\n');
                         fprintf(fid, 'DIM M\r\n');
                         fprintf(fid, 'DAMP\r\n');

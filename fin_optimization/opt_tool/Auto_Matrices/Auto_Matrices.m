@@ -78,9 +78,9 @@ for i = 1:N1
         end
         
         % Defining Fin Section
-        Zup = [zup_raw/C1 zup_raw/C2];
-        Lmaxu = [Lmaxu_raw/C1 Lmaxu_raw/C2];
-        Lflatu = [(C1 - 2*Lmaxu_raw)/C1 (C2 - 2*Lmaxu_raw)/C2];
+        Zup = [zup_raw/C1, zup_raw/C2];
+        Lmaxu = [Lmaxu_raw/C1, Lmaxu_raw/C2];
+        Lflatu = [(C1 - 2*Lmaxu_raw)/C1, (C2 - 2*Lmaxu_raw)/C2];
         
         for k = 1:2
             XCG = xcg(k);
@@ -279,4 +279,4 @@ delete('for003.dat', 'for004.dat', 'for005.dat', 'for006.dat', 'for009.dat',...
     'for010.dat', 'for011.dat', 'for012.dat', 'empty.mat', 'full.mat')
 
 clearvars -except data
-toc
+AMtime = toc;

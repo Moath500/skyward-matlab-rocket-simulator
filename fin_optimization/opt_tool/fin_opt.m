@@ -1,89 +1,81 @@
-% FIN_OPT - This script evaluate a comparison between different
-% aerodynamics coefficients calculated with datcom 
-% 
-% Author: Matteo Pozzoli
-% Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
-% email: matteo.pozzoli@skywarder.eu
-% Website: http://www.skywarder.eu
-% License: 2-clause BSD
-% 
-% Release date: 14/10/2019
+%{
+
+FIN_OPT - This script chose the best fin set between the chosen.
+For every set, missile datcom is used to predict the aerodynamic coefficients.
+
+Author: Matteo Pozzoli
+Skyward Experimental Rocketry | CRD Dept | crd@skywarder.eu
+email: matteo.pozzoli@skywarder.eu
+Website: http://www.skywarder.eu
+Release date: 14/10/2019
+
+%}
 
 clear 
 close all
 clc 
 
-%% DATA
+path = genpath(pwd);
+addpath(path);
 
-run Auto_Matrices.m
-
-
+%% RETRIVING GEOMETRICAL DATA
 run config.m
 
-n=length(data);
+%% COMPUTING AERODYNAMIC DATA
+run Auto_Matrices.m
 
-% settings 
-grafico = true;
-cal_min = 1;                    % minum stability margin required
-
-%% RUN 
+%% FINSETs SIMULATION 
+tic
 
 % preallocation 
-apogee = zeros(1,n);
-XCP = zeros(2,n);
-leg = cell(1,n);
-j = 1;
+n = length(data);
+apogee = zeros(1, n);
+XCP = zeros(2, n);
 
-tic 
-for i=1:n
+figure; hold on; xlabel('time [s]'); ylabel('S / M');
+
+for i = 1:n
+    data_ith = data{i};
+    [settings] = ManageData(data_ith, settings);
+    [apogee(i), t, Xcp] = run_sim(settings);
    
-    % running simulation 
-    [settings.CoeffsF,settings.CoeffsE,settings.Alphas,settings.Betas,settings.Altitudes,settings.Machs] = takefile(data{i});
-    [apogee(i),t,Xcp] = run_sim(settings);
-   
-    % ottimizzazione 
-    check=isnan(Xcp);
-    while check(j)==1
-        j=j+1;
-    end
-    
-    XCP(i,1)=Xcp(j);
-    XCP(i,2)=Xcp(end);
-    
+    % optimization values 
+    ind_notNan = (not(isnan(Xcp)));
+    Xcp = Xcp(ind_notNan);
+    t = t(ind_notNan);
+    XCP(i, 1) = Xcp(1);
+    XCP(i, 2) = Xcp(end);
     
     % plot grafici stabilità 
-    if grafico 
-        plot(t,Xcp,'.')
-        xlabel('time [s]')
-        ylabel('S / M')
-        hold on 
-        
-        leg{i}=strcat('Matrice_',int2str(i));
+    if settings.plot
+        plot(t, Xcp, '.')
     end
 end
-legend(leg);
 
-%% results control
+legend(strcat('Matrix_', string(1:n)));
 
-index=find(XCP(1:n,1)>cal_min);
-v_xcp=XCP(index,1);
+%% OPTIMIZATION
+% chosing between XPC and apogee
+indexes = find(XCP(1:n, 1) > settings.cal_min);
+v_xcp = XCP(indexes, 1);
+apo_ok = apogee(indexes);
+[apo_max, ind_max] = max(apo_ok);
 
-apo_ok=apogee(index);
-[apo_max,ind_max]=max(apo_ok);
+best = indexes(ind_max); 
 
-ind = index(ind_max); 
+FOtime = toc;
 
 %% print results 
-
-fprintf('il massimo apogeo è %g ottenuto con le alette: \n',apo_max)
-fprintf('forma a %s \n',data{ind}.shape)
-fprintf('corda max: %g [m] \n',data{ind}.c_max)
-fprintf('corda min: %g [m] \n',data{ind}.c_min)
-fprintf('altezza: %g [m] \n',data{ind}.h)
-
-
-toc 
-
-
-
-
+fprintf('COMPUTATIONAL EFFORT: \n\n')
+fprintf('- AutoMatrices time, %g [s]\n', AMtime)
+fprintf('- Simulations time, %g [s]\n', FOtime)
+fprintf('- Total time, %g [s]\n\n\n', FOtime + AMtime)
+fprintf('BEST FINSET: \n\n')
+fprintf('- shape, %s \n', data{best}.shape)
+fprintf('- attached chord, %g [m] \n', data{best}.c_max)
+fprintf('- free chord, %g [m] \n', data{best}.c_min)
+fprintf('- height, %g [m] \n\n\n', data{best}.h)
+fprintf('BEST FINSET SIMULATION RESULTS: \n\n')
+fprintf('- apogee, %g [m]: \n', apo_max)
+fprintf('- stability margin @launchpad exit, %g \n', XCP(best, 1))
+fprintf('- stability margin @apogee, %g \n', XCP(best, 2))

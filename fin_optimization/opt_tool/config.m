@@ -13,7 +13,6 @@
 % Release date: 16/04/2016
 
 %% LAUNCH SETUP
-
 % launchpad 
 settings.z0 = 1416;                   %[m] Launchpad Altitude
 settings.lrampa = 5.3;                %[m] LaunchPad route (launchpad length-distance from ground of the first hook)
@@ -75,7 +74,6 @@ end
 
 settings.C = 0.09;                          % [m]      Caliber (Fuselage Diameter)
 settings.S = 0.0064;                        % [m^2]    Cross-sectional Surface
-L = 2.02;                                   % [m]      Rocket length
 
 %% MASS GEOMERTY DETAILS
 % x-axis: along the fuselage
@@ -92,8 +90,6 @@ settings.Ixxe = 0.008472446;                    % [kg*m^2] Inertia to x-axis
 settings.Iyye = 1.712284592;                    % [kg*m^2] Inertia to y-axis
 settings.Izze = 1.712304085;                    % [kg*m^2] Inertia to z-axis
 
-
-
 %% INTEGRATION OPTIONS
 
 settings.ode.final_time =  2000;                 % [s] Final integration time
@@ -108,21 +104,9 @@ settings.ode.final_time =  2000;                 % [s] Final integration time
 
 settings.ode.optionsasc = odeset('AbsTol',1E-3,'RelTol',1E-3,...
     'Events',@event_apogee,'InitialStep',1);    %ODE options for ascend
-
-settings.ode.optionsdrg1 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
-    'Events',@event_drg2_opening);              %ODE options for drogue
-
-settings.ode.optionsdrg2 = odeset('AbsTol',1E-3,'RelTol',1E-3,...
-    'Events',@event_landing);              %ODE options for drogue
-
-settings.ode.optionsdesc = odeset('AbsTol',1E-3,'RelTol',1E-12,...
-    'Events',@event_landing);                   %ODE options for ballistic descent
-
-
+                %ODE options for ballistic descent
 
 %% Random wind model
-
-
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
 settings.wind.MagMin = 10;                   % [m/s] Minimum Magnitude
@@ -137,3 +121,9 @@ settings.wind.AzMax = (180)*pi/180;         % [rad] Maximum Azimuth, user input 
 % 90 deg                        -> East
 % 180 deg                       -> South
 % 270 deg                       -> West
+
+%% Optimization Choice
+settings.cal_min = 1;                    % minum stability margin required
+
+%% XCP plot
+settings.plot = true;

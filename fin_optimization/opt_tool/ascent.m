@@ -1,4 +1,4 @@
-function [dY,parout] = ascent(t,Y,settings,uw,vw,ww)
+function [dY, XCP_value] = ascent(t,Y,settings,uw,vw,ww)
 % ODE-Function of the 6DOF Rigid Rocket Model
 % State = ( x y z | u v w | p q r | q0 q1 q2 q3 | m | Ixx Iyy Izz )
 %
@@ -78,9 +78,8 @@ if -z < 0     % z is directed as the gravity vector
     z = 0;
 end
 
-[~, a, P, rho] = atmosisa(-z+settings.z0);
+[~, a, ~, rho] = atmosisa(-z+settings.z0);
 M = V_norm/a;
-M_value = M;
 
 %% CONSTANTS
 
@@ -133,11 +132,6 @@ else
     alpha = 0;
     beta = 0;
 end
-
-alpha_value = alpha;
-beta_value = beta;
-
-
 
 %% DATCOM COEFFICIENTS
 
@@ -203,7 +197,7 @@ Cmqf = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsF.CMQ,alpha,M,beta
 Cnbf = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsF.CLNB,alpha,M,beta,-z);
 Cnrf = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsF.CLNR,alpha,M,beta,-z);
 Cnpf = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsF.CLNP,alpha,M,beta,-z);
-XCPf = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsF.X_C_P,alpha,M,beta,-z);
+XCPf = - interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsF.X_C_P,alpha,M,beta,-z);
 
 %% CHOSING THE EMPTY CONDITION VALUE
 % interpolation of the coefficients with the value in the nearest condition of the Coeffs matrix
@@ -219,7 +213,7 @@ Cmqe = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsE.CMQ,alpha,M,beta
 Cnbe = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsE.CLNB,alpha,M,beta,-z);
 Cnre = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsE.CLNR,alpha,M,beta,-z);
 Cnpe = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsE.CLNP,alpha,M,beta,-z);
-XCPe = interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsE.X_C_P,alpha,M,beta,-z);
+XCPe = - interp4_easy(A_datcom,M_datcom,B_datcom,H_datcom,CoeffsE.X_C_P,alpha,M,beta,-z);
 
 %% LINEAR INTERPOLATION BETWEEN THE TWO CONDITIONS
 % Computing the value of the aerodynamics coefficients at a certain time
@@ -266,10 +260,6 @@ if -z < settings.lrampa*sin(OMEGA)      % No torque on the Launch
     dq = 0;
     dr = 0;
     
-    alpha_value = NaN;
-    beta_value = NaN;
-    Y = 0;
-    Z = 0;
     XCP_value = NaN;
     
     
@@ -307,6 +297,7 @@ else
         -Izzdot*r/Izz;
     
 end
+
 % Quaternion
 OM = 1/2* [ 0 -p -q -r  ;
             p  0  r -q  ;
@@ -330,9 +321,5 @@ dY(15) = Ixxdot;
 dY(16) = Iyydot;
 dY(17) = Izzdot;
 dY = dY';
-
-%% SAVING THE QUANTITIES FOR THE PLOTS
-
-parout.coeff.XCP = XCP_value;
 
 

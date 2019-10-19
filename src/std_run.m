@@ -108,7 +108,7 @@ Y0a = [X0; V0; W0; Q0; settings.m0; settings.Ixxf; settings.Iyyf; settings.Izzf]
 [Ta,Ya] = ode113(@ascent, [0, tf], Y0a, settings.ode.optionsasc1, settings, uw, vw, ww, uncert); % till the apogee
 
 if settings.para(1).delay ~= 0 % checking if the actuation delay is different from zero
-    [Ta2,Ya2] = ode113(@ascent, [Ta(end), Ta(end) + settings.para1.delay], Ya(end,:), settings.ode.optionsasc2,...
+    [Ta2,Ya2] = ode113(@ascent, [Ta(end), Ta(end) + settings.para(1).delay], Ya(end,:), settings.ode.optionsasc2,...
         settings, uw, vw, ww, uncert); % till end of the delay
     
     Ta = [Ta; Ta2(2:end ) ];

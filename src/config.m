@@ -21,8 +21,8 @@ settings.funZ = funZ_gen('zdata.mat', settings.lat0, settings.lon0, true, 'xy');
 % launchpad directions
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
-settings.OMEGAmin = 85*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
-settings.OMEGAmax = 85*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmin = 75*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmax = 75*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
 settings.PHImin = 180*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.PHImax = 180*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;              % If true, phi is selected according to wind direction (constant wind model only)
@@ -118,8 +118,8 @@ settings.para(1).S = 0.7;                                           % [m^2]   Su
 settings.para(1).mass = 0.075;                                      % [kg]   Parachute Mass
 settings.para(1).CD = 0.75;                                         % [/] Parachute Drag Coefficient
 settings.para(1).CL = 0;                                            % [/] Parachute Lift Coefficient
-settings.para(1).delay = 0;                                         % [s] drogue opening delay 
-settings.para(1).z_cut = 200;                                       % [m] Final altitude of the parachute
+settings.para(1).delay = 1;                                         % [s] drogue opening delay 
+settings.para(1).z_cut = 300;                                       % [m] Final altitude of the parachute
 
 % parachute 2
 settings.para(2).S = 10.5;                                          % [m^2]   Surface
@@ -205,7 +205,7 @@ settings.wind.AzMax = (0)*pi/180;                 % [rad] Maximum Azimuth, user 
 %% BALLISTIC SIMULATION
 % Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = false;    
+settings.ballistic = true;    
 
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started

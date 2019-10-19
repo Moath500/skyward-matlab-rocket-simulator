@@ -18,28 +18,28 @@ clc
 %% Set default values - Dimensions in cm
 data = struct();
 data.D = 9;
-data.RocketLength = 190;
+data.RocketLength = 202;
 data.NoseLength = 30;
 data.BodyLength = data.RocketLength - data.NoseLength;
 data.FinMaxChord = 10;
 data.FinMinChord = 5;
-data.FinHeight = 5;
+data.FinHeight = 6;
 data.BottomDist = 0.0;
 data.XLe = data.RocketLength - data.BottomDist - [data.FinMaxChord ; ...
     data.FinMaxChord-(data.FinMaxChord-data.FinMinChord)/2];
-data.XCG = 126;
+data.XCG = 117.1;
 data.ZCG = 0;
 data.NShape = 'KARMAN';
 data.NPower = 0.5;
 
 % Fin cross section
-data.FinT = 0.4;
-data.LmaxMaxChord = 0.6;
-data.LmaxMinChord = 0.6;
-data.LflatMaxChord = 8;
-data.LflatMinChord = 4;
-data.LmaxMaxChord = 0.5*(data.FinMaxChord - data.LflatMaxChord);
-data.LmaxMinChord = 0.5*(data.FinMinChord - data.LflatMinChord);
+data.FinT = 0.3;
+data.LDiagSection = 0.15; % Horizontal length of diagonal part of the section
+data.LmaxMaxChord = data.LDiagSection;
+data.LmaxMinChord = data.LDiagSection;
+data.LflatMinChord = (data.FinMinChord-data.LmaxMinChord)/2;
+data.LflatMaxChord = (data.FinMaxChord-data.LmaxMaxChord)/2;
+
 
 %% Create layout
 f = figure('Visible','off','Position',[100 100 850 638]);
@@ -47,20 +47,9 @@ f.Name = 'Rocket Geometry';
 
 RocketUIAxes = axes('Units','Pixels','Position',[56 355 503 265],'Title',...
     'Rocket');
-% RocketUIAxes.XGrid = 'on';
-% RocketUIAxes.YGrid = 'on';
-% xlabel(RocketUIAxes, 'X [cm]')
-% ylabel(RocketUIAxes, 'Z [cm]')
-% title(RocketUIAxes,'Rocket');
 
 FinsUIAxes = axes('Units','Pixels','Position',[56 50 503 255],'Title',...
     'Fins');
-% FinsUIAxes.XGrid = 'on';
-% FinsUIAxes.YGrid = 'on';
-% xlabel(FinsUIAxes, 'X [cm]')
-% ylabel(FinsUIAxes, 'Y [cm]')
-% title(FinsUIAxes,'Fins');
-
 
 Label = uicontrol('Style','text','String','Measures in [cm]',...
     'Position',[650 610 100 22]);
@@ -127,16 +116,11 @@ ThicknessLabel = uicontrol('Style','text','String','Thickness',...
 ThicknessEditField = uicontrol('Style','edit',...
     'Position',[660 250 83 22 ]);
 
-LflatMaxCLabel = uicontrol('Style','text','String','Lflat (Max chord)',...
+LMaxCLabel = uicontrol('Style','text','String','L max',...
     'Position',[562 222 103 22]);
-LflatMaxCEditField = uicontrol('Style','edit',...
+LmaxCEditField = uicontrol('Style','edit',...
     'Position',[660 225 83 22 ]);
-LflatMaxCEditField.Callback = @LflatMaxCEditFieldValueChanged;
-
-LflatMinCLabel = uicontrol('Style','text','String','Lflat (Min chord)',...
-    'Position',[562 197 103 22]);
-LflatMinCEditField = uicontrol('Style','edit',...
-    'Position',[660 200 83 22 ]);
+LmaxCEditField.Callback = @LMaxCEditFieldValueChanged;
 
 Button = uicontrol('Style','pushbutton','String','Print DATCOM text',...
     'Position',[640 145 120 26 ],'Callback',@PrintDATCOM);
@@ -154,9 +138,7 @@ ZCGEditField.String = num2str(data.ZCG);
 NPowerEditField.String = num2str(data.NPower);
 
 ThicknessEditField.String = num2str(data.FinT);
-LflatMaxCEditField.String = num2str(data.LflatMaxChord);
-LflatMinCEditField.String = num2str(data.LflatMinChord);
-
+LmaxCEditField.String = num2str(data.LDiagSection);
 
 updateplot;
 
@@ -166,8 +148,6 @@ NoseLengthEditField.Callback = @NoseLengthEditFieldValueChanged;
 RocketLengthEditField.Callback = @RocketLengthEditFieldValueChanged;
 XCGEditField.Callback = @XCGEditFieldValueChanged;
 ZCGEditField.Callback = @ZCGEditFieldValueChanged;
-LflatMaxCEditField.Callback = @LflatMaxCEditFieldValueChanged;
-LflatMinCEditField.Callback = @LflatMinCEditFieldValueChanged;
 XLe1EditField.Callback = @XLe1EditFieldValueChanged;
 XLe2EditField.Callback = @XLe2EditFieldValueChanged;
 MaxChordEditField.Callback = @MaxChordEditFieldValueChanged;
@@ -348,32 +328,16 @@ f.Visible = 'on';
         updateplot;
     end
 
-    % Value changed function: LflatMaxChordEditField
-    function LflatMaxCEditFieldValueChanged(src,event)
-        value = str2double(get(src,'String'));
-        
-        if value > data.FinMaxChord
-            msgbox('Invalid values of Lmax. Cannot be > than chord','Warning');
-            src.String = num2str(data.LflatMaxChord);
-        else
-            data.LflatMaxChord = value;
-            data.LmaxMaxChord = (data.FinMaxChord-data.LflatMaxChord)/2;
-            updateplot;
-        end
+    function LMaxCEditFieldValueChanged(src,event)
+       value = str2double(get(src,'String'));
+       data.LDiagSection  = value;
+       data.LmaxMaxChord = value;
+       data.LmaxMinChord = value;
+       data.LflatMinChord = (data.FinMinChord-data.LmaxMinChord)/2;
+       data.LflatMaxChord = (data.FinMaxChord-data.LmaxMaxChord)/2;
+       updateplot;
     end
 
-    % Value changed function: LflatMinChordEditField
-    function LflatMinCEditFieldValueChanged(src,event)
-        value = str2double(get(src,'String'));
-        if value > data.FinMinChord
-            msgbox('Invalid values of Lmax. Cannot be bigger than chord','Warning');
-            src.String = num2str(data.LflatMinChord);
-        else
-            data.LflatMinChord = value;
-            data.LmaxMinChord = (data.FinMinChord-data.LflatMinChord)/2;
-            updateplot;
-        end
-    end
 
     % Value changed function: XCGEditField
     function XCGEditFieldValueChanged(src,event)
@@ -424,6 +388,7 @@ f.Visible = 'on';
         xlabel(RocketUIAxes, 'X [cm]')
         ylabel(RocketUIAxes, 'Z [cm]')
         legend([h1,h2],'Rocket','CG');
+        axis(RocketUIAxes,'equal');
         grid(RocketUIAxes,'on');
         hold(RocketUIAxes,'off');
         
@@ -445,6 +410,7 @@ f.Visible = 'on';
         xlabel(FinsUIAxes, 'X [cm]')
         ylabel(FinsUIAxes, 'Y [cm]')
         grid(FinsUIAxes,'minor');
+        axis(FinsUIAxes,'equal');
         legend([h1,h2],'Cross section at fin root','Cross section at fin tip');
         hold(FinsUIAxes,'off');
     end

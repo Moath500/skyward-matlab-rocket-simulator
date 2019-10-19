@@ -42,6 +42,6 @@ end
 
 %% CALCULATE OUTPUT QUANTITIES
 
-apogee = Ya(end, 3);
+apogee = -Ya(end, 3);
 
 

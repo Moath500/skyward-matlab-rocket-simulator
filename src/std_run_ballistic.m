@@ -41,7 +41,6 @@ if settings.OMEGAmin ~= settings.OMEGAmax || settings.PHImin ~= settings.PHImax
 end
 
 %% STARTING CONDITIONS
-
 % Attitude
 settings.OMEGA = settings.OMEGAmin;
 settings.PHI = settings.PHImin;
@@ -105,7 +104,7 @@ save('ascent_plot.mat', 'data_ascent');
 
 %% DESCEND 
 % Initial Condition are the last from ascent
-[Td,Yd] = ode113(@descent_ballistic, [Ta(end), tf], Ya(end, 1:13), settings.ode.optionsdesc, settings, uw, vw, ww, uncert);
+[Td, Yd] = ode113(@descent_ballistic, [Ta(end), tf], Ya(end, 1:13), settings.ode.optionsdesc, settings, uw, vw, ww, uncert);
 [data_bal] = RecallOdeFcn(@descent_ballistic, Td, Yd, settings, uw, vw, ww, uncert);
 data_bal.state.Y = Yd;
 data_bal.state.T = Td;

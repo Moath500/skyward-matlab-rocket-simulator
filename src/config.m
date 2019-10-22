@@ -16,37 +16,40 @@ settings.z0 = 1416;                                                             
 settings.lrampa = 5.3;                                                              %[m] LaunchPad route (distance from ground of the first hook)
 settings.lat0 = 41.809017;                                                          % Launchpad latitude
 settings.lon0 = 14.054264;                                                          % Launchpad longitude
-settings.funZ = funZ_gen('zdata.mat', settings.lat0, settings.lon0, true, 'xy');    % Altitude map computation
+settings.terrain = true;
+if settings.terrain 
+    settings.funZ = funZ_gen('zdata.mat', settings.lat0, settings.lon0, true, 'xy');    % Altitude map computation
+end
 
 % launchpad directions
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
-settings.OMEGAmin = 85*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
-settings.OMEGAmax = 85*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 180*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 180*pi/180;           %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.OMEGAmin = 87*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmax = 87*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.PHImin = 0*pi/180;         %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 0*pi/180;         %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;              % If true, phi is selected according to wind direction (constant wind model only)
 settings.PHIsigma = 0*pi/180;         % Stocasthic simulation only
 
 %% ENGINE DETAILS
 % Aerotech K550W-L
-settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
-    1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
-
-settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
-    178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
-    4.589 0.000  ] * 9.81/2.2;                                      % [N]
-
-settings.mp = 0.889; 
-
-% Aerotech K695
-% settings.motor.exp_time = [0, 0.02:0.05:0.82, 0.88:0.05:2.23];
+% settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
+%     1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
 % 
-% settings.motor.exp_thrust = [ 0 540.57 716.61 724.39 740.18 751.53 762.31 821.36 908.55 894.53 885.86 881.97 875.41 869.85 863.18 857.51 847.39,...
-%   844.38 834.96 825.7 817.69 810.69 793.9 781.77 766.09 750.53 739.41 721.05 703.71 689.03 674.91 662.67 646.1,...
-%   633.76 616.52 603.96 590.2 574.71 567.59 569.37 463.39 268.23 121.55 40.92 7.23 3.91]; 
-%     
-% settings.mp = 0.918;
+% settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
+%     178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
+%     4.589 0.000  ] * 9.81/2.2;                                      % [N]
+% 
+% settings.mp = 0.889; 
+
+% Aerotech K695R-L
+settings.motor.exp_time = [0, 0.02:0.05:0.82, 0.88:0.05:2.23];
+
+settings.motor.exp_thrust = [ 0 540.57 716.61 724.39 740.18 751.53 762.31 821.36 908.55 894.53 885.86 881.97 875.41 869.85 863.18 857.51 847.39,...
+  844.38 834.96 825.7 817.69 810.69 793.9 781.77 766.09 750.53 739.41 721.05 703.71 689.03 674.91 662.67 646.1,...
+  633.76 616.52 603.96 590.2 574.71 567.59 569.37 463.39 268.23 121.55 40.92 7.23 3.91]; 
+    
+settings.mp = 0.918;
                                                                     % [kg]   Propellant Mass
 settings.mnc = 0.300;                                               % [kg]   Nosecone Mass
 settings.tb = settings.motor.exp_time(end);                         % [s]    Burning time
@@ -121,11 +124,18 @@ settings.para(1).CL = 0;                                            % [/] Parach
 settings.para(1).delay = 0;                                         % [s] drogue opening delay 
 settings.para(1).z_cut = 200;                                       % [m] Final altitude of the parachute
 
-% parachute 2
-settings.para(2).S = 10.5;                                          % [m^2]   Surface
+% % parachute 2
+% settings.para(2).S = 10.5;                                          % [m^2]   Surface
+% settings.para(2).mass = 0.45;                                       % [kg]   Parachute Mass
+% settings.para(2).CD = 0.7;                                          % [/] Parachute Drag Coefficient
+% settings.para(2).CL = 0;                                            % [/] Parachute Lift Coefficient
+% settings.para(2).z_cut = 0;                                         % [m] Final altitude of the parachute
+
+% rogallo
+settings.para(2).S = 7;                                          % [m^2]   Surface
 settings.para(2).mass = 0.45;                                       % [kg]   Parachute Mass
-settings.para(2).CD = 0.7;                                          % [/] Parachute Drag Coefficient
-settings.para(2).CL = 0;                                          % [/] Parachute Lift Coefficient
+settings.para(2).CD = 0.4;                                          % [/] Parachute Drag Coefficient
+settings.para(2).CL = 0.9;                                            % [/] Parachute Lift Coefficient
 settings.para(2).z_cut = 0;                                         % [m] Final altitude of the parachute
 
 %% INTEGRATION OPTIONS
@@ -156,14 +166,12 @@ settings.wind.model = false;
 % matlab hswm model, wind model on altitude based on historical data
 
 % input Day and Hour as arrays to run stochastic simulations
-
 settings.wind.DayMin = 105;                         % [d] Minimum Day of the launch 
 settings.wind.DayMax = 105;                         % [d] Maximum Day of the launch
 settings.wind.HourMin = 13;                         % [h] Minimum Hour of the day
 settings.wind.HourMax = 13;                         % [h] Maximum Hour of the day
 settings.wind.ww = 0;                               % [m/s] Vertical wind speed
                 
-
 %%%%% Input wind 
 settings.wind.input = false;
 % Wind is generated for every altitude interpolating with the coefficient defined below
@@ -176,8 +184,8 @@ V0 = 3;
 C = [0 0 10 15 20 30 40];
     
 settings.wind.input_matr = [ (V0+V0*C/100)
-    120*ones(1, 7)
-    0    100  600  750  900  1500 2500 ];
+                             120*ones(1, 7)
+                             0 100 600 750 900 1500 2500 ];
 
 settings.wind.input_uncertainty = [30, 20];
 % settings.wind.input_uncertainty = [a,b];      wind uncertanties:
@@ -189,12 +197,12 @@ settings.wind.input_uncertainty = [30, 20];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 10;                           % [m/s] Minimum Magnitude
-settings.wind.MagMax = 10;                           % [m/s] Maximum Magnitude
+settings.wind.MagMin = 9.8;                           % [m/s] Minimum Magnitude
+settings.wind.MagMax = 9.8;                          % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;                     % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;                     % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (0)*pi/180;                 % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (0)*pi/180;                 % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (180)*pi/180;                 % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (180)*pi/180;                 % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -225,7 +233,6 @@ settings.prob.SafeEllipse.alpha = 10;
 
 %% PLOT DETAILS
 settings.plots = true;
-settings.terrain = true;
 
 %% LANDING POINTS
 settings.landing_map = true;

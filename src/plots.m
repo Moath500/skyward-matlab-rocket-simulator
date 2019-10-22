@@ -266,31 +266,32 @@ else   %%%% STOCHASTIC PLOTS (only if N>1)
     axis image
     
     %% LANDING POINTS 3D
-    
-    figure('Name', 'Landing Points Map', 'NumberTitle', 'off')
-    hold on; grid on;
-    
-    X_t = -8000:30:8000;
-    Y_t = -8000:30:8000;
-    L_X = length(X_t);
-    L_Y = length(Y_t);
-    Z_t = zeros(L_X, L_Y);
-    for i = 1:L_X
-        for j = 1:L_Y
-            Z_t(j,i) = settings.funZ(X_t(i), Y_t(j));
+    if settings.terrain
+        figure('Name', 'Landing Points Map', 'NumberTitle', 'off')
+        hold on; grid on;
+        
+        X_t = -8000:30:8000;
+        Y_t = -8000:30:8000;
+        L_X = length(X_t);
+        L_Y = length(Y_t);
+        Z_t = zeros(L_X, L_Y);
+        for i = 1:L_X
+            for j = 1:L_Y
+                Z_t(j,i) = settings.funZ(X_t(i), Y_t(j));
+            end
         end
+        
+        surf(X_t, -Y_t, -Z_t, 'EdgeColor', 'none'); colorbar; view(-90, 80);
+        if not(settings.ballistic)
+            h1 = plot3(LPin(:,1), -LPin(:,2), -LPin(:, 3),'o', 'MarkerEdgeColor', 'r', 'MarkerfaceColor', 'r');
+            h2 = plot3(LPout(:, 1), -LPout(:, 2), -LPout(:, 3), 'o', 'MarkerEdgeColor', 'k', 'MarkerfaceColor', 'k');
+            legend([h1, h2], 'safe landing points', 'not-safe landing points')
+        else
+            h1 = plot3(LP(:,1), -LP(:,2), -LP(:,3), 'o', 'MarkerEdgeColor', 'k', 'MarkerfaceColor', 'k');
+            legend(h1,'ballistic landing points')
+        end
+        xlabel('North [m]'), ylabel('East [m]'), zlabel('Altitude [m]');
     end
-    
-    surf(X_t, -Y_t, -Z_t, 'EdgeColor', 'none'); colorbar; view(-90, 80);
-    if not(settings.ballistic)
-        h1 = plot3(LPin(:,1), -LPin(:,2), -LPin(:, 3),'o', 'MarkerEdgeColor', 'r', 'MarkerfaceColor', 'r');
-        h2 = plot3(LPout(:, 1), -LPout(:, 2), -LPout(:, 3), 'o', 'MarkerEdgeColor', 'k', 'MarkerfaceColor', 'k');
-        legend([h1, h2], 'safe landing points', 'not-safe landing points')
-    else
-        h1 = plot3(LP(:,1), -LP(:,2), -LP(:,3), 'o', 'MarkerEdgeColor', 'k', 'MarkerfaceColor', 'k');
-        legend(h1,'ballistic landing points')
-    end
-    xlabel('North [m]'), ylabel('East [m]'), zlabel('Altitude [m]');
     
     %% LAST PARACHUTE OPENING POINTS
     if not(settings.ballistic)

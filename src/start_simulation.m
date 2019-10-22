@@ -17,12 +17,14 @@ path = genpath(pwd);
 addpath(path);
 
 %% LOAD DATA
-run(strcat('config.m'));
+run('config.m');
+
 if not(settings.ballistic)
     settings.Npara = length(settings.para);
 else
     settings.Npara = 1;
 end
+
 %% START THE CHOSEN SIMULATION
 % T = vector of time used by ODE, [s] also for Tf Ta
 % Y = State = ( x y z | u v w | p q r | q0 q1 q2 q3 ) also for Ya,Yf corresponding to T
@@ -199,4 +201,4 @@ if settings.stoch.N == 1
     delete('ascent_plot.mat')
 end
 
-clearvars -except T data_ascent data_para data_bal flag  
+clearvars -except T data_ascent data_para data_bal flag LP

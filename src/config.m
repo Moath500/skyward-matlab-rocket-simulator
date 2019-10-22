@@ -1,6 +1,6 @@
 %{
 
-CONFIG - This script sets up all the parameters for the simulation 
+CONFIG - This script sets up all the parameters for the simulation
 All the parameters are stored in the "settings" structure.
 
 Author: Francesco Colombi
@@ -11,13 +11,13 @@ Release date: 16/04/2016
 %}
 
 %% LAUNCH SETUP
-% launchpad 
+% launchpad
 settings.z0 = 1416;                                                                 %[m] Launchpad Altitude
 settings.lrampa = 5.3;                                                              %[m] LaunchPad route (distance from ground of the first hook)
 settings.lat0 = 41.809017;                                                          % Launchpad latitude
 settings.lon0 = 14.054264;                                                          % Launchpad longitude
 settings.terrain = true;
-if settings.terrain 
+if settings.terrain
     settings.funZ = funZ_gen('zdata.mat', settings.lat0, settings.lon0, true, 'xy');    % Altitude map computation
 end
 
@@ -35,20 +35,20 @@ settings.PHIsigma = 0*pi/180;         % Stocasthic simulation only
 % Aerotech K550W-L
 % settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
 %     1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
-% 
+%
 % settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
 %     178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
 %     4.589 0.000  ] * 9.81/2.2;                                      % [N]
-% 
-% settings.mp = 0.889; 
+%
+% settings.mp = 0.889;
 
 % Aerotech K695R-L
 settings.motor.exp_time = [0, 0.02:0.05:0.82, 0.88:0.05:2.23];
 
 settings.motor.exp_thrust = [ 0 540.57 716.61 724.39 740.18 751.53 762.31 821.36 908.55 894.53 885.86 881.97 875.41 869.85 863.18 857.51 847.39,...
   844.38 834.96 825.7 817.69 810.69 793.9 781.77 766.09 750.53 739.41 721.05 703.71 689.03 674.91 662.67 646.1,...
-  633.76 616.52 603.96 590.2 574.71 567.59 569.37 463.39 268.23 121.55 40.92 7.23 3.91]; 
-    
+  633.76 616.52 603.96 590.2 574.71 567.59 569.37 463.39 268.23 121.55 40.92 7.23 3.91];
+
 settings.mp = 0.918;
                                                                     % [kg]   Propellant Mass
 settings.mnc = 0.300;                                               % [kg]   Nosecone Mass
@@ -79,7 +79,7 @@ settings.Izzf = 2.050413838;                    % [kg*m^2] Inertia to z-axis
 settings.Ixxe = 0.008472446;                    % [kg*m^2] Inertia to x-axis
 settings.Iyye = 1.712284592;                    % [kg*m^2] Inertia to y-axis
 settings.Izze = 1.712304085;                    % [kg*m^2] Inertia to z-axis
-     
+
 %% AERODYNAMICS DETAILS
 % These coefficients are obtained using MISSILE DATCOM
 % (after parsing with the tool datcom_parser.py)
@@ -121,8 +121,8 @@ settings.para(1).S = 0.7;                                           % [m^2]   Su
 settings.para(1).mass = 0.075;                                      % [kg]   Parachute Mass
 settings.para(1).CD = 0.75;                                         % [/] Parachute Drag Coefficient
 settings.para(1).CL = 0;                                            % [/] Parachute Lift Coefficient
-settings.para(1).delay = 0;                                         % [s] drogue opening delay 
-settings.para(1).z_cut = 200;                                       % [m] Final altitude of the parachute
+settings.para(1).delay = 1;                                         % [s] drogue opening delay
+settings.para(1).z_cut = 300;                                       % [m] Final altitude of the parachute
 
 % % parachute 2
 % settings.para(2).S = 10.5;                                          % [m^2]   Surface
@@ -151,7 +151,7 @@ settings.ode.final_time =  2000;                                    % [s] Final 
 
 settings.ode.optionsasc1 = odeset('Events',@event_apogee,'InitialStep',1);    %ODE options for ascend
 
-settings.ode.optionsasc2 = odeset('InitialStep',1);                           %ODE options for due to the opening delay of the parachute  
+settings.ode.optionsasc2 = odeset('InitialStep',1);                           %ODE options for due to the opening delay of the parachute
 
 settings.ode.optionspara = odeset('Events',@event_para_cut);              %ODE options for the parachutes
 
@@ -166,13 +166,13 @@ settings.wind.model = false;
 % matlab hswm model, wind model on altitude based on historical data
 
 % input Day and Hour as arrays to run stochastic simulations
-settings.wind.DayMin = 105;                         % [d] Minimum Day of the launch 
+settings.wind.DayMin = 105;                         % [d] Minimum Day of the launch
 settings.wind.DayMax = 105;                         % [d] Maximum Day of the launch
 settings.wind.HourMin = 13;                         % [h] Minimum Hour of the day
 settings.wind.HourMax = 13;                         % [h] Maximum Hour of the day
 settings.wind.ww = 0;                               % [m/s] Vertical wind speed
-                
-%%%%% Input wind 
+
+%%%%% Input wind
 settings.wind.input = false;
 % Wind is generated for every altitude interpolating with the coefficient defined below
 
@@ -182,7 +182,7 @@ settings.wind.input = false;
 
 V0 = 3;
 C = [0 0 10 15 20 30 40];
-    
+
 settings.wind.input_matr = [ (V0+V0*C/100)
                              120*ones(1, 7)
                              0 100 600 750 900 1500 2500 ];
@@ -213,7 +213,7 @@ settings.wind.AzMax = (180)*pi/180;                 % [rad] Maximum Azimuth, use
 %% BALLISTIC SIMULATION
 % Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = false;    
+settings.ballistic = true;
 
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started

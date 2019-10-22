@@ -148,8 +148,10 @@ if settings.stoch.N == 1
     subplot(3,1,3)
     plot(Tf, -Vhframe(:, 3)), hold on, grid on, xlabel('Time[s]'), ylabel('Velocity-z [m/s]');
     
+    bound_value(1).V(3) = - bound_value(1).V(3);
     for i = 1:Np
-        h(i) = plot(bound_value(i).t, bound_value(i).V(2), 'o', 'MarkerSize',...
+        
+        h(i) = plot(bound_value(i).t,bound_value(i).V(3), 'o', 'MarkerSize',...
             10, 'MarkerFaceColor', Colors(:,i), 'MarkerEdgeColor', 'none');
     end
     

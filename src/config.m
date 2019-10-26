@@ -24,8 +24,8 @@ end
 % launchpad directions
 % for a single run the maximum and the minimum value of the following
 % angles must be the same.
-settings.OMEGAmin = 87*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
-settings.OMEGAmax = 87*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmin = 89*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
+settings.OMEGAmax = 89*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
 settings.PHImin = 0*pi/180;         %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.PHImax = 0*pi/180;         %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;              % If true, phi is selected according to wind direction (constant wind model only)
@@ -124,19 +124,19 @@ settings.para(1).CL = 0;                                            % [/] Parach
 settings.para(1).delay = 1;                                         % [s] drogue opening delay
 settings.para(1).z_cut = 300;                                       % [m] Final altitude of the parachute
 
-% % parachute 2
-% settings.para(2).S = 10.5;                                          % [m^2]   Surface
-% settings.para(2).mass = 0.45;                                       % [kg]   Parachute Mass
-% settings.para(2).CD = 0.7;                                          % [/] Parachute Drag Coefficient
-% settings.para(2).CL = 0;                                            % [/] Parachute Lift Coefficient
-% settings.para(2).z_cut = 0;                                         % [m] Final altitude of the parachute
-
-% rogallo
-settings.para(2).S = 7;                                          % [m^2]   Surface
+% parachute 2
+settings.para(2).S = 10.5;                                          % [m^2]   Surface
 settings.para(2).mass = 0.45;                                       % [kg]   Parachute Mass
-settings.para(2).CD = 0.4;                                          % [/] Parachute Drag Coefficient
-settings.para(2).CL = 0.9;                                            % [/] Parachute Lift Coefficient
+settings.para(2).CD = 0.7;                                          % [/] Parachute Drag Coefficient
+settings.para(2).CL = 0;                                            % [/] Parachute Lift Coefficient
 settings.para(2).z_cut = 0;                                         % [m] Final altitude of the parachute
+
+% % rogallo
+% settings.para(2).S = 7;                                          % [m^2]   Surface
+% settings.para(2).mass = 0.45;                                       % [kg]   Parachute Mass
+% settings.para(2).CD = 0.4;                                          % [/] Parachute Drag Coefficient
+% settings.para(2).CL = 0.9;                                            % [/] Parachute Lift Coefficient
+% settings.para(2).z_cut = 0;                                         % [m] Final altitude of the parachute
 
 %% INTEGRATION OPTIONS
 settings.ode.final_time =  2000;                                    % [s] Final integration time
@@ -197,12 +197,12 @@ settings.wind.input_uncertainty = [30, 20];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 9.8;                           % [m/s] Minimum Magnitude
-settings.wind.MagMax = 9.8;                          % [m/s] Maximum Magnitude
+settings.wind.MagMin = 9;                           % [m/s] Minimum Magnitude
+settings.wind.MagMax = 15;                          % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;                     % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;                     % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
-settings.wind.AzMin = (180)*pi/180;                 % [rad] Minimum Azimuth, user input in degrees (ex. 90)
-settings.wind.AzMax = (180)*pi/180;                 % [rad] Maximum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMin = (0)*pi/180;                   % [rad] Minimum Azimuth, user input in degrees (ex. 90)
+settings.wind.AzMax = (360)*pi/180;                 % [rad] Maximum Azimuth, user input in degrees (ex. 90)
 
 % NOTE: wind aziumt angle indications (wind directed towards):
 % 0 deg (use 360 instead of 0)  -> North
@@ -213,12 +213,12 @@ settings.wind.AzMax = (180)*pi/180;                 % [rad] Maximum Azimuth, use
 %% BALLISTIC SIMULATION
 % Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = true;
+settings.ballistic = false;
 
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;                               % Number of cases
+settings.stoch.N = 1000;                               % Number of cases
 
 %%% launch probability details
 settings.stoch.prob.x_lim = 2e3;                    % Max ovest displacement [m]

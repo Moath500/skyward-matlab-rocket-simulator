@@ -156,7 +156,7 @@ parfor i = 1:N
     [Ta,Ya] = ode113(@ascent, [0, tf], Y0a, settings.ode.optionsasc1, settings, uw, vw, ww, uncert, Hour, Day, OMEGA);
     
     if settings.para(1).delay ~= 0 % checking if the actuation delay is different from zero
-        [Ta2,Ya2] = ode113(@ascent, [Ta(end), Ta(end) + settings.para1.delay], Ya(end, :),...
+        [Ta2,Ya2] = ode113(@ascent, [Ta(end), Ta(end) + settings.para(1).delay], Ya(end, :),...
             settings.ode.optionsasc2, settings, uw, vw, ww, uncert, Hour, Day, OMEGA);
         Ta = [Ta; Ta2(2:end   )];
         Ya = [Ya; Ya2(2:end, :)];

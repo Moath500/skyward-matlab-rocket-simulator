@@ -36,6 +36,9 @@ for i = 1:NT
     
     all_steps.accelerations.body_acc(i, 1:3) = single_step.accelerations.body_acc;
     
+    all_steps.geo_cord.lat(i) = single_step.geo_cord.lat;
+    all_steps.geo_cord.lon(i) = single_step.geo_cord.lon;
+    
     if not(isequal(fun_info.function, 'descent_parachute'))
         
         all_steps.interp.M(i) = single_step.interp.M;

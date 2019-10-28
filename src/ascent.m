@@ -51,24 +51,26 @@ Release date: 13/01/2018
 %}
 
 % recalling the state
-% x = Y(1);
-% y = Y(2);
-  z = Y(3);
-  u = Y(4);
-  v = Y(5);
-  w = Y(6);
-  p = Y(7);
-  q = Y(8);
-  r = Y(9); 
-  q0 = Y(10);
-  q1 = Y(11);
-  q2 = Y(12);
-  q3 = Y(13);
-  m = Y(14);
-  Ixx = Y(15);
-  Iyy = Y(16);
-  Izz = Y(17);
+x = Y(1);
+y = Y(2);
+z = Y(3);
+u = Y(4);
+v = Y(5);
+w = Y(6);
+p = Y(7);
+q = Y(8);
+r = Y(9);
+q0 = Y(10);
+q1 = Y(11);
+q2 = Y(12);
+q3 = Y(13);
+m = Y(14);
+Ixx = Y(15);
+Iyy = Y(16);
+Izz = Y(17);
 
+
+[lat, lon, ~] = ned2geodetic(x, y, 0, settings.lat0, settings.lon0, 0, wgs84Ellipsoid);     % geographic coordinates
 
 %% QUATERION ATTITUDE
 
@@ -403,4 +405,6 @@ parout.coeff.Cnr = Cnr;
 parout.coeff.Cnp = Cnp;
 parout.coeff.XCP = XCP_value;
 
+parout.geo_cord.lat = lat;
+parout.geo_cord.lon = lon;
 

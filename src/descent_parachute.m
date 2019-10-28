@@ -40,12 +40,15 @@ Release date: 13/01/2018
 %}
 
 % recalling the state
-% x = Y(1);
-% y = Y(2);
-  z = Y(3);
-  u = Y(4);
-  v = Y(5);
-  w = Y(6);
+x = Y(1);
+y = Y(2);
+z = Y(3);
+u = Y(4);
+v = Y(5);
+w = Y(6);
+
+[lat, lon, ~] = ned2geodetic(x, y, 0, settings.lat0, settings.lon0, 0, wgs84Ellipsoid);     % geographic coordinates
+
 
 %% ADDING WIND (supposed to be added in NED axes);
 
@@ -152,5 +155,8 @@ if settings.plots
     parout.air.P = P;
     
     parout.accelerations.body_acc = [du, dv, dw];
+    
+    parout.geo_cord.lat = lat;
+    parout.geo_cord.lon = lon;
     
 end

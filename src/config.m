@@ -26,30 +26,30 @@ end
 % angles must be the same.
 settings.OMEGAmin = 87*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 87*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 0*pi/180;         %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.PHImax = 0*pi/180;         %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;              % If true, phi is selected according to wind direction (constant wind model only)
 settings.PHIsigma = 0*pi/180;         % Stocasthic simulation only
 
 %% ENGINE DETAILS
 % Aerotech K550W-L
-% settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
-%     1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
-%
-% settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
-%     178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
-%     4.589 0.000  ] * 9.81/2.2;                                      % [N]
-%
-% settings.mp = 0.889;
+settings.motor.exp_time = [0 0.13 0.38 0.63 0.88 1.14 1.39...
+    1.64 1.9 2.15 2.40 2.66 2.91 3.16 3.5];                         %[s]
 
-% Aerotech K695R-L
-settings.motor.exp_time = [0, 0.02:0.05:0.82, 0.88:0.05:2.23];
+settings.motor.exp_thrust = [ 0 139.8 158.07 171.978 178.769 ...
+    178.247 158.859 132.922 111.005 92.082 74.075 44.837 16.156...
+    4.589 0.000  ] * 9.81/2.2;                                      % [N]
 
-settings.motor.exp_thrust = [ 0 540.57 716.61 724.39 740.18 751.53 762.31 821.36 908.55 894.53 885.86 881.97 875.41 869.85 863.18 857.51 847.39,...
-  844.38 834.96 825.7 817.69 810.69 793.9 781.77 766.09 750.53 739.41 721.05 703.71 689.03 674.91 662.67 646.1,...
-  633.76 616.52 603.96 590.2 574.71 567.59 569.37 463.39 268.23 121.55 40.92 7.23 3.91];
+settings.mp = 0.889;
 
-settings.mp = 0.918;
+% % Aerotech K695R-L
+% settings.motor.exp_time = [0, 0.02:0.05:0.82, 0.88:0.05:2.23];
+% 
+% settings.motor.exp_thrust = [ 0 540.57 716.61 724.39 740.18 751.53 762.31 821.36 908.55 894.53 885.86 881.97 875.41 869.85 863.18 857.51 847.39,...
+%   844.38 834.96 825.7 817.69 810.69 793.9 781.77 766.09 750.53 739.41 721.05 703.71 689.03 674.91 662.67 646.1,...
+%   633.76 616.52 603.96 590.2 574.71 567.59 569.37 463.39 268.23 121.55 40.92 7.23 3.91];
+% 
+% settings.mp = 0.918;
                                                                     % [kg]   Propellant Mass
 settings.mnc = 0.300;                                               % [kg]   Nosecone Mass
 settings.tb = settings.motor.exp_time(end);                         % [s]    Burning time
@@ -117,8 +117,8 @@ clear('s');
 
 %% PARACHUTES DETAILS
 % parachute 1
-settings.para(1).S = 0.7;                                           % [m^2]   Surface
-settings.para(1).mass = 0.075;                                      % [kg]   Parachute Mass
+settings.para(1).S = 1.55;                                          % [m^2]   Surface
+settings.para(1).mass = 0.4;                                        % [kg]   Parachute Mass
 settings.para(1).CD = 0.75;                                         % [/] Parachute Drag Coefficient
 settings.para(1).CL = 0;                                            % [/] Parachute Lift Coefficient
 settings.para(1).delay = 1;                                         % [s] drogue opening delay
@@ -126,17 +126,17 @@ settings.para(1).z_cut = 300;                                       % [m] Final 
 
 % parachute 2
 settings.para(2).S = 10.5;                                          % [m^2]   Surface
-settings.para(2).mass = 0.45;                                       % [kg]   Parachute Mass
+settings.para(2).mass = 0.8;                                        % [kg]   Parachute Mass
 settings.para(2).CD = 0.7;                                          % [/] Parachute Drag Coefficient
 settings.para(2).CL = 0;                                            % [/] Parachute Lift Coefficient
 settings.para(2).z_cut = 0;                                         % [m] Final altitude of the parachute
 
 % % rogallo
-% settings.para(2).S = 7;                                          % [m^2]   Surface
-% settings.para(2).mass = 0.45;                                       % [kg]   Parachute Mass
-% settings.para(2).CD = 0.4;                                          % [/] Parachute Drag Coefficient
-% settings.para(2).CL = 0.9;                                            % [/] Parachute Lift Coefficient
-% settings.para(2).z_cut = 0;                                         % [m] Final altitude of the parachute
+% settings.para(2).S = 7;                                           % [m^2]   Surface
+% settings.para(2).mass = 0.7;                                     % [kg]   Parachute Mass
+% settings.para(2).CD = 0.4;                                        % [/] Parachute Drag Coefficient
+% settings.para(2).CL = 0.9;                                        % [/] Parachute Lift Coefficient
+% settings.para(2).z_cut = 0;                                       % [m] Final altitude of the parachute
 
 %% INTEGRATION OPTIONS
 settings.ode.final_time =  2000;                                    % [s] Final integration time
@@ -197,8 +197,8 @@ settings.wind.input_uncertainty = [30, 20];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 10;                           % [m/s] Minimum Magnitude
-settings.wind.MagMax = 10;                          % [m/s] Maximum Magnitude
+settings.wind.MagMin = 17;                           % [m/s] Minimum Magnitude
+settings.wind.MagMax = 17;                          % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;                     % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;                     % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (180)*pi/180;                   % [rad] Minimum Azimuth, user input in degrees (ex. 90)

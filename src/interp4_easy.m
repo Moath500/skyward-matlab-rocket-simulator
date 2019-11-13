@@ -29,6 +29,7 @@ for i = 1:4
 end
 
 V = F(index(1),index(2),index(3),index(4));
+V = interpn(X1,X2,X3,X4,F,x1,x2,x3,x4);
 
 
 

@@ -13,7 +13,7 @@ Release date: 16/04/2016
 %% LAUNCH SETUP
 % launchpad
 settings.z0 = 1416;                                                                 %[m] Launchpad Altitude
-settings.lrampa = 5.3;                                                              %[m] LaunchPad route (distance from ground of the first hook)
+settings.lrampa = 4.9;                                                              %[m] LaunchPad route (distance from ground of the first hook)
 settings.lat0 = 41.809017;                                                          % Launchpad latitude
 settings.lon0 = 14.054264;                                                          % Launchpad longitude
 settings.terrain = true;
@@ -54,7 +54,7 @@ settings.mp = 0.889;
 settings.mnc = 0.300;                                               % [kg]   Nosecone Mass
 settings.tb = settings.motor.exp_time(end);                         % [s]    Burning time
 settings.mfr = settings.mp/settings.tb;                             % [kg/s] Mass Flow Rate
-settings.ms = 6.330;                                                  % [kg]   Total Mass
+settings.ms = 6.5;                                                  % [kg]   Total Mass
 settings.m0 = settings.ms + settings.mp;                            % [kg]   Structural Mass
 
 %% GEOMETRY DETAILS
@@ -197,8 +197,8 @@ settings.wind.input_uncertainty = [30, 20];
 
 % Wind is generated randomly from the minimum to the maximum parameters which defines the wind.
 % Setting the same values for min and max will fix the parameters of the wind.
-settings.wind.MagMin = 17;                           % [m/s] Minimum Magnitude
-settings.wind.MagMax = 17;                          % [m/s] Maximum Magnitude
+settings.wind.MagMin = 15;                           % [m/s] Minimum Magnitude
+settings.wind.MagMax = 15;                          % [m/s] Maximum Magnitude
 settings.wind.ElMin = 0*pi/180;                     % [rad] Minimum Elevation, user input in degrees (ex. 0)
 settings.wind.ElMax = 0*pi/180;                     % [rad] Maximum Elevation, user input in degrees (ex. 0) (Max == 90 Deg)
 settings.wind.AzMin = (180)*pi/180;                   % [rad] Minimum Azimuth, user input in degrees (ex. 90)
@@ -213,7 +213,7 @@ settings.wind.AzMax = (180)*pi/180;                 % [rad] Maximum Azimuth, use
 %% BALLISTIC SIMULATION
 % Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = false;
+settings.ballistic = true;
 
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started

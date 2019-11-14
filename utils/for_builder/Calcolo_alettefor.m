@@ -5,13 +5,13 @@ clc
 D = 0.09; %Diameter [m]
 L = 2.02; %Length [m]
 
-Chord_1 = 0.10; %[m]
-Chord_2 = 0.05; %[m]
+Chord_1 = 0.14; %[m]
+Chord_2 = 0.07; %[m]
 Alt = 0.07; %[m]
 
-Spess = 0.003; %[m]
+Spess = 0.004; %[m]
 Dist = 0.00; %[m]
-Boh = 0.006;
+Ler = 0.002;
 
 
 XLE_1 = L-Chord_1-Dist;
@@ -25,11 +25,11 @@ SSPAN_2 = D/2 + Alt;
 ZUPPER_1 = (Spess/2)/Chord_1;
 ZUPPER_2 = (Spess/2)/Chord_2;
 
-LMAXU_1 = Boh/Chord_1;
-LMAXU_2 = Boh/Chord_2;
+LMAXU_1 = Ler/Chord_1;
+LMAXU_2 = Ler/Chord_2;
 
-LFLATU_1 = (Chord_1 - 2*Boh)/Chord_1;
-LFLATU_2 = (Chord_2 - 2*Boh)/Chord_2;
+LFLATU_1 = (Chord_1 - 2*Ler)/Chord_1;
+LFLATU_2 = (Chord_2 - 2*Ler)/Chord_2;
 
 fprintf('XLE = %f , %f\n\n',XLE_1,XLE_2);
 fprintf('SSPAN = %f , %f\n\n',SSPAN_1,SSPAN_2);

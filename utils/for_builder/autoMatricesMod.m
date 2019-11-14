@@ -213,6 +213,7 @@ for A = 1:Nalt
 end
 fclose(fid);
 
+return
 %% Datcom and parsing
 if ismac
     system('./datcom for005.dat' );

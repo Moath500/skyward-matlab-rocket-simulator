@@ -14,8 +14,8 @@ Release date: 16/04/2016
 % launchpad
 settings.z0 = 1416;                                                                 %[m] Launchpad Altitude
 settings.lrampa = 4.9;                                                              %[m] LaunchPad route (distance from ground of the first hook)
-settings.lat0 = 41.809017;                                                          % Launchpad latitude
-settings.lon0 = 14.054264;                                                          % Launchpad longitude
+settings.lat0 = 41.809617;                                                          % Launchpad latitude
+settings.lon0 = 14.054954;                                                          % Launchpad longitude
 settings.terrain = true;
 if settings.terrain
     settings.funZ = funZ_gen('zdata.mat', settings.lat0, settings.lon0, true, 'xy');    % Altitude map computation
@@ -26,8 +26,8 @@ end
 % angles must be the same.
 settings.OMEGAmin = 87*pi/180;        %[rad] Minimum Elevation Angle, user input in degrees (ex. 80)
 settings.OMEGAmax = 87*pi/180;        %[rad] Maximum Elevation Angle, user input in degrees (ex. 80)
-settings.PHImin = 0*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
-settings.PHImax = 0*pi/180;         %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImin = 180*pi/180;           %[rad] Minimum Azimuth Angle from North Direction, user input in degrees (ex. 90)
+settings.PHImax = 200*pi/180;         %[rad] Maximum Azimuth Angle from North Direction, user input in degrees (ex. 90)
 settings.upwind = false;              % If true, phi is selected according to wind direction (constant wind model only)
 settings.PHIsigma = 0*pi/180;         % Stocasthic simulation only
 
@@ -180,11 +180,11 @@ settings.wind.input = false;
 % secon row: wind azimut angle (toward wind incoming direction) [deg]
 % third row: altitude
 
-V0 = 3;
-C = [0 0 10 15 20 30 40];
+V0 = 7;
+C = [0 0 10 15 20 30 30];
 
 settings.wind.input_matr = [ (V0+V0*C/100)
-                             120*ones(1, 7)
+                             30*ones(1, 7)
                              0 100 600 750 900 1500 2500 ];
 
 settings.wind.input_uncertainty = [30, 20];
@@ -213,12 +213,12 @@ settings.wind.AzMax = (180)*pi/180;                 % [rad] Maximum Azimuth, use
 %% BALLISTIC SIMULATION
 % Set to True to run a ballistic (without drogues) simulation
 
-settings.ballistic = true;
+settings.ballistic = false;
 
 %% STOCHASTIC DETAILS
 % If N > 1 the stochastic routine is started
 
-settings.stoch.N = 1;                               % Number of cases
+settings.stoch.N = 100;                               % Number of cases
 
 %%% launch probability details
 settings.stoch.prob.x_lim = 2e3;                    % Max ovest displacement [m]

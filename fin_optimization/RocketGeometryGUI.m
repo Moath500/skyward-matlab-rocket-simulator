@@ -12,8 +12,8 @@ function data = RocketGeometryGUI
 % Website: http://www.skywarder.eu
 % Release date: 11 October 2019 | First Version
 % License:  2-clause BSD
-% close all
-% clear all
+close all
+clear all
 clc
 %% Set default values - Dimensions in cm
 data = struct();
@@ -21,9 +21,9 @@ data.D = 9;
 data.RocketLength = 202;
 data.NoseLength = 30;
 data.BodyLength = data.RocketLength - data.NoseLength;
-data.FinMaxChord = 10;
-data.FinMinChord = 5;
-data.FinHeight = 6;
+data.FinMaxChord = 17;
+data.FinMinChord = 8;
+data.FinHeight = 7.5;
 data.BottomDist = 0.0;
 data.XLe = data.RocketLength - data.BottomDist - [data.FinMaxChord ; ...
     data.FinMaxChord-(data.FinMaxChord-data.FinMinChord)/2];
@@ -33,14 +33,14 @@ data.NShape = 'KARMAN';
 data.NPower = 0.5;
 
 % Fin cross section
-data.FinT = 0.3;
-data.LDiagSection = 0.15; % Horizontal length of diagonal part of the section
+data.FinT = 0.55;
+data.LDiagSection = 0.3; % Horizontal length of diagonal part of the section
 data.LmaxMaxChord = data.LDiagSection;
 data.LmaxMinChord = data.LDiagSection;
-data.LflatMinChord = (data.FinMinChord-data.LmaxMinChord)/2;
-data.LflatMaxChord = (data.FinMaxChord-data.LmaxMaxChord)/2;
+data.LflatMinChord = data.FinMinChord-2*data.LDiagSection;
+data.LflatMaxChord = data.FinMaxChord-2*data.LDiagSection;
 
-
+data
 %% Create layout
 f = figure('Visible','off','Position',[100 100 850 638]);
 f.Name = 'Rocket Geometry';
@@ -186,12 +186,12 @@ f.Visible = 'on';
         str = sprintf('%s LER=2*0.0025,\n',str);
         str = sprintf('%s STA=0.0,\n',str);
         str = sprintf('%s SSPAN=%4.3f,%4.3f,\n',str,data.D/2/100,(data.D/2+data.FinHeight)/100);
-        str = sprintf('%s CHORD=%4.3f,%4.3f,\n',str,data.FinMaxChord/2/100,data.FinMinChord/100);
+        str = sprintf('%s CHORD=%4.3f,%4.3f,\n',str,data.FinMaxChord/100,data.FinMinChord/100);
         str = sprintf('%s SECTYP=HEX,\n',str);
-        str = sprintf('%s ZUPPER=%4.3f,%4.3f,\n',str,data.FinT/2/data.FinMaxChord,data.FinT/2/data.FinMinChord);
-        str = sprintf('%s LMAXU=%4.3f,%4.3f,\n',str,data.LmaxMaxChord/data.FinMaxChord,...
+        str = sprintf('%s ZUPPER=%4.4f,%4.4f,\n',str,data.FinT/2/data.FinMaxChord,data.FinT/2/data.FinMinChord);
+        str = sprintf('%s LMAXU=%4.4f,%4.4f,\n',str,data.LmaxMaxChord/data.FinMaxChord,...
             data.LmaxMinChord/data.FinMinChord);
-        str = sprintf('%s LFLATU=%3.2f,%3.2f,$\n',str,data.LflatMaxChord/data.FinMaxChord,...
+        str = sprintf('%s LFLATU=%.4f,%.4f,$\n',str,data.LflatMaxChord/data.FinMaxChord,...
             data.LflatMinChord/data.FinMinChord);
              
         fprintf(str)
@@ -290,7 +290,7 @@ f.Visible = 'on';
             src.String = num2str(data.FinMaxChord);
         else
             data.FinMaxChord = value;
-            data.LmaxMaxChord = (data.FinMaxChord - data.LflatMaxChord)/2;
+            data.LflatMaxChord = data.FinMaxChord - 2*data.LmaxMaxChord;
             updateplot;
         end
     end
@@ -309,7 +309,7 @@ f.Visible = 'on';
             src.String = num2str(data.FinMinChord);
         else
             data.FinMinChord = value;
-            data.LmaxMinChord = (data.FinMinChord - data.LflatMinChord)/2;
+            data.LflatMinChord = data.FinMinChord - 2*data.LmaxMinChord;
             updateplot;
         end
     end
@@ -333,8 +333,8 @@ f.Visible = 'on';
        data.LDiagSection  = value;
        data.LmaxMaxChord = value;
        data.LmaxMinChord = value;
-       data.LflatMinChord = (data.FinMinChord-data.LmaxMinChord)/2;
-       data.LflatMaxChord = (data.FinMaxChord-data.LmaxMaxChord)/2;
+       data.LflatMinChord = data.FinMinChord-2*data.LmaxMinChord;
+       data.LflatMaxChord = data.FinMaxChord-2*data.LmaxMaxChord;
        updateplot;
     end
 
